@@ -1,0 +1,140 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="{{ route('admin.dashboard') }}" class="brand-link">
+        @if(setting('site_logo'))
+            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name', 'Cambridge') }} Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        @else
+            <img src="https://via.placeholder.com/33x33?text=CC" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        @endif
+        <span class="brand-text font-weight-light">{{ setting('site_name', 'Cambridge') }} Admin</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="https://ui-avatars.com/api/?name={{ Auth::guard('admin')->user()->name }}&size=160&background=random" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block">{{ Auth::guard('admin')->user()->name }}</a>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+
+                <!-- Courses Management -->
+                <li class="nav-item {{ request()->routeIs('admin.courses.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.levels.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('admin.courses.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.levels.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            Courses
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.courses.index') }}" class="nav-link {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>All Courses</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Categories</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.levels.index') }}" class="nav-link {{ request()->routeIs('admin.levels.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Levels</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Pages -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <p>Pages</p>
+                    </a>
+                </li>
+
+                <!-- Success Stories -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.stories.index') }}" class="nav-link {{ request()->routeIs('admin.stories.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-star"></i>
+                        <p>Success Stories</p>
+                    </a>
+                </li>
+
+                <!-- Contacts -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.contacts.index') }}" class="nav-link {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-envelope"></i>
+                        <p>
+                            Messages
+                            @php
+                                $unreadCount = \App\Models\Contact::where('is_read', false)->count();
+                            @endphp
+                            @if($unreadCount > 0)
+                                <span class="badge badge-warning right">{{ $unreadCount }}</span>
+                            @endif
+                        </p>
+                    </a>
+                </li>
+
+                <!-- Banners -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.banners.index') }}" class="nav-link {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-images"></i>
+                        <p>Banners</p>
+                    </a>
+                </li>
+
+                <!-- Features -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.features.index') }}" class="nav-link {{ request()->routeIs('admin.features.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-star"></i>
+                        <p>Features</p>
+                    </a>
+                </li>
+
+                <!-- Divider -->
+                <li class="nav-header">SYSTEM</li>
+
+                <!-- Settings -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>Site Settings</p>
+                    </a>
+                </li>
+
+                <!-- Logout -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Logout</p>
+                    </a>
+                    <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>
