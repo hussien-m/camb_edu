@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Frontend\ContactController;
+use App\Http\Controllers\Frontend\CourseInquiryController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\NewsletterController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +17,12 @@ Route::get('/page/{slug}', [HomeController::class, 'showPage'])->name('page.show
 
 // Contact Form
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Course Inquiry
+Route::post('/course/{course}/inquiry', [CourseInquiryController::class, 'store'])->name('course.inquiry.store');
+
+// Newsletter Subscription
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 
 // Storage Link Route (for shared hosting)
 Route::get('/storage-link', function () {

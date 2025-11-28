@@ -551,10 +551,10 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card course-card">
                     <div class="card-img-wrapper">
-                        @if($course->image_path)
-                            <img src="{{ Storage::url($course->image_path) }}" alt="{{ $course->title }}">
+                        @if($course->image)
+                            <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}">
                         @else
-                            <img src="https://picsum.photos/seed/{{ $course->id }}/400/300" alt="{{ $course->title }}">
+                            <img src="https://picsum.photos/seed/{{ $course->title }}/400/300" alt="{{ $course->title }}">
                         @endif
                         <span class="badge-featured">⭐ Featured</span>
                     </div>
@@ -721,6 +721,73 @@
 @endif
 
 <!-- ============================================
+     NEWSLETTER SECTION
+============================================ -->
+<section class="newsletter-section py-5" style="background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%); margin-top: 80px;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0 text-white">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="newsletter-icon me-3">
+                        <i class="fas fa-envelope-open-text fa-3x"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-2 fw-bold">Subscribe to Our Newsletter</h2>
+                        <p class="mb-0 fs-5">Get the latest updates, courses, and exclusive offers delivered to your inbox!</p>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle me-2 fa-lg"></i>
+                        <span>Weekly Updates</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle me-2 fa-lg"></i>
+                        <span>New Courses</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle me-2 fa-lg"></i>
+                        <span>Special Offers</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="newsletter-form-wrapper p-4 bg-white rounded-3 shadow-lg">
+                    <form id="newsletter-form">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="newsletter-email" class="form-label fw-bold text-dark">
+                                <i class="fas fa-envelope me-2 text-primary"></i>Email Address
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-at text-muted"></i>
+                                </span>
+                                <input type="email"
+                                       class="form-control border-start-0 ps-0"
+                                       id="newsletter-email"
+                                       name="email"
+                                       placeholder="Enter your email address"
+                                       required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-primary w-100 fw-bold shadow">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Subscribe Now
+                        </button>
+                        <div id="newsletter-message" class="mt-3 text-center fw-bold"></div>
+                    </form>
+                    <p class="text-muted text-center mt-3 mb-0 small">
+                        <i class="fas fa-lock me-1"></i>
+                        Your privacy is important to us. We'll never share your email.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
      CONTACT SECTION
 ============================================ -->
 <section class="section-white">
@@ -816,11 +883,68 @@
 
 @push('scripts')
 <script>
+// Newsletter Subscription Script
+document.addEventListener('DOMContentLoaded', function() {
+    const newsletterForm = document.getElementById('newsletter-form');
+
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = this;
+            const email = document.getElementById('newsletter-email').value;
+            const messageEl = document.getElementById('newsletter-message');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Subscribing...';
+
+            fetch('{{ route("newsletter.subscribe") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageEl.className = 'mt-3 text-center fw-bold text-success';
+                    messageEl.textContent = data.message;
+                    form.reset();
+                } else {
+                    messageEl.className = 'mt-3 text-center fw-bold text-danger';
+                    messageEl.textContent = data.message;
+                }
+            })
+            .catch(error => {
+                messageEl.className = 'mt-3 text-center fw-bold text-danger';
+                messageEl.textContent = 'An error occurred. Please try again.';
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Subscribe Now';
+
+                // Clear message after 5 seconds
+                setTimeout(() => {
+                    messageEl.textContent = '';
+                }, 5000);
+            });
+        });
+    }
+});
+
+// Contact Form Script
+// Contact Form Script
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const alertBox = document.getElementById('contactAlert');
     const alertMessage = document.getElementById('contactAlertMessage');
+
+    if (!form) return;
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();

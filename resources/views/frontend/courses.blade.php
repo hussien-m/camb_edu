@@ -621,10 +621,10 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="card course-card">
                             <div class="card-img-wrapper">
-                                @if($course->image_path)
-                                    <img src="{{ Storage::url($course->image_path) }}" alt="{{ $course->title }}">
+                                @if($course->image)
+                                    <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}">
                                 @else
-                                    <img src="https://picsum.photos/seed/{{ $course->id }}/400/300" alt="{{ $course->title }}">
+                                    <img src="https://picsum.photos/seed/{{ urlencode($course->title) }}/400/300" alt="{{ $course->title }}">
                                 @endif
                                 @if($course->is_featured)
                                     <span class="badge-featured">⭐ Featured</span>

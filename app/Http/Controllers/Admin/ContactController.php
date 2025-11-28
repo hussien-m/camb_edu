@@ -4,12 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Services\Admin\ContactService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ContactController extends Controller
 {
+    protected $contactService;
+
+    public function __construct(ContactService $contactService)
+    {
+        $this->contactService = $contactService;
+    }
+
     public function index(Request $request): View
     {
         $query = Contact::query();
@@ -32,7 +40,7 @@ class ContactController extends Controller
     {
         // Mark as read when viewed
         if (!$contact->is_read) {
-            $contact->markAsRead();
+            $this->contactService->markAsRead($contact);
         }
 
         return view('admin.contacts.show', compact('contact'));
@@ -40,14 +48,14 @@ class ContactController extends Controller
 
     public function markAsRead(Contact $contact): RedirectResponse
     {
-        $contact->markAsRead();
+        $this->contactService->markAsRead($contact);
 
         return back()->with('success', 'Message marked as read.');
     }
 
     public function destroy(Contact $contact): RedirectResponse
     {
-        $contact->delete();
+        $this->contactService->deleteContact($contact);
 
         return redirect()
             ->route('admin.contacts.index')

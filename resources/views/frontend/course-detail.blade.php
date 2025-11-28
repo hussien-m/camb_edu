@@ -311,6 +311,7 @@
         gap: 10px;
         text-decoration: none;
         margin-bottom: 15px;
+        cursor: pointer;
     }
 
     .btn-enroll:hover {
@@ -318,6 +319,12 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
         color: white;
+    }
+
+    .btn-enroll form {
+        width: 100%;
+        margin: 0;
+    }
     }
 
     .btn-back {
@@ -396,6 +403,80 @@
         color: #1e3a8a;
         font-weight: 700;
         font-size: 1.1rem;
+    }
+
+    /* Course Inquiry Form */
+    .inquiry-form-box {
+        background: white;
+        border-radius: 24px;
+        padding: 35px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        border: 2px solid #f0f0f0;
+        margin-top: 30px;
+    }
+
+    .inquiry-form-box .form-group {
+        margin-bottom: 20px;
+    }
+
+    .inquiry-form-box label {
+        color: #1e3a8a;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    .inquiry-form-box .form-control {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .inquiry-form-box .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .inquiry-form-box textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .btn-submit-inquiry {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-submit-inquiry:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .alert {
+        border-radius: 12px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        border: none;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
     }
 
     /* Responsive */
@@ -488,9 +569,9 @@
                     @endif
 
                     <!-- Course Image -->
-                    @if($course->image_path)
+                    @if($course->image)
                     <div class="course-image-wrapper">
-                        <img src="{{ Storage::url($course->image_path) }}" class="course-image" alt="{{ $course->title }}">
+                        <img src="{{ asset('storage/' . $course->image) }}" class="course-image" alt="{{ $course->title }}">
                     </div>
                     @else
                     <div class="course-image-wrapper">
@@ -500,6 +581,15 @@
 
                     <!-- Course Title -->
                     <h1 class="course-title">{{ $course->title }}</h1>
+
+                    <!-- Course Code Badge -->
+                    @if($course->course_code)
+                    <div class="mb-3">
+                        <span class="badge bg-primary" style="font-size: 1rem; padding: 8px 16px;">
+                            <i class="fas fa-tag me-2"></i>Course Code: {{ $course->course_code }}
+                        </span>
+                    </div>
+                    @endif
 
                     <!-- Short Description -->
                     @if($course->short_description)
@@ -515,6 +605,69 @@
                         {!! $course->description !!}
                     </div>
                     @endif
+
+                    <!-- Course Inquiry Form -->
+                    <div class="inquiry-form-box mt-5">
+                        <h4 class="sidebar-title">
+                            <i class="fas fa-envelope"></i>
+                            <span>Inquire About This Course</span>
+                        </h4>
+
+                        <div id="inquiry-alert" style="display: none;"></div>
+
+                        <form id="inquiryForm" action="{{ route('course.inquiry.store', $course->id) }}" method="POST">
+                            @csrf
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Full Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control"
+                                               id="name" name="name"
+                                               placeholder="Enter your full name" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email Address <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control"
+                                               id="email" name="email"
+                                               placeholder="your.email@example.com" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number</label>
+                                        <input type="tel" class="form-control"
+                                               id="phone" name="phone"
+                                               placeholder="+1 (555) 123-4567">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="message">Your Message <span class="text-danger">*</span></label>
+                                        <textarea class="form-control"
+                                                  id="message" name="message" rows="5"
+                                                  placeholder="Tell us about your interest in this course..." required></textarea>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn-submit-inquiry" id="submitBtn">
+                                        <i class="fas fa-paper-plane"></i>
+                                        <span>Send Inquiry</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -572,10 +725,33 @@
                     </div>
                     @endif
 
-                    <a href="#contact" class="btn-enroll">
-                        <i class="fas fa-paper-plane"></i>
-                        <span>Enroll Now</span>
-                    </a>
+                    @auth('student')
+                        @php
+                            $isEnrolled = \App\Models\Enrollment::where('student_id', auth('student')->id())
+                                ->where('course_id', $course->id)
+                                ->exists();
+                        @endphp
+
+                        @if($isEnrolled)
+                            <a href="{{ route('student.courses.index') }}" class="btn-enroll" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Already Enrolled - Go to Dashboard</span>
+                            </a>
+                        @else
+                            <form action="{{ route('student.courses.enroll', $course) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn-enroll">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Enroll Now</span>
+                                </button>
+                            </form>
+                        @endif
+                    @else
+                        <a href="{{ route('student.login') }}" class="btn-enroll">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login to Enroll</span>
+                        </a>
+                    @endauth
 
                     <a href="{{ route('courses.index') }}" class="btn-back">
                         <i class="fas fa-arrow-left"></i>
@@ -616,4 +792,89 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#inquiryForm').on('submit', function(e) {
+        e.preventDefault();
+
+        // Clear previous errors
+        $('.form-control').removeClass('is-invalid');
+        $('.invalid-feedback').text('');
+        $('#inquiry-alert').hide();
+
+        // Disable submit button
+        const submitBtn = $('#submitBtn');
+        const originalText = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> <span>Sending...</span>');
+
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                // Show success message
+                $('#inquiry-alert')
+                    .removeClass('alert-danger')
+                    .addClass('alert alert-success')
+                    .html('<i class="fas fa-check-circle me-2"></i> Thank you for your inquiry! We will contact you soon.')
+                    .slideDown();
+
+                // Reset form
+                $('#inquiryForm')[0].reset();
+
+                // Re-enable button
+                submitBtn.prop('disabled', false).html(originalText);
+
+                // Hide success message after 5 seconds
+                setTimeout(function() {
+                    $('#inquiry-alert').slideUp();
+                }, 5000);
+
+                // Scroll to alert
+                $('html, body').animate({
+                    scrollTop: $('#inquiry-alert').offset().top - 100
+                }, 500);
+            },
+            error: function(xhr) {
+                // Re-enable button
+                submitBtn.prop('disabled', false).html(originalText);
+
+                if (xhr.status === 422) {
+                    // Validation errors
+                    const errors = xhr.responseJSON.errors;
+
+                    $.each(errors, function(field, messages) {
+                        const input = $('[name="' + field + '"]');
+                        input.addClass('is-invalid');
+                        input.siblings('.invalid-feedback').text(messages[0]);
+                    });
+
+                    // Show error alert
+                    $('#inquiry-alert')
+                        .removeClass('alert-success')
+                        .addClass('alert alert-danger')
+                        .html('<i class="fas fa-exclamation-circle me-2"></i> Please fix the errors below.')
+                        .slideDown();
+                } else {
+                    // General error
+                    $('#inquiry-alert')
+                        .removeClass('alert-success')
+                        .addClass('alert alert-danger')
+                        .html('<i class="fas fa-exclamation-circle me-2"></i> Something went wrong. Please try again.')
+                        .slideDown();
+                }
+
+                // Scroll to alert
+                $('html, body').animate({
+                    scrollTop: $('#inquiry-alert').offset().top - 100
+                }, 500);
+            }
+        });
+    });
+});
+</script>
+@endpush
+
 @endsection

@@ -3,11 +3,20 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreFeatureRequest;
+use App\Http\Requests\Admin\UpdateFeatureRequest;
 use App\Models\Feature;
-use Illuminate\Http\Request;
+use App\Services\Admin\FeatureService;
 
 class FeatureController extends Controller
 {
+    protected $featureService;
+
+    public function __construct(FeatureService $featureService)
+    {
+        $this->featureService = $featureService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -28,19 +37,9 @@ class FeatureController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreFeatureRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'icon' => 'nullable|string|max:255',
-            'order' => 'required|integer|min:0',
-            'is_active' => 'nullable'
-        ]);
-
-        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
-
-        Feature::create($validated);
+        $this->featureService->createFeature($request->validated());
 
         return redirect()->route('admin.features.index')
             ->with('success', 'Feature created successfully');
@@ -65,19 +64,9 @@ class FeatureController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Feature $feature)
+    public function update(UpdateFeatureRequest $request, Feature $feature)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'icon' => 'nullable|string|max:255',
-            'order' => 'required|integer|min:0',
-            'is_active' => 'nullable'
-        ]);
-
-        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
-
-        $feature->update($validated);
+        $this->featureService->updateFeature($feature, $request->validated());
 
         return redirect()->route('admin.features.index')
             ->with('success', 'Feature updated successfully');
@@ -88,7 +77,7 @@ class FeatureController extends Controller
      */
     public function destroy(Feature $feature)
     {
-        $feature->delete();
+        $this->featureService->deleteFeature($feature);
 
         return redirect()->route('admin.features.index')
             ->with('success', 'Feature deleted successfully');

@@ -3,31 +3,29 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Admin\UploadImageRequest;
+use App\Services\Admin\ImageUploadService;
 
 class ImageUploadController extends Controller
 {
-    /**
-     * Upload image from editor
-     */
-    public function upload(Request $request)
+    protected $imageService;
+
+    public function __construct(ImageUploadService $imageService)
     {
-        $request->validate([
-            'upload' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $this->imageService = $imageService;
+    }
 
-        if ($request->hasFile('upload')) {
-            $file = $request->file('upload');
-            $path = $file->store('editor-images', 'public');
-            $url = asset('storage/' . $path);
+    public function upload(UploadImageRequest $request)
+    {
+        $result = $this->imageService->uploadImage($request->file('upload'));
 
-            // CKEditor 5 response format
-            return response()->json([
-                'url' => $url
-            ]);
+        if (!$result['success']) {
+            return response()->json(['error' => $result['message']], 400);
         }
 
-        return response()->json(['error' => 'No file uploaded'], 400);
+        // CKEditor 5 response format
+        return response()->json([
+            'url' => $result['url']
+        ]);
     }
 }

@@ -11,6 +11,7 @@ class Course extends Model
     use HasFactory;
 
     protected $fillable = [
+        'course_code',
         'title',
         'slug',
         'category_id',
@@ -68,5 +69,28 @@ class Course extends Model
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    // Exam System Relationships
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'enrollments')
+            ->withPivot('status', 'enrolled_at', 'completed_at', 'progress')
+            ->withTimestamps();
+    }
+
+    public function exams()
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
     }
 }

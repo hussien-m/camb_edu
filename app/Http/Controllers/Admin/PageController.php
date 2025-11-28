@@ -3,15 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StorePageRequest;
+use App\Http\Requests\Admin\UpdatePageRequest;
 use App\Models\Page;
+use App\Services\Admin\PageService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PageController extends Controller
 {
+    protected $pageService;
+
+    public function __construct(PageService $pageService)
+    {
+        $this->pageService = $pageService;
+    }
+
     public function index(): View
     {
         $pages = Page::latest()->paginate(15);
@@ -23,23 +30,9 @@ class PageController extends Controller
         return view('admin.pages.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StorePageRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:pages,slug',
-            'content' => 'nullable|string',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-        ]);
-
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['title']);
-        }
-
-        $validated['is_published'] = $request->has('is_published') ? 1 : 0;
-
-        Page::create($validated);
+        $this->pageService->createPage($request->validated());
 
         return redirect()
             ->route('admin.pages.index')
@@ -51,23 +44,9 @@ class PageController extends Controller
         return view('admin.pages.edit', compact('page'));
     }
 
-    public function update(Request $request, Page $page): RedirectResponse
+    public function update(UpdatePageRequest $request, Page $page): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:pages,slug,' . $page->id,
-            'content' => 'nullable|string',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-        ]);
-
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['title']);
-        }
-
-        $validated['is_published'] = $request->has('is_published') ? 1 : 0;
-
-        $page->update($validated);
+        $this->pageService->updatePage($page, $request->validated());
 
         return redirect()
             ->route('admin.pages.index')
@@ -76,7 +55,7 @@ class PageController extends Controller
 
     public function destroy(Page $page): RedirectResponse
     {
-        $page->delete();
+        $this->pageService->deletePage($page);
 
         return redirect()
             ->route('admin.pages.index')

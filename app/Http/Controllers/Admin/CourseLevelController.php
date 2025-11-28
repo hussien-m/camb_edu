@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreCourseLevelRequest;
+use App\Http\Requests\Admin\UpdateCourseLevelRequest;
 use App\Models\CourseLevel;
+use App\Services\Admin\CourseLevelService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CourseLevelController extends Controller
 {
+    protected $levelService;
+
+    public function __construct(CourseLevelService $levelService)
+    {
+        $this->levelService = $levelService;
+    }
+
     public function index(): View
     {
         $levels = CourseLevel::withCount('courses')->orderBy('sort_order')->paginate(15);
@@ -22,20 +30,9 @@ class CourseLevelController extends Controller
         return view('admin.levels.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCourseLevelRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:course_levels,slug',
-            'description' => 'nullable|string',
-            'sort_order' => 'nullable|integer|min:0',
-        ]);
-
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
-        }
-
-        CourseLevel::create($validated);
+        $this->levelService->createLevel($request->validated());
 
         return redirect()
             ->route('admin.levels.index')
@@ -47,20 +44,9 @@ class CourseLevelController extends Controller
         return view('admin.levels.edit', compact('level'));
     }
 
-    public function update(Request $request, CourseLevel $level): RedirectResponse
+    public function update(UpdateCourseLevelRequest $request, CourseLevel $level): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:course_levels,slug,' . $level->id,
-            'description' => 'nullable|string',
-            'sort_order' => 'nullable|integer|min:0',
-        ]);
-
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
-        }
-
-        $level->update($validated);
+        $this->levelService->updateLevel($level, $request->validated());
 
         return redirect()
             ->route('admin.levels.index')
@@ -69,7 +55,7 @@ class CourseLevelController extends Controller
 
     public function destroy(CourseLevel $level): RedirectResponse
     {
-        $level->delete();
+        $this->levelService->deleteLevel($level);
 
         return redirect()
             ->route('admin.levels.index')

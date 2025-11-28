@@ -46,7 +46,8 @@ class LoginController extends Controller
     {
         Auth::guard('admin')->logout();
 
-        $request->session()->invalidate();
+        // Only regenerate token, don't invalidate entire session
+        // This prevents affecting other guard sessions (like student)
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');

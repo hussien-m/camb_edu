@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', setting('site_title', 'Cambridge College - Best Education in Libya'))</title>
 
     <!-- SEO Meta Tags -->
@@ -32,83 +33,111 @@
         }
 
         /* ============================================
-           MAIN NAVBAR - Professional Design
+           MAIN NAVBAR - Compact Professional Design
         ============================================ */
         .navbar {
             background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%);
-            padding: 18px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 10000;
             transition: all 0.3s;
         }
         .navbar.scrolled {
-            padding: 10px 0;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            padding: 6px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
         .navbar-brand {
-            font-weight: 800;
+            font-weight: 700;
             color: white !important;
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             transition: transform 0.3s;
         }
         .navbar-brand:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
         .navbar-brand img {
-            height: 55px;
-            width: 55px;
+            height: 40px;
+            width: 40px;
             object-fit: cover;
-            border-radius: 12px;
-            border: 3px solid #ffcc00;
-            box-shadow: 0 4px 12px rgba(255,204,0,0.3);
+            border-radius: 8px;
+            border: 2px solid #ffcc00;
+            box-shadow: 0 2px 8px rgba(255,204,0,0.2);
             transition: all 0.3s;
         }
         .navbar-brand:hover img {
-            transform: rotate(5deg);
-            box-shadow: 0 6px 18px rgba(255,204,0,0.5);
+            transform: rotate(3deg);
+            box-shadow: 0 4px 12px rgba(255,204,0,0.4);
         }
 
-        /* Navbar Links - Enhanced */
+        /* Navbar Links - Compact */
         .navbar .nav-link {
-            color: rgba(255,255,255,0.9) !important;
-            margin: 0 8px;
-            padding: 10px 18px !important;
-            border-radius: 10px;
+            color: rgba(255,255,255,0.95) !important;
+            margin: 0 4px;
+            padding: 6px 12px !important;
+            border-radius: 6px;
             transition: all 0.3s;
-            font-weight: 600;
-            font-size: 1.05rem;
+            font-weight: 500;
+            font-size: 0.9rem;
             position: relative;
+            white-space: nowrap;
         }
         .navbar .nav-link::after {
             content: '';
             position: absolute;
-            bottom: 5px;
+            bottom: 2px;
             left: 50%;
             transform: translateX(-50%) scaleX(0);
-            width: 70%;
-            height: 3px;
+            width: 60%;
+            height: 2px;
             background: #ffcc00;
-            border-radius: 2px;
+            border-radius: 1px;
             transition: transform 0.3s;
         }
         .navbar .nav-link:hover {
             color: #ffcc00 !important;
-            background: rgba(255,204,0,0.1);
+            background: rgba(255,204,0,0.12);
         }
         .navbar .nav-link:hover::after {
             transform: translateX(-50%) scaleX(1);
         }
         .navbar .nav-link.active {
             color: #ffcc00 !important;
-            background: rgba(255,204,0,0.15);
+            background: rgba(255,204,0,0.18);
         }
         .navbar .nav-link.active::after {
             transform: translateX(-50%) scaleX(1);
+        }
+        .navbar .nav-link i {
+            font-size: 0.85rem;
+        }
+
+        /* Course Links - Different styling for desktop */
+        .navbar .courses-link {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .navbar .courses-link {
+                display: block;
+                background: rgba(59, 130, 246, 0.15);
+                border-left: 3px solid #3b82f6;
+            }
+            .navbar .courses-link:hover {
+                background: rgba(59, 130, 246, 0.25);
+                color: #3b82f6 !important;
+                border-left-color: #60a5fa;
+            }
+            .navbar .courses-link.active {
+                background: rgba(59, 130, 246, 0.3);
+                color: #3b82f6 !important;
+                border-left-color: #2563eb;
+                font-weight: 600;
+            }
         }
 
         /* Dropdown Menu - Modern */
@@ -148,22 +177,123 @@
             margin: 10px 15px;
         }
 
-        /* Register Button - Premium */
+        /* Register Button - Compact Design */
         .btn-register {
-            background: #ffcc00 !important;
-            color: #1e3a8a !important;
-            font-weight: 800 !important;
-            padding: 10px 25px !important;
-            border-radius: 12px !important;
-            border: none !important;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            padding: 6px 16px !important;
+            border-radius: 20px !important;
+            border: 2px solid rgba(255,255,255,0.2) !important;
             transition: all 0.3s !important;
-            box-shadow: 0 4px 12px rgba(255,204,0,0.3) !important;
-            margin-right: 10px !important;
+            box-shadow: 0 2px 10px rgba(220,38,38,0.3) !important;
+            margin-right: 8px !important;
+            font-size: 0.9rem !important;
         }
         .btn-register:hover {
-            background: #e6b800 !important;
-            transform: translateY(-3px) !important;
-            box-shadow: 0 8px 20px rgba(255,204,0,0.5) !important;
+            background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%) !important;
+            border-color: rgba(255,255,255,0.4) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 15px rgba(220,38,38,0.5) !important;
+            color: #ffffff !important;
+        }
+
+        /* Secondary Navbar Styles */
+        .courses-navbar {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .courses-navbar .nav-link {
+            color: white !important;
+            padding: 6px 15px;
+            transition: all 0.3s;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .courses-navbar .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .courses-navbar .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+
+        /* Fix mobile navbar collapse background */
+        @media (max-width: 991px) {
+            .courses-navbar .navbar-collapse {
+                background: rgba(37, 99, 235, 0.98);
+                padding: 15px;
+                border-radius: 8px;
+                margin-top: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            }
+            .courses-navbar .nav-item {
+                margin: 5px 0;
+            }
+            .courses-navbar .nav-link {
+                padding: 10px 15px;
+                display: block;
+                text-align: center;
+            }
+        }
+
+        /* Responsive Design - Mobile & Tablet */
+        @media (max-width: 991px) {
+            .navbar {
+                padding: 6px 0;
+                z-index: 10000;
+            }
+            .navbar-brand {
+                font-size: 1rem;
+            }
+            .navbar-brand img {
+                height: 35px;
+                width: 35px;
+            }
+            .navbar .nav-link {
+                padding: 8px 12px !important;
+                margin: 2px 0;
+                font-size: 0.9rem;
+            }
+            .navbar-collapse {
+                background: rgba(30, 58, 138, 0.98);
+                padding: 10px 15px;
+                border-radius: 8px;
+                margin-top: 10px;
+            }
+            /* Ensure secondary navbar is below main navbar */
+            .courses-navbar {
+                position: relative !important;
+                top: auto !important;
+                z-index: 1040;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .navbar-brand {
+                font-size: 0.95rem;
+            }
+            .navbar-brand img {
+                height: 32px;
+                width: 32px;
+            }
+            .navbar .nav-link {
+                font-size: 0.85rem;
+                padding: 6px 10px !important;
+            }
+            .btn-register {
+                font-size: 0.85rem !important;
+                padding: 5px 14px !important;
+            }
+            .courses-navbar {
+                padding: 6px 0;
+            }
+            .courses-navbar .nav-link {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
         }
 
         /* Animation */
@@ -181,11 +311,56 @@
         /* ============================================
            FOOTER - Professional Design
         ============================================ */
+        /* Newsletter Section */
+        .newsletter-section {
+            position: relative;
+            overflow: hidden;
+        }
+        .newsletter-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .newsletter-section .container {
+            position: relative;
+            z-index: 1;
+        }
+        .newsletter-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .newsletter-form-wrapper {
+            animation: slideInRight 0.6s ease-out;
+        }
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .newsletter-form-wrapper input:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+        }
+
         footer {
             background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%);
             color: white;
             padding: 60px 0 30px;
-            margin-top: 80px;
             position: relative;
             overflow: hidden;
         }
@@ -465,7 +640,7 @@
 </head>
 <body>
 
-<!-- Main Navbar - Professional Single Navbar -->
+<!-- Main Navbar - Professional Design -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">
@@ -487,91 +662,111 @@
                     </a>
                 </li>
 
-                <!-- Courses Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->routeIs('courses*') ? 'active' : '' }}"
-                       href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-graduation-cap me-1"></i> Courses
+                <!-- Accreditations -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'accreditations' ? 'active' : '' }}"
+                       href="{{ route('page.show', 'accreditations') }}">
+                        <i class="fas fa-award me-1"></i> Accreditations
                     </a>
-                    <ul class="dropdown-menu">
-                        @foreach($categories ?? [] as $category)
-                            <li>
-                                <a class="dropdown-item" href="{{ route('courses.index', ['category_id' => $category->id]) }}">
-
-                                        <i class="fa fa-list-alt"></i>
-
-                                    {{ $category->name }}
-                                </a>
-                            </li>
-                        @endforeach
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('courses.index') }}">
-                                <i class="fas fa-th"></i>
-                                All Courses
-                            </a>
-                        </li>
-                    </ul>
                 </li>
 
-                <!-- Levels Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->routeIs('courses*') && request()->has('level_id') ? 'active' : '' }}"
-                       href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-layer-group me-1"></i> Levels
+                <!-- Verification -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'verification' ? 'active' : '' }}"
+                       href="{{ route('page.show', 'verification') }}">
+                        <i class="fas fa-check-circle me-1"></i> Verification
                     </a>
-                    <ul class="dropdown-menu">
-                        @foreach($levels ?? [] as $level)
-                            <li>
-                                <a class="dropdown-item" href="{{ route('courses.index', ['level_id' => $level->id]) }}">
-                                    <i class="fas fa-award"></i>
-                                    {{ $level->name }}
-                                </a>
-                            </li>
-                        @endforeach
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('courses.index') }}">
-                                <i class="fas fa-th"></i>
-                                All Levels
-                            </a>
-                        </li>
-                    </ul>
                 </li>
 
-                <!-- Pages Dropdown -->
-                @if(isset($pages) && $pages->count() > 0)
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ request()->routeIs('page.show') ? 'active' : '' }}"
-                           href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-file-alt me-1"></i> Pages
+                <!-- Attestation -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'attestation' ? 'active' : '' }}"
+                       href="{{ route('page.show', 'attestation') }}">
+                        <i class="fas fa-stamp me-1"></i> Attestation
+                    </a>
+                </li>
+
+                <!-- About Us -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'about-us' ? 'active' : '' }}"
+                       href="{{ route('page.show', 'about-us') }}">
+                        <i class="fas fa-info-circle me-1"></i> About Us
+                    </a>
+                </li>
+
+                <!-- Contact -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">
+                        <i class="fas fa-envelope me-1"></i> Contact
+                    </a>
+                </li>
+
+                <!-- Divider for Mobile -->
+                <li class="nav-item d-lg-none w-100" style="border-top: 2px solid rgba(255,204,0,0.3); margin: 15px 0 10px 0;">
+                    <div class="text-center text-white py-2" style="font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;">
+                        <i class="fas fa-graduation-cap me-2"></i>OUR PROGRAMS
+                    </div>
+                </li>
+
+                <!-- Course Levels -->
+                @php
+                    $levelsMenu = \App\Models\CourseLevel::orderBy('sort_order')->get();
+                @endphp
+                @foreach($levelsMenu as $level)
+                <li class="nav-item">
+                    <a class="nav-link courses-link {{ request()->has('level_id') && request()->get('level_id') == $level->id ? 'active' : '' }}"
+                       href="{{ route('courses.index', ['level_id' => $level->id]) }}">
+                        <i class="fas fa-certificate me-1"></i> {{ $level->name }}
+                    </a>
+                </li>
+                @endforeach
+
+                <!-- Divider for Mobile -->
+                <li class="nav-item d-lg-none w-100" style="border-top: 2px solid rgba(255,204,0,0.3); margin: 15px 0 10px 0;">
+                    <div class="text-center text-white py-2" style="font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;">
+                        <i class="fas fa-user me-2"></i>ACCOUNT
+                    </div>
+                </li>
+
+                @auth('student')
+                    <li class="nav-item">
+                        <a class="nav-link btn-register" href="{{ route('student.dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                         </a>
-                        <ul class="dropdown-menu">
-                            @foreach($pages as $page)
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('page.show', $page->slug) }}">
-                                        <i class="fas fa-angle-right"></i>
-                                        {{ $page->title }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
                     </li>
-                @endif
-
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('success.stories') ? 'active' : '' }}"
-                       href="{{ route('success.stories') }}">
-                        <i class="fas fa-star me-1"></i> Success Stories
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link btn-register" href="#contact">
-                        <i class="fas fa-user-plus me-1"></i> Register Now
-                    </a>
-                </li>
+                @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('student.login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-register" href="{{ route('student.register') }}">
+                            <i class="fas fa-user-plus me-1"></i> Register Now
+                        </a>
+                    </li>
+                @endauth
             </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Secondary Navbar for Desktop Only - Course Levels -->
+<nav class="navbar navbar-expand-lg navbar-dark courses-navbar d-none d-lg-block" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 10px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div class="container">
+        <div class="navbar-nav mx-auto">
+            @php
+                $levelsMenu2 = \App\Models\CourseLevel::orderBy('sort_order')->get();
+            @endphp
+            @foreach($levelsMenu2 as $level)
+                <a class="nav-link text-white {{ request()->has('level_id') && request()->get('level_id') == $level->id ? 'fw-bold' : '' }}"
+                   href="{{ route('courses.index', ['level_id' => $level->id]) }}"
+                   style="padding: 8px 20px; transition: all 0.3s; border-radius: 8px; font-weight: 600;"
+                   onmouseover="this.style.background='rgba(255,255,255,0.2)'"
+                   onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-certificate me-1"></i> {{ $level->name }}
+                </a>
+            @endforeach
         </div>
     </div>
 </nav>
@@ -708,8 +903,69 @@
     </div>
 </footer>
 
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Setup CSRF Token for AJAX -->
+<script>
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    }
+});
+</script>
+
+<!-- Newsletter Subscription Script -->
+<script>
+document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const email = document.getElementById('newsletter-email').value;
+    const messageEl = document.getElementById('newsletter-message');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    // Disable button
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    fetch('{{ route("newsletter.subscribe") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageEl.className = 'text-success';
+            messageEl.textContent = data.message;
+            form.reset();
+        } else {
+            messageEl.className = 'text-danger';
+            messageEl.textContent = data.message;
+        }
+    })
+    .catch(error => {
+        messageEl.className = 'text-danger';
+        messageEl.textContent = 'An error occurred. Please try again.';
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+
+        // Clear message after 5 seconds
+        setTimeout(() => {
+            messageEl.textContent = '';
+        }, 5000);
+    });
+});
+</script>
 
 <!-- Google Analytics -->
 @if(setting('google_analytics'))

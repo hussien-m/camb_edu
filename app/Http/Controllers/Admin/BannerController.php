@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreBannerRequest;
+use App\Http\Requests\Admin\UpdateBannerRequest;
 use App\Models\Banner;
+use App\Services\Admin\BannerService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class BannerController extends Controller
 {
+    protected $bannerService;
+
+    public function __construct(BannerService $bannerService)
+    {
+        $this->bannerService = $bannerService;
+    }
+
     public function index(): View
     {
         $banners = Banner::ordered()->paginate(15);
@@ -22,23 +30,9 @@ class BannerController extends Controller
         return view('admin.banners.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreBannerRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'link' => 'nullable|string|max:255',
-            'order' => 'nullable|integer|min:0',
-        ]);
-
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('banners', 'public');
-        }
-
-        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
-
-        Banner::create($validated);
+        $this->bannerService->createBanner($request->validated());
 
         return redirect()
             ->route('admin.banners.index')
@@ -50,26 +44,9 @@ class BannerController extends Controller
         return view('admin.banners.edit', compact('banner'));
     }
 
-    public function update(Request $request, Banner $banner): RedirectResponse
+    public function update(UpdateBannerRequest $request, Banner $banner): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'link' => 'nullable|string|max:255',
-            'order' => 'nullable|integer|min:0',
-        ]);
-
-        if ($request->hasFile('image')) {
-            if ($banner->image) {
-                Storage::disk('public')->delete($banner->image);
-            }
-            $validated['image'] = $request->file('image')->store('banners', 'public');
-        }
-
-        $validated['is_active'] = $request->has('is_active') ? 1 : 0;
-
-        $banner->update($validated);
+        $this->bannerService->updateBanner($banner, $request->validated());
 
         return redirect()
             ->route('admin.banners.index')
@@ -78,11 +55,7 @@ class BannerController extends Controller
 
     public function destroy(Banner $banner): RedirectResponse
     {
-        if ($banner->image) {
-            Storage::disk('public')->delete($banner->image);
-        }
-
-        $banner->delete();
+        $this->bannerService->deleteBanner($banner);
 
         return redirect()
             ->route('admin.banners.index')

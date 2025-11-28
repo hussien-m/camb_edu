@@ -95,6 +95,22 @@
                     </a>
                 </li>
 
+                <!-- Course Inquiries -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.inquiries.index') }}" class="nav-link {{ request()->routeIs('admin.inquiries.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-question-circle"></i>
+                        <p>
+                            Course Inquiries
+                            @php
+                                $newInquiriesCount = \App\Models\CourseInquiry::where('status', 'new')->count();
+                            @endphp
+                            @if($newInquiriesCount > 0)
+                                <span class="badge badge-info right">{{ $newInquiriesCount }}</span>
+                            @endif
+                        </p>
+                    </a>
+                </li>
+
                 <!-- Banners -->
                 <li class="nav-item">
                     <a href="{{ route('admin.banners.index') }}" class="nav-link {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
@@ -109,6 +125,55 @@
                         <i class="nav-icon fas fa-star"></i>
                         <p>Features</p>
                     </a>
+                </li>
+
+                <!-- Newsletter Subscribers -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.newsletter.index') }}" class="nav-link {{ request()->routeIs('admin.newsletter.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-newspaper"></i>
+                        <p>Newsletter Subscribers</p>
+                    </a>
+                </li>
+
+                <!-- Students Management -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.students.index') }}" class="nav-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-user-graduate"></i>
+                        <p>
+                            Students
+                            @php
+                                $pendingCount = \App\Models\Student::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingCount > 0)
+                                <span class="badge badge-warning right">{{ $pendingCount }}</span>
+                            @endif
+                        </p>
+                    </a>
+                </li>
+
+                <!-- Exams Management -->
+                <li class="nav-item {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <p>
+                            Exams
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.exams.index') }}" class="nav-link {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Exams & Questions</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.exam-results.index') }}" class="nav-link {{ request()->routeIs('admin.exam-results.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Exam Results</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <!-- Divider -->

@@ -54,6 +54,12 @@ Route::middleware('admin')->group(function () {
     Route::delete('contacts/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'destroy'])->name('contacts.destroy');
     Route::post('contacts/{contact}/mark-read', [App\Http\Controllers\Admin\ContactController::class, 'markAsRead'])->name('contacts.mark-read');
 
+    // Course Inquiries
+    Route::get('inquiries', [App\Http\Controllers\Admin\CourseInquiryController::class, 'index'])->name('inquiries.index');
+    Route::get('inquiries/{inquiry}', [App\Http\Controllers\Admin\CourseInquiryController::class, 'show'])->name('inquiries.show');
+    Route::post('inquiries/{inquiry}/status', [App\Http\Controllers\Admin\CourseInquiryController::class, 'updateStatus'])->name('inquiries.update-status');
+    Route::delete('inquiries/{inquiry}', [App\Http\Controllers\Admin\CourseInquiryController::class, 'destroy'])->name('inquiries.destroy');
+
     // Banners
     Route::resource('banners', App\Http\Controllers\Admin\BannerController::class);
 
@@ -63,4 +69,34 @@ Route::middleware('admin')->group(function () {
     // Settings
     Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // Newsletter Subscribers
+    Route::get('newsletter', [App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('newsletter.index');
+    Route::delete('newsletter/{id}', [App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('newsletter.destroy');
+    Route::get('newsletter/export', [App\Http\Controllers\Admin\NewsletterController::class, 'export'])->name('newsletter.export');
+
+    // Students Management
+    Route::get('students', [App\Http\Controllers\Admin\StudentController::class, 'index'])->name('students.index');
+    Route::get('students/{student}/edit', [App\Http\Controllers\Admin\StudentController::class, 'edit'])->name('students.edit');
+    Route::put('students/{student}', [App\Http\Controllers\Admin\StudentController::class, 'update'])->name('students.update');
+    Route::delete('students/{student}', [App\Http\Controllers\Admin\StudentController::class, 'destroy'])->name('students.destroy');
+    Route::put('students/{student}/status', [App\Http\Controllers\Admin\StudentController::class, 'updateStatus'])->name('students.update-status');
+
+    // Exams Management
+    Route::resource('exams', App\Http\Controllers\Admin\ExamController::class);
+
+    // Questions Management
+    Route::get('exams/{exam}/questions/create', [App\Http\Controllers\Admin\QuestionController::class, 'create'])->name('questions.create');
+    Route::post('exams/{exam}/questions', [App\Http\Controllers\Admin\QuestionController::class, 'store'])->name('questions.store');
+    Route::get('exams/{exam}/questions/{question}/edit', [App\Http\Controllers\Admin\QuestionController::class, 'edit'])->name('questions.edit');
+    Route::put('exams/{exam}/questions/{question}', [App\Http\Controllers\Admin\QuestionController::class, 'update'])->name('questions.update');
+    Route::delete('exams/{exam}/questions/{question}', [App\Http\Controllers\Admin\QuestionController::class, 'destroy'])->name('questions.destroy');
+
+    // Exam Results Management
+    Route::get('exam-results', [App\Http\Controllers\Admin\ExamResultController::class, 'index'])->name('exam-results.index');
+    Route::get('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'show'])->name('exam-results.show');
+    Route::get('exam-results/{id}/edit', [App\Http\Controllers\Admin\ExamResultController::class, 'edit'])->name('exam-results.edit');
+    Route::put('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'update'])->name('exam-results.update');
+    Route::post('exam-results/{id}/recalculate', [App\Http\Controllers\Admin\ExamResultController::class, 'recalculate'])->name('exam-results.recalculate');
+    Route::delete('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'destroy'])->name('exam-results.destroy');
 });
