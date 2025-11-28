@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'admin.guest' => \App\Http\Middleware\RedirectIfAdmin::class,
+            'student' => \App\Http\Middleware\StudentMiddleware::class,
+            'student.guest' => \App\Http\Middleware\RedirectIfStudent::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

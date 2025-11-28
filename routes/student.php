@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Guest Routes (Login & Register)
-Route::middleware('guest:student')->group(function () {
+Route::middleware('student.guest')->group(function () {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login']);
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');

@@ -1,0 +1,259 @@
+.certificate-download-container {
+    background: linear-gradient(135deg, #8B4513 0%, #D4AF37 100%);
+    padding: 30px 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.certificate-page {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #8B4513 0%, #D4AF37 100%);
+    padding: 30px 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.certificate-container {
+    background: linear-gradient(to bottom, #fdfcf9 0%, #ffffff 100%);
+    max-width: 1100px;
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: visible;
+    border: 20px solid #8B4513;
+    border-image: repeating-linear-gradient(
+        45deg,
+        #8B4513,
+        #8B4513 10px,
+        #D4AF37 10px,
+        #D4AF37 20px
+    ) 20;
+}
+
+/* Ornamental Corners */
+.corner-ornament {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border: 4px solid #D4AF37;
+    z-index: 2;
+}
+
+.corner-ornament.top-left {
+    top: 20px;
+    left: 20px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.corner-ornament.top-right {
+    top: 20px;
+    right: 20px;
+    border-left: none;
+    border-bottom: none;
+}
+
+.corner-ornament.bottom-left {
+    bottom: 20px;
+    left: 20px;
+    border-right: none;
+    border-top: none;
+}
+
+.corner-ornament.bottom-right {
+    bottom: 20px;
+    right: 20px;
+    border-left: none;
+    border-top: none;
+}
+
+.certificate-header {
+    text-align: center;
+    padding: 40px 40px 20px;
+    border-bottom: 3px solid #D4AF37;
+}
+
+.certificate-header .icon {
+    font-size: 4rem;
+    color: #8B4513;
+    margin-bottom: 15px;
+}
+
+.certificate-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #8B4513;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.certificate-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    font-style: italic;
+}
+
+.certificate-body {
+    padding: 60px 80px;
+    text-align: center;
+}
+
+.recipient-name {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3.5rem;
+    color: #8B4513;
+    margin: 30px 0;
+}
+
+.certificate-text {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 20px 0;
+    line-height: 1.8;
+}
+
+.certificate-details {
+    display: flex;
+    justify-content: space-around;
+    margin: 50px 0;
+    padding: 30px 0;
+    border-top: 2px solid #D4AF37;
+    border-bottom: 2px solid #D4AF37;
+}
+
+.detail-item {
+    text-align: center;
+    flex: 1;
+}
+
+.detail-label {
+    font-size: 0.9rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.detail-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #8B4513;
+    font-family: 'Playfair Display', serif;
+}
+
+.signature-section {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 60px;
+}
+
+.signature-block {
+    text-align: center;
+    flex: 1;
+}
+
+.signature-line {
+    border-bottom: 2px solid #333;
+    width: 200px;
+    margin: 40px auto 10px;
+}
+
+.signature-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.signature-title {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.qr-code-placeholder {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.qr-code-placeholder img {
+    max-width: 150px;
+    border: 2px solid #D4AF37;
+    padding: 10px;
+}
+
+.certificate-footer {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 0.9rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.certificate-seal {
+    text-align: center;
+    padding: 20px;
+}
+
+.certificate-seal img {
+    max-width: 100px;
+    opacity: 0.8;
+}
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .certificate-container {
+        box-shadow: none;
+        border: 20px solid #8B4513 !important;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .certificate-container {
+        border-width: 15px;
+    }
+
+    .certificate-body {
+        padding: 40px 30px;
+    }
+
+    .certificate-title {
+        font-size: 2.5rem;
+    }
+
+    .recipient-name {
+        font-size: 2.5rem;
+    }
+
+    .certificate-details {
+        flex-direction: column;
+    }
+
+    .detail-item {
+        margin-bottom: 20px;
+    }
+
+    .signature-section {
+        flex-direction: column;
+    }
+
+    .corner-ornament {
+        width: 80px;
+        height: 80px;
+    }
+}

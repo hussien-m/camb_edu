@@ -191,16 +191,6 @@
 </div>
 
 @push('scripts')
-<script>
-document.getElementById('profile_photo').addEventListener('change', function(e) {
-    if (e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.querySelector('img, .rounded-circle').src = e.target.result;
-        }
-        reader.readAsDataURL(e.target.files[0]);
-    }
-});
-</script>
+    @vite('resources/js/profile.js')
 @endpush
 @endsection

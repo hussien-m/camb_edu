@@ -19,7 +19,9 @@ class StudentMiddleware
             return redirect()->route('student.login')->with('error', 'Please login to access student area');
         }
 
-        if (auth()->guard('student')->user()->status !== 'active') {
+        $student = auth()->guard('student')->user();
+
+        if ($student->status !== 'active') {
             auth()->guard('student')->logout();
             return redirect()->route('student.login')->with('error', 'Your account is not active. Please contact administration.');
         }

@@ -3,67 +3,7 @@
 @section('title', 'Student Registration')
 
 @push('styles')
-<style>
-    .register-section {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%);
-        padding: 80px 0 60px;
-        position: relative;
-    }
-    .register-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-        pointer-events: none;
-    }
-    .register-card {
-        background: white;
-        border-radius: 24px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
-    }
-    .register-header {
-        background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%);
-        color: white;
-        padding: 40px;
-        text-align: center;
-    }
-    .register-header h2 {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
-    .form-control {
-        height: 50px;
-        border-radius: 12px;
-        border: 2px solid #e5e7eb;
-        padding: 0 20px;
-        font-size: 1rem;
-    }
-    .form-control:focus {
-        border-color: #1e3a8a;
-        box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25);
-    }
-    .btn-register {
-        height: 55px;
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 1.1rem;
-        background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%);
-        border: none;
-        transition: all 0.3s;
-    }
-    .btn-register:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(30, 58, 138, 0.4);
-    }
-</style>
+    @vite('resources/css/student-auth.css')
 @endpush
 
 @section('content')
