@@ -20,7 +20,7 @@ class ExamResultController extends Controller
 
     public function index(Request $request)
     {
-        $attempts = $this->resultService->getFilteredAttempts($request);
+        $attempts = $this->resultService->getFilteredAttempts($request->all());
         $exams = Exam::all();
 
         return view('admin.exam-results.index', compact('attempts', 'exams'));
@@ -53,24 +53,22 @@ class ExamResultController extends Controller
 
     public function recalculate($id)
     {
-        $result = $this->resultService->recalculateScore($id);
-
-        if (!$result['success']) {
-            return back()->with('error', $result['message']);
+        try {
+            $this->resultService->recalculateScore($id);
+            return redirect()->back()->with('success', 'Score recalculated successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to recalculate: ' . $e->getMessage());
         }
-
-        return redirect()->back()->with('success', 'Score recalculated successfully');
     }
 
     public function destroy($id)
     {
-        $result = $this->resultService->deleteAttempt($id);
-
-        if (!$result['success']) {
-            return back()->with('error', $result['message']);
+        try {
+            $this->resultService->deleteAttempt($id);
+            return redirect()->route('admin.exam-results.index')
+                ->with('success', 'Attempt deleted successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to delete: ' . $e->getMessage());
         }
-
-        return redirect()->route('admin.exam-results.index')
-            ->with('success', 'Attempt deleted successfully');
     }
 }

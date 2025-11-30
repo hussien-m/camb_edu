@@ -195,13 +195,10 @@ class ExamResultService
     {
         Certificate::create([
             'student_id' => $attempt->student_id,
-            'exam_id' => $attempt->exam_id,
-            'enrollment_id' => $attempt->enrollment_id,
+            'course_id' => $attempt->exam->course_id,
             'exam_attempt_id' => $attempt->id,
             'certificate_number' => $this->generateCertificateNumber(),
             'issue_date' => now(),
-            'score' => $attempt->score,
-            'percentage' => $attempt->percentage,
         ]);
     }
 

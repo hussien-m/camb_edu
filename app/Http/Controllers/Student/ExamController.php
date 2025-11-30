@@ -79,7 +79,14 @@ class ExamController extends Controller
 
         $this->examService->saveAnswer($attempt, $request->validated());
 
-        return response()->json(['success' => true]);
+        $answeredCount = $attempt->answers()->count();
+        $totalQuestions = $attempt->exam->questions()->count();
+
+        return response()->json([
+            'success' => true,
+            'answered_count' => $answeredCount,
+            'unanswered_count' => $totalQuestions - $answeredCount
+        ]);
     }
 
     public function submit(ExamAttempt $attempt)

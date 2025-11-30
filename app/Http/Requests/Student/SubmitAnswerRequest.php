@@ -15,7 +15,7 @@ class SubmitAnswerRequest extends FormRequest
     {
         return [
             'question_id' => 'required|exists:questions,id',
-            'answer' => 'required',
+            'option_id' => 'required|exists:question_options,id',
         ];
     }
 }

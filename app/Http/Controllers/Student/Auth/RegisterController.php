@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Services\Student\StudentEmailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,13 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
+    protected StudentEmailService $emailService;
+
+    public function __construct(StudentEmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
     public function showRegistrationForm()
     {
         return view('student.auth.register');
@@ -40,12 +48,16 @@ class RegisterController extends Controller
             'phone' => $request->phone,
             'date_of_birth' => $request->date_of_birth,
             'country' => $request->country,
-            'status' => 'pending', // يحتاج موافقة الادمن
+            'status' => 'pending', // Pending until email verified
         ]);
 
-        // تسجيل دخول تلقائي بعد التسجيل
+        // Send verification email
+        $this->emailService->sendVerificationEmail($student);
+
+        // Login the student
         Auth::guard('student')->login($student);
 
-        return redirect()->route('student.dashboard')->with('success', 'Registration successful! Your account is pending approval.');
+        return redirect()->route('student.verify.notice')
+            ->with('success', 'Registration successful! Please check your email to verify your account.');
     }
 }

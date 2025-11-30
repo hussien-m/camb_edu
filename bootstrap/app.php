@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
+
+            Route::middleware('web')
+                ->prefix('student')
+                ->name('student.')
+                ->group(base_path('routes/student.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -23,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.guest' => \App\Http\Middleware\RedirectIfAdmin::class,
             'student' => \App\Http\Middleware\StudentMiddleware::class,
             'student.guest' => \App\Http\Middleware\RedirectIfStudent::class,
+            'student.verified' => \App\Http\Middleware\EnsureStudentIsVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

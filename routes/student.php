@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Student\Auth\LoginController;
 use App\Http\Controllers\Student\Auth\RegisterController;
+use App\Http\Controllers\Student\Auth\VerificationController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -20,12 +21,22 @@ Route::middleware('student.guest')->group(function () {
     Route::post('register', [RegisterController::class, 'register']);
 });
 
-// Protected Student Routes
+// Email Verification Routes (accessible by logged in but unverified students)
 Route::middleware('student')->group(function () {
+    Route::get('email/verify', [VerificationController::class, 'notice'])->name('verify.notice');
+    Route::post('email/resend', [VerificationController::class, 'resend'])->name('verify.resend');
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+});
+
+// Email verification link (no auth required)
+Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+    ->name('verify.email');
+
+// Protected Student Routes (must be verified)
+Route::middleware(['student', 'student.verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
     // My Courses
     Route::get('courses', [App\Http\Controllers\Student\CourseController::class, 'index'])->name('courses.index');

@@ -23,7 +23,7 @@ class StudentMiddleware
 
         if ($student->status !== 'active') {
             auth()->guard('student')->logout();
-            return redirect()->route('student.login')->with('error', 'Your account is not active. Please contact administration.');
+            return redirect()->route('student.login')->with('error', 'Your account is not active. Please check your email and click the activation link.');
         }
 
         return $next($request);

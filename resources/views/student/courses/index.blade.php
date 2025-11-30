@@ -11,7 +11,13 @@
         </div>
     @endif
 
-    @forelse($courses as $course)
+    @forelse($courses as $courseData)
+        @php
+            $course = $courseData['course'];
+            $enrollment = $courseData['enrollment'];
+            $progress = $courseData['progress'];
+            $examsData = $courseData['examsData'];
+        @endphp
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
@@ -41,11 +47,6 @@
                             @endif
                         </div>
                     </div>                    <div class="col-md-4 text-end">
-                        @php
-                            $enrollment = $course->enrollments->first();
-                            $progress = $enrollment ? $enrollment->progress : 0;
-                        @endphp
-
                         <div class="mb-3">
                             <small class="text-muted">Progress</small>
                             <div class="progress" style="height: 25px;">
@@ -55,14 +56,14 @@
                             </div>
                         </div>
 
-                        @if($course->exams->isNotEmpty())
-                            @foreach($course->exams as $exam)
+                        @if(!empty($examsData) && count($examsData) > 0)
+                            @foreach($examsData as $examItem)
                                 @php
-                                    $studentId = auth('student')->id();
-                                    $attempts = $exam->attempts; // Already filtered by student in controller
-                                    $lastAttempt = $attempts->where('status', 'completed')->sortByDesc('created_at')->first();
-                                    $attemptCount = $attempts->count();
-                                    $inProgress = $attempts->where('status', 'in_progress')->first();
+                                    $exam = $examItem['exam'];
+                                    $attempts = $examItem['attempts'];
+                                    $lastAttempt = $examItem['lastAttempt'];
+                                    $attemptCount = $examItem['attemptCount'];
+                                    $inProgress = $examItem['inProgress'];
                                 @endphp
 
                                 <div class="exam-card mb-2 p-3 border rounded">

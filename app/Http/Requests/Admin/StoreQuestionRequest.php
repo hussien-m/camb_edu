@@ -14,11 +14,12 @@ class StoreQuestionRequest extends FormRequest
     public function rules()
     {
         return [
-            'exam_id' => 'required|exists:exams,id',
             'question_text' => 'required|string',
             'question_type' => 'required|in:multiple_choice,true_false,short_answer',
-            'marks' => 'required|integer|min:1',
-            'order' => 'nullable|integer',
+            'points' => 'required|integer|min:1',
+            'options' => 'required|array|min:2',
+            'options.*.text' => 'required|string',
+            'correct_option' => 'required|integer',
         ];
     }
 }

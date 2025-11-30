@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EnrollmentController;
+use App\Http\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,6 +44,9 @@ Route::middleware('admin')->group(function () {
     // Courses
     Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
 
+    // Enrollments
+    Route::get('enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('enrollments.index');
+
     // Pages
     Route::resource('pages', App\Http\Controllers\Admin\PageController::class);
 
@@ -69,6 +74,11 @@ Route::middleware('admin')->group(function () {
     // Settings
     Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // Email Settings (SMTP)
+    Route::get('email-settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.email');
+    Route::post('email-settings/save', [App\Http\Controllers\Admin\SettingsController::class, 'save'])->name('settings.save');
+    Route::post('email-settings/test', [App\Http\Controllers\Admin\SettingsController::class, 'testEmail'])->name('settings.test-email');
 
     // Newsletter Subscribers
     Route::get('newsletter', [App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('newsletter.index');

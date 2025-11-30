@@ -168,6 +168,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('admin.enrollments.index') }}" class="nav-link {{ request()->routeIs('admin.enrollments.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Student Enrollments</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('admin.exam-results.index') }}" class="nav-link {{ request()->routeIs('admin.exam-results.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Exam Results</p>
@@ -179,11 +185,19 @@
                 <!-- Divider -->
                 <li class="nav-header">SYSTEM</li>
 
-                <!-- Settings -->
+                <!-- Site Settings -->
                 <li class="nav-item">
-                    <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cog"></i>
                         <p>Site Settings</p>
+                    </a>
+                </li>
+
+                <!-- Email Settings -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.settings.email') }}" class="nav-link {{ request()->routeIs('admin.settings.email') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-envelope"></i>
+                        <p>Email Configuration</p>
                     </a>
                 </li>
 

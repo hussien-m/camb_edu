@@ -20,7 +20,7 @@ class CertificateController extends Controller
     public function index():View
     {
         $student = Auth::guard('student')->user();
-        $certificates = $this->certificateService->getStudentCertificates($student);
+        $certificates = $this->certificateService->getCertificates($student);
 
         return view('student.certificates.index', compact('certificates'));
     }

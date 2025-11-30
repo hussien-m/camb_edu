@@ -13,6 +13,118 @@ use Illuminate\Support\Facades\DB;
 class StudentExamService
 {
     /**
+     * Check if student can access this exam
+     */
+    public function checkExamAccess(Student $student, Exam $exam): array
+    {
+        // Check enrollment
+        $enrollment = Enrollment::where('student_id', $student->id)
+            ->where('course_id', $exam->course_id)
+            ->where('status', 'active')
+            ->first();
+
+        if (!$enrollment) {
+            return [
+                'allowed' => false,
+                'message' => 'You are not enrolled in this course.'
+            ];
+        }
+
+        // Check max attempts
+        $attemptCount = $this->getAttemptCount($student, $exam);
+        if ($exam->max_attempts > 0 && $attemptCount >= $exam->max_attempts) {
+            return [
+                'allowed' => false,
+                'message' => 'You have reached the maximum number of attempts for this exam.'
+            ];
+        }
+
+        return ['allowed' => true];
+    }
+
+    /**
+     * Get previous attempts for student
+     */
+    public function getPreviousAttempts(Student $student, Exam $exam)
+    {
+        return ExamAttempt::where('student_id', $student->id)
+            ->where('exam_id', $exam->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
+    /**
+     * Get attempt count
+     */
+    public function getAttemptCount(Student $student, Exam $exam): int
+    {
+        return ExamAttempt::where('student_id', $student->id)
+            ->where('exam_id', $exam->id)
+            ->count();
+    }
+
+    /**
+     * Validate an ongoing attempt
+     */
+    public function validateAttempt(ExamAttempt $attempt): array
+    {
+        if ($attempt->status !== 'in_progress') {
+            return [
+                'valid' => false,
+                'expired' => false,
+                'message' => 'This exam attempt has already been completed.'
+            ];
+        }
+
+        $expired = $this->isExamExpired($attempt);
+        if ($expired) {
+            $this->finishAttempt($attempt, true);
+            return [
+                'valid' => false,
+                'expired' => true,
+                'message' => 'Time has expired for this exam.'
+            ];
+        }
+
+        return ['valid' => true, 'expired' => false];
+    }
+
+    /**
+     * Get answered questions for an attempt
+     */
+    public function getAnsweredQuestions(ExamAttempt $attempt): array
+    {
+        $answeredQuestions = [];
+        foreach ($attempt->answers as $answer) {
+            $answeredQuestions[$answer->question_id] = $answer->selected_option_id;
+        }
+        return $answeredQuestions;
+    }
+
+    /**
+     * Save answer for a question
+     */
+    public function saveAnswer(ExamAttempt $attempt, array $data): bool
+    {
+        $question = $attempt->exam->questions()->findOrFail($data['question_id']);
+        $option = $question->options()->findOrFail($data['option_id']);
+
+        StudentAnswer::updateOrCreate(
+            [
+                'attempt_id' => $attempt->id,
+                'question_id' => $question->id,
+            ],
+            [
+                'selected_option_id' => $option->id,
+                'is_correct' => $option->is_correct,
+                'points_earned' => $option->is_correct ? $question->points : 0,
+            ]
+        );
+
+        return true;
+    }
+
+    /**
      * Prepare exam data for student exam view
      * @param Student $student
      * @param Exam $exam
@@ -55,18 +167,40 @@ class StudentExamService
     /**
      * Start exam for student
      */
-    public function startExam(Student $student, Exam $exam)
+    public function startExam(Student $student, Exam $exam): array
     {
+        // Check access first
+        $accessCheck = $this->checkExamAccess($student, $exam);
+        if (!$accessCheck['allowed']) {
+            return [
+                'success' => false,
+                'message' => $accessCheck['message']
+            ];
+        }
+
+        // Check for in-progress attempt
+        $inProgressAttempt = ExamAttempt::where('student_id', $student->id)
+            ->where('exam_id', $exam->id)
+            ->where('status', 'in_progress')
+            ->first();
+
+        if ($inProgressAttempt) {
+            return [
+                'success' => true,
+                'attempt' => $inProgressAttempt
+            ];
+        }
+
         $enrollment = Enrollment::where('student_id', $student->id)
             ->where('course_id', $exam->course_id)
             ->where('status', 'active')
-            ->firstOrFail();
+            ->first();
 
         $attemptNumber = ExamAttempt::where('student_id', $student->id)
             ->where('exam_id', $exam->id)
             ->count() + 1;
 
-        return ExamAttempt::create([
+        $attempt = ExamAttempt::create([
             'student_id' => $student->id,
             'exam_id' => $exam->id,
             'enrollment_id' => $enrollment->id,
@@ -74,6 +208,11 @@ class StudentExamService
             'attempt_number' => $attemptNumber,
             'status' => 'in_progress',
         ]);
+
+        return [
+            'success' => true,
+            'attempt' => $attempt
+        ];
     }
 
     /**
@@ -95,29 +234,6 @@ class StudentExamService
             'questions' => $questions,
             'answeredQuestions' => $answeredQuestions,
         ];
-    }
-
-    /**
-     * Submit answer for a question
-     */
-    public function submitAnswer(ExamAttempt $attempt, array $data)
-    {
-        $question = $attempt->exam->questions()->findOrFail($data['question_id']);
-        $option = $question->options()->findOrFail($data['option_id']);
-
-        StudentAnswer::updateOrCreate(
-            [
-                'attempt_id' => $attempt->id,
-                'question_id' => $question->id,
-            ],
-            [
-                'selected_option_id' => $option->id,
-                'is_correct' => $option->is_correct,
-                'points_earned' => $option->is_correct ? $question->points : 0,
-            ]
-        );
-
-        return true;
     }
 
     /**

@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const optionId = this.value;
             const attemptId = document.querySelector('[data-attempt-id]')?.getAttribute('data-attempt-id');
 
-            fetch(`/student/exams/${attemptId}/save-answer`, {
+            fetch(`/student/attempts/${attemptId}/answer`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
