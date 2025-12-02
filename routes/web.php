@@ -7,6 +7,9 @@ use App\Http\Controllers\Frontend\NewsletterController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('test-push',function(){
+    return "Test";
+});
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [HomeController::class, 'search'])->name('courses.index');
