@@ -195,15 +195,7 @@
                     </div>
                     @endif
 
-                    @if($course->fee && $course->fee > 0)
-                    <div class="course-price">
-                        {{ number_format($course->fee) }} LYD
-                    </div>
-                    @else
-                    <div class="course-price" style="color: #10b981;">
-                        Free
-                    </div>
-                    @endif
+
 
                     @auth('student')
                         @php
