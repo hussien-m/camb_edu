@@ -105,7 +105,11 @@
                             @endif
 
                             @if(setting('contact_email'))
-                            <a href="mailto:{{ setting('contact_email') }}?subject={{ urlencode('Inquiry about: ' . $course->title) }}&body={{ urlencode('Hello,\n\nI am interested in learning more about the course: ' . $course->title . '\n\nPlease provide me with more information.\n\nThank you.') }}"
+                            @php
+                                $emailSubject = 'Inquiry about: ' . $course->title;
+                                $emailBody = "Hello,\n\nI am interested in learning more about the course: " . $course->title . "\n\nPlease provide me with more information.\n\nThank you.";
+                            @endphp
+                            <a href="mailto:{{ setting('contact_email') }}?subject={{ rawurlencode($emailSubject) }}&body={{ rawurlencode($emailBody) }}"
                                class="contact-btn email-btn">
                                 <i class="fas fa-envelope"></i>
                                 <div class="btn-content">
