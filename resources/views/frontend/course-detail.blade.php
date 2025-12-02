@@ -350,8 +350,10 @@ $(document).ready(function() {
                 $('html, body').animate({
                     scrollTop: $('#inquiry-alert').offset().top - 100
                 }, 500);
-@endsection
-
-@push('scripts')
-@vite('resources/js/frontend-course-detail.js')
+            }
+        });
+    });
+});
+</script>
 @endpush
+@endsection
