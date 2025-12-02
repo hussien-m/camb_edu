@@ -1,6 +1,6 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Student Login')
+@section('title', 'Forgot Password')
 
 @push('styles')
     @vite('resources/css/student-auth.css')
@@ -13,9 +13,9 @@
             <div class="col-lg-5">
                 <div class="login-card">
                     <div class="login-header">
-                        <i class="fas fa-graduation-cap fa-4x mb-3"></i>
-                        <h2>Student Login</h2>
-                        <p class="mb-0">Welcome Back!</p>
+                        <i class="fas fa-key fa-4x mb-3"></i>
+                        <h2>Forgot Password?</h2>
+                        <p class="mb-0">No worries, we'll send you reset instructions.</p>
                     </div>
 
                     <div class="p-5">
@@ -33,44 +33,30 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('student.login') }}">
+                        <form method="POST" action="{{ route('student.password.email') }}">
                             @csrf
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Email Address</label>
                                 <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                       value="{{ old('email') }}" required autofocus>
+                                       value="{{ old('email') }}" required autofocus placeholder="Enter your registered email">
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Password</label>
-                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-4 d-flex justify-content-between align-items-center">
-                                <div class="form-check">
-                                    <input type="checkbox" name="remember" class="form-check-input" id="remember">
-                                    <label class="form-check-label" for="remember">Remember Me</label>
-                                </div>
-                                <a href="{{ route('student.password.request') }}" class="text-primary text-decoration-none">
-                                    <i class="fas fa-key me-1"></i>Forgot Password?
-                                </a>
+                                <small class="text-muted mt-2 d-block">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Enter the email address associated with your account.
+                                </small>
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
-                                <i class="fas fa-sign-in-alt me-2"></i> Login
+                                <i class="fas fa-paper-plane me-2"></i> Send Reset Link
                             </button>
 
                             <div class="text-center">
-                                <p class="mb-0">Don't have an account?
-                                    <a href="{{ route('student.register') }}" class="fw-bold text-primary">Register here</a>
-                                </p>
+                                <a href="{{ route('student.login') }}" class="text-decoration-none">
+                                    <i class="fas fa-arrow-left me-1"></i> Back to Login
+                                </a>
                             </div>
                         </form>
                     </div>

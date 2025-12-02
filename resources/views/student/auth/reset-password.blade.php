@@ -1,6 +1,6 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Student Login')
+@section('title', 'Reset Password')
 
 @push('styles')
     @vite('resources/css/student-auth.css')
@@ -13,9 +13,9 @@
             <div class="col-lg-5">
                 <div class="login-card">
                     <div class="login-header">
-                        <i class="fas fa-graduation-cap fa-4x mb-3"></i>
-                        <h2>Student Login</h2>
-                        <p class="mb-0">Welcome Back!</p>
+                        <i class="fas fa-lock-open fa-4x mb-3"></i>
+                        <h2>Reset Password</h2>
+                        <p class="mb-0">Create a new password for your account.</p>
                     </div>
 
                     <div class="p-5">
@@ -33,44 +33,42 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('student.login') }}">
+                        <form method="POST" action="{{ route('student.password.update') }}">
                             @csrf
+                            <input type="hidden" name="token" value="{{ $token }}">
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Email Address</label>
                                 <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                       value="{{ old('email') }}" required autofocus>
+                                       value="{{ $email ?? old('email') }}" required readonly>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Password</label>
-                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+                                <label class="form-label fw-bold">New Password</label>
+                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                                       required autofocus placeholder="Enter new password (min 8 characters)">
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="mb-4 d-flex justify-content-between align-items-center">
-                                <div class="form-check">
-                                    <input type="checkbox" name="remember" class="form-check-input" id="remember">
-                                    <label class="form-check-label" for="remember">Remember Me</label>
-                                </div>
-                                <a href="{{ route('student.password.request') }}" class="text-primary text-decoration-none">
-                                    <i class="fas fa-key me-1"></i>Forgot Password?
-                                </a>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Confirm New Password</label>
+                                <input type="password" name="password_confirmation" class="form-control"
+                                       required placeholder="Confirm your new password">
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
-                                <i class="fas fa-sign-in-alt me-2"></i> Login
+                                <i class="fas fa-save me-2"></i> Reset Password
                             </button>
 
                             <div class="text-center">
-                                <p class="mb-0">Don't have an account?
-                                    <a href="{{ route('student.register') }}" class="fw-bold text-primary">Register here</a>
-                                </p>
+                                <a href="{{ route('student.login') }}" class="text-decoration-none">
+                                    <i class="fas fa-arrow-left me-1"></i> Back to Login
+                                </a>
                             </div>
                         </form>
                     </div>

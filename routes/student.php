@@ -3,6 +3,7 @@
 use App\Http\Controllers\Student\Auth\LoginController;
 use App\Http\Controllers\Student\Auth\RegisterController;
 use App\Http\Controllers\Student\Auth\VerificationController;
+use App\Http\Controllers\Student\Auth\ForgotPasswordController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,12 @@ Route::middleware('student.guest')->group(function () {
     Route::post('login', [LoginController::class, 'login']);
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register']);
+
+    // Password Reset Routes
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 // Email Verification Routes (accessible by logged in but unverified students)
