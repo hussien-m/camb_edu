@@ -297,7 +297,7 @@
                 {{ setting('footer_text', '© ' . date('Y') . ' Cambridge College. All rights reserved.') }}
                 <br>
                 <small>Developed by
-                    <a href="#" target="_blank">Cambridge College Team</a>
+                    <a href="#" target="_blank">{{ setting('site_title') ?? 'Hussien Mohamed' }} Team</a>
                 </small>
             </p>
         </div>
