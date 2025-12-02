@@ -69,6 +69,16 @@ class SettingsController extends Controller
         ]);
 
         try {
+            // Log mail configuration for debugging
+            \Log::info('Mail Config:', [
+                'mailer' => config('mail.default'),
+                'host' => config('mail.mailers.smtp.host'),
+                'port' => config('mail.mailers.smtp.port'),
+                'encryption' => config('mail.mailers.smtp.encryption'),
+                'username' => config('mail.mailers.smtp.username'),
+                'from' => config('mail.from'),
+            ]);
+
             // Send test email
             Mail::send([], [], function (Message $message) use ($validated) {
                 $message
@@ -77,11 +87,15 @@ class SettingsController extends Controller
                     ->html($this->getTestEmailHtml($validated['test_message']));
             });
 
+            \Log::info('Test email sent successfully to: ' . $validated['test_email']);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Test email sent successfully to ' . $validated['test_email'],
             ]);
         } catch (\Exception $e) {
+            \Log::error('Test email failed: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send email: ' . $e->getMessage(),
