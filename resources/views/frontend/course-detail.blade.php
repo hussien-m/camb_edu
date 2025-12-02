@@ -250,11 +250,7 @@
                             @if($related->level)
                             <span class="badge-level">{{ $related->level->name }}</span>
                             @endif
-                            @if($related->fee && $related->fee > 0)
-                            <span class="related-course-price">{{ number_format($related->fee) }} LYD</span>
-                            @else
-                            <span class="related-course-price" style="color: #10b981;">Free</span>
-                            @endif
+
                         </div>
                     </div>
                     @endforeach
