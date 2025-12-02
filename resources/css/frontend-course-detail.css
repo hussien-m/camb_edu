@@ -515,4 +515,103 @@
     .course-price {
         font-size: 2rem;
     }
+
+    .contact-buttons-wrapper {
+        flex-direction: column;
+    }
+
+    .contact-btn {
+        width: 100%;
+    }
+}
+
+/* ============================================
+   Contact Us Buttons Section
+============================================ */
+.contact-buttons-section {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 20px;
+    padding: 30px;
+    border: 2px solid #bae6fd;
+}
+
+.contact-section-title {
+    color: #0369a1;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.contact-section-title i {
+    font-size: 1.5rem;
+    color: #0284c7;
+}
+
+.contact-buttons-wrapper {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.contact-btn {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 24px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.contact-btn i {
+    font-size: 2rem;
+    opacity: 0.9;
+}
+
+.contact-btn .btn-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-btn .btn-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.contact-btn .btn-info {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    font-weight: 400;
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+}
+
+.whatsapp-btn:hover {
+    background: linear-gradient(135deg, #128c7e 0%, #075e54 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    color: white;
+}
+
+/* Email Button */
+.email-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+}
+
+.email-btn:hover {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    color: white;
 }

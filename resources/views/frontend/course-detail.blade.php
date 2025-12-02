@@ -86,6 +86,37 @@
                     </div>
                     @endif
 
+                    <!-- Contact Us Buttons -->
+                    <div class="contact-buttons-section mt-4">
+                        <h4 class="contact-section-title">
+                            <i class="fas fa-headset"></i>
+                            <span>Need Help? Contact Us</span>
+                        </h4>
+                        <div class="contact-buttons-wrapper">
+                            @if(setting('contact_whatsapp'))
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}?text={{ urlencode('Hello! I am interested in the course: ' . $course->title) }}"
+                               class="contact-btn whatsapp-btn" target="_blank">
+                                <i class="fab fa-whatsapp"></i>
+                                <div class="btn-content">
+                                    <span class="btn-label">Chat on WhatsApp</span>
+                                    <span class="btn-info">Quick Response</span>
+                                </div>
+                            </a>
+                            @endif
+
+                            @if(setting('contact_email'))
+                            <a href="mailto:{{ setting('contact_email') }}?subject={{ urlencode('Inquiry about: ' . $course->title) }}&body={{ urlencode('Hello,\n\nI am interested in learning more about the course: ' . $course->title . '\n\nPlease provide me with more information.\n\nThank you.') }}"
+                               class="contact-btn email-btn">
+                                <i class="fas fa-envelope"></i>
+                                <div class="btn-content">
+                                    <span class="btn-label">Send Email</span>
+                                    <span class="btn-info">{{ setting('contact_email') }}</span>
+                                </div>
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Course Inquiry Form -->
                     <div class="inquiry-form-box mt-5">
                         <h4 class="sidebar-title">
