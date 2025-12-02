@@ -114,14 +114,14 @@
                                 @endif
                             </div>
                             <div class="card-body">
-                                <span class="course-category">{{ $course->category->name }}</span>
+                                <span class="course-category">{{ $course->category->name ?? 'General' }}</span>
                                 <h5 class="course-title">{{ $course->title }}</h5>
                                 <p class="course-description">{{ $course->description }}</p>
 
                                 <div class="course-meta">
                                     <span class="meta-item">
                                         <i class="fas fa-signal"></i>
-                                        {{ $course->level->name }}
+                                        {{ $course->level->name ?? 'N/A' }}
                                     </span>
                                     <span class="meta-item">
                                         <i class="fas fa-clock"></i>
@@ -135,7 +135,7 @@
                                     <div class="course-price" style="color: #10b981;">Free</div>
                                 @endif
 
-                                <a href="{{ route('courses.show', [$course->category->slug, $course->level->slug, $course->slug]) }}" class="btn btn-course">
+                                <a href="{{ route('courses.show', [$course->category->slug ?? 'general', $course->level->slug ?? 'course', $course->slug]) }}" class="btn btn-course">
                                     <i class="fas fa-arrow-right"></i> View Details
                                 </a>
                             </div>
