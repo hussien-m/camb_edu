@@ -513,4 +513,49 @@
         flex-direction: column;
         gap: 10px;
     }
+
+    /* Pagination Mobile Fix */
+    .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 0 10px;
+    }
+
+    .pagination .page-link {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        margin: 2px;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .pagination .page-item:first-child .page-link,
+    .pagination .page-item:last-child .page-link {
+        padding: 8px 10px;
+    }
+
+    #paginationContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px;
+    }
+
+    #paginationContainer .pagination {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        min-width: max-content;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination .page-link {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        min-width: 35px;
+        border-radius: 8px;
+    }
+
+    .pagination {
+        gap: 3px;
+    }
 }

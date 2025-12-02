@@ -27,7 +27,7 @@
     ]
   },
   "resources/css/frontend-courses.css": {
-    "file": "assets/frontend-courses-C7yO9czp.css",
+    "file": "assets/frontend-courses-Cr8CJR_s.css",
     "src": "resources/css/frontend-courses.css",
     "isEntry": true,
     "name": "frontend-courses",
@@ -45,7 +45,7 @@
     ]
   },
   "resources/css/frontend-layout.css": {
-    "file": "assets/frontend-layout-DhRHbsPQ.css",
+    "file": "assets/frontend-layout-Cmm0Gk2r.css",
     "src": "resources/css/frontend-layout.css",
     "isEntry": true,
     "name": "frontend-layout",
@@ -96,7 +96,7 @@
     "isEntry": true
   },
   "resources/js/frontend-courses.js": {
-    "file": "assets/frontend-courses-3yQt7n7g.js",
+    "file": "assets/frontend-courses-BaWX7Ah1.js",
     "name": "frontend-courses",
     "src": "resources/js/frontend-courses.js",
     "isEntry": true

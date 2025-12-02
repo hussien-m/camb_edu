@@ -101,6 +101,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error loading courses:', error);
             hideLoading();
+            // Fallback: redirect to the URL directly
+            window.location.href = url;
         });
     }
 
@@ -134,7 +136,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Accept': 'text/html'
             }
         })
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
         .then(html => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
@@ -161,6 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error:', error);
             hideLoading();
+            // Fallback: redirect to the URL directly
+            window.location.href = url;
         });
     }
 

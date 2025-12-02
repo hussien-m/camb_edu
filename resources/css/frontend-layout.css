@@ -668,8 +668,53 @@ footer .contact-info i {
         font-size: 0.95rem;
     }
 
+    /* Pagination Mobile Responsive */
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+    }
+
     .pagination .page-link {
         padding: 8px 12px;
         font-size: 14px;
+        min-width: 38px;
+        text-align: center;
+    }
+
+    .pagination .page-item {
+        margin: 2px;
+    }
+}
+
+@media(max-width:576px) {
+    /* Pagination Small Mobile */
+    .pagination {
+        gap: 2px;
+    }
+
+    .pagination .page-link {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-width: 32px;
+        border-radius: 6px;
+    }
+
+    .pagination .page-item:first-child .page-link,
+    .pagination .page-item:last-child .page-link {
+        padding: 6px 8px;
+    }
+
+    /* Hide some page numbers on very small screens */
+    .pagination .page-item:not(:first-child):not(:last-child):not(.active):not([aria-current]) {
+        display: none;
+    }
+
+    .pagination .page-item.active,
+    .pagination .page-item:first-child,
+    .pagination .page-item:last-child,
+    .pagination .page-item:nth-child(2),
+    .pagination .page-item:nth-last-child(2) {
+        display: block;
     }
 }
