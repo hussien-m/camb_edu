@@ -95,11 +95,6 @@
                             </span>
                         </div>
 
-                        @if($course->price && $course->price > 0)
-                            <div class="course-price">{{ number_format($course->price) }} LYD</div>
-                        @else
-                            <div class="course-price" style="color: #10b981;">Free</div>
-                        @endif
 
                         <a href="{{ route('courses.show', [$course->category->slug, $course->level->slug, $course->slug]) }}" class="btn btn-course">
                             <i class="fas fa-arrow-right me-2"></i> View Details

@@ -108,9 +108,10 @@
                             @php
                                 $emailSubject = 'Inquiry about: ' . $course->title;
                                 $emailBody = "Hello,\n\nI am interested in learning more about the course: " . $course->title . "\n\nPlease provide me with more information.\n\nThank you.";
+                                $gmailLink = 'https://mail.google.com/mail/?view=cm&to=' . setting('contact_email') . '&su=' . rawurlencode($emailSubject) . '&body=' . rawurlencode($emailBody);
                             @endphp
-                            <a href="mailto:{{ setting('contact_email') }}?subject={{ rawurlencode($emailSubject) }}&body={{ rawurlencode($emailBody) }}"
-                               class="contact-btn email-btn">
+                            <a href="{{ $gmailLink }}"
+                               class="contact-btn email-btn" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-envelope"></i>
                                 <div class="btn-content">
                                     <span class="btn-label">Send Email</span>
