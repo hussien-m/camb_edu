@@ -1,0 +1,128 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-IAc3EYps.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/certificate-download.css": {
+    "file": "assets/certificate-download-CpjPr7V9.css",
+    "src": "resources/css/certificate-download.css",
+    "isEntry": true,
+    "name": "certificate-download",
+    "names": [
+      "certificate-download.css"
+    ]
+  },
+  "resources/css/frontend-course-detail.css": {
+    "file": "assets/frontend-course-detail-H6xJ6ZoN.css",
+    "src": "resources/css/frontend-course-detail.css",
+    "isEntry": true,
+    "name": "frontend-course-detail",
+    "names": [
+      "frontend-course-detail.css"
+    ]
+  },
+  "resources/css/frontend-courses.css": {
+    "file": "assets/frontend-courses-C7yO9czp.css",
+    "src": "resources/css/frontend-courses.css",
+    "isEntry": true,
+    "name": "frontend-courses",
+    "names": [
+      "frontend-courses.css"
+    ]
+  },
+  "resources/css/frontend-home.css": {
+    "file": "assets/frontend-home-CeYHT03K.css",
+    "src": "resources/css/frontend-home.css",
+    "isEntry": true,
+    "name": "frontend-home",
+    "names": [
+      "frontend-home.css"
+    ]
+  },
+  "resources/css/frontend-layout.css": {
+    "file": "assets/frontend-layout-DhRHbsPQ.css",
+    "src": "resources/css/frontend-layout.css",
+    "isEntry": true,
+    "name": "frontend-layout",
+    "names": [
+      "frontend-layout.css"
+    ]
+  },
+  "resources/css/student-auth.css": {
+    "file": "assets/student-auth-CYlpgTvb.css",
+    "src": "resources/css/student-auth.css",
+    "isEntry": true,
+    "name": "student-auth",
+    "names": [
+      "student-auth.css"
+    ]
+  },
+  "resources/css/student-layout.css": {
+    "file": "assets/student-layout-BhxNoj-c.css",
+    "src": "resources/css/student-layout.css",
+    "isEntry": true,
+    "name": "student-layout",
+    "names": [
+      "student-layout.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-ByW0VTRm.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/csrf-setup.js": {
+    "file": "assets/csrf-setup-Ca6YOW6m.js",
+    "name": "csrf-setup",
+    "src": "resources/js/csrf-setup.js",
+    "isEntry": true
+  },
+  "resources/js/exam-timer.js": {
+    "file": "assets/exam-timer-DQgTOdnd.js",
+    "name": "exam-timer",
+    "src": "resources/js/exam-timer.js",
+    "isEntry": true
+  },
+  "resources/js/frontend-course-detail.js": {
+    "file": "assets/frontend-course-detail-D09-7Y80.js",
+    "name": "frontend-course-detail",
+    "src": "resources/js/frontend-course-detail.js",
+    "isEntry": true
+  },
+  "resources/js/frontend-courses.js": {
+    "file": "assets/frontend-courses-3yQt7n7g.js",
+    "name": "frontend-courses",
+    "src": "resources/js/frontend-courses.js",
+    "isEntry": true
+  },
+  "resources/js/frontend-home.js": {
+    "file": "assets/frontend-home-BrQppdAE.js",
+    "name": "frontend-home",
+    "src": "resources/js/frontend-home.js",
+    "isEntry": true
+  },
+  "resources/js/frontend-newsletter.js": {
+    "file": "assets/frontend-newsletter-gKH4BlXR.js",
+    "name": "frontend-newsletter",
+    "src": "resources/js/frontend-newsletter.js",
+    "isEntry": true
+  },
+  "resources/js/profile.js": {
+    "file": "assets/profile-y6OHYoo4.js",
+    "name": "profile",
+    "src": "resources/js/profile.js",
+    "isEntry": true
+  },
+  "resources/js/student-layout.js": {
+    "file": "assets/student-layout-CVlHQDCz.js",
+    "name": "student-layout",
+    "src": "resources/js/student-layout.js",
+    "isEntry": true
+  }
+}
