@@ -266,6 +266,17 @@
                         <i class="fas fa-phone"></i>
                         {{ setting('contact_phone', '+218 91 234 5678') }}
                     </p>
+                    @if(setting('contact_whatsapp'))
+                    <p>
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}"
+                           target="_blank"
+                           style="color: #25d366; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i>
+                            <span>{{ setting('contact_whatsapp') }}</span>
+                            <span style="background: #25d366; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Chat Now</span>
+                        </a>
+                    </p>
+                    @endif
                     @if(setting('contact_address'))
                         <p>
                             <i class="fas fa-map-marker-alt"></i>
