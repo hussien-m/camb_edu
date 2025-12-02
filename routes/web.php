@@ -8,7 +8,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('test-push',function(){
-    return "Test 3";
+    return "Test 4";
 });
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
