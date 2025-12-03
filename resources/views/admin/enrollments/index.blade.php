@@ -297,64 +297,57 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('filterForm').submit();
     });
 
-    // DataTables temporarily disabled - uncomment to enable
-    /*
-    if ( $.fn.dataTable ) {
-        if ($.fn.DataTable.isDataTable('#enrollmentsTable')) {
-            $('#enrollmentsTable').DataTable().destroy();
-        }
-        
+    // Initialize DataTable
+    if (typeof $.fn.DataTable !== 'undefined') {
         setTimeout(function() {
-            try {
-                let table = $('#enrollmentsTable').DataTable({
-                    destroy: true,
-                    paging: false,
-                    info: false,
-                    searching: false,
-                    responsive: false,
-                    ordering: true,
-                    autoWidth: false,
-                    columnDefs: [
-                        { orderable: false, targets: 4 }
-                    ],
-                    dom: 'Bfrtip',
-                    buttons: [
-                        {
-                            extend: 'csvHtml5',
-                            text: '<i class="fas fa-file-csv"></i> CSV',
-                            className: 'btn btn-sm btn-outline-secondary',
-                            exportOptions: { columns: [0, 1, 2, 3] }
-                        },
-                        {
-                            extend: 'excelHtml5',
-                            text: '<i class="fas fa-file-excel"></i> Excel',
-                            className: 'btn btn-sm btn-outline-success',
-                            exportOptions: { columns: [0, 1, 2, 3] }
-                        },
-                        {
-                            extend: 'pdfHtml5',
-                            text: '<i class="fas fa-file-pdf"></i> PDF',
-                            className: 'btn btn-sm btn-outline-danger',
-                            exportOptions: { columns: [0, 1, 2, 3] }
-                        },
-                        {
-                            extend: 'print',
-                            text: '<i class="fas fa-print"></i> Print',
-                            className: 'btn btn-sm btn-outline-primary',
-                            exportOptions: { columns: [0, 1, 2, 3] }
-                        }
-                    ],
-                    initComplete: function() {
-                        const btns = $('.dt-buttons').addClass('float-left mt-2');
-                        $('#enrollmentsTable_wrapper .row').first().prepend(btns);
-                    }
-                });
-            } catch(e) {
-                console.error('DataTable initialization error:', e);
+            if ($.fn.DataTable.isDataTable('#enrollmentsTable')) {
+                $('#enrollmentsTable').DataTable().destroy();
             }
-        }, 100);
+            
+            $('#enrollmentsTable').DataTable({
+                destroy: true,
+                paging: false,
+                info: false,
+                searching: false,
+                ordering: true,
+                responsive: true,
+                autoWidth: false,
+                columnDefs: [
+                    { orderable: false, targets: 4 }
+                ],
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fas fa-file-csv"></i> CSV',
+                        className: 'btn btn-sm btn-outline-secondary',
+                        exportOptions: { columns: [0, 1, 2, 3] }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        className: 'btn btn-sm btn-outline-success',
+                        exportOptions: { columns: [0, 1, 2, 3] }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        className: 'btn btn-sm btn-outline-danger',
+                        exportOptions: { columns: [0, 1, 2, 3] }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        className: 'btn btn-sm btn-outline-primary',
+                        exportOptions: { columns: [0, 1, 2, 3] }
+                    }
+                ],
+                initComplete: function() {
+                    $('.dt-buttons').addClass('float-left mt-2').prependTo('#enrollmentsTable_wrapper .row:first');
+                }
+            });
+        }, 200);
     }
-    */
 });
 </script>
 @endpush
