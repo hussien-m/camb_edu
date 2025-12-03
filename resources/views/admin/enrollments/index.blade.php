@@ -299,7 +299,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize DataTable with Buttons (if DataTables loaded)
     if ( $.fn.dataTable ) {
+        // Destroy any existing instance
+        if ($.fn.DataTable.isDataTable('#enrollmentsTable')) {
+            $('#enrollmentsTable').DataTable().destroy();
+        }
+        
         let table = $('#enrollmentsTable').DataTable({
+            destroy: true,
             paging: false,
             info: false,
             searching: false,
