@@ -50,11 +50,11 @@ class MailServiceProvider extends ServiceProvider
             @stream_context_set_default($streamContextOptions);
         }
 
-        // Also set socket timeout for better server compatibility (shorter for shared hosting)
-        @ini_set('default_socket_timeout', env('MAIL_TIMEOUT', 30));
+        // Also set socket timeout for better server compatibility (shorter for faster response)
+        @ini_set('default_socket_timeout', env('MAIL_TIMEOUT', 10));
 
         // Set additional PHP settings for better SMTP connectivity on shared hosting
-        @ini_set('max_execution_time', 120);
+        @ini_set('max_execution_time', 60);
 
         // Enable allow_url_fopen if possible (for some SMTP connections)
         if (ini_get('allow_url_fopen') == '0' && function_exists('ini_set')) {

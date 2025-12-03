@@ -7,6 +7,7 @@ use App\Services\Mail\AlternativeMailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Mail\Message;
 
 class SettingsController extends Controller
@@ -41,7 +42,7 @@ class SettingsController extends Controller
             } elseif ($validated['mail_port'] == 25) {
                 $encryption = null;
             }
-            
+
             // Update .env file
             $this->updateEnvFile([
                 'MAIL_MAILER' => 'smtp',
@@ -83,7 +84,7 @@ class SettingsController extends Controller
 
         try {
             // Log mail configuration for debugging
-            \Log::info('Mail Config:', [
+            Log::info('Mail Config:', [
                 'mailer' => config('mail.default'),
                 'host' => config('mail.mailers.smtp.host'),
                 'port' => config('mail.mailers.smtp.port'),
@@ -97,57 +98,39 @@ class SettingsController extends Controller
                 'default_socket_timeout' => ini_get('default_socket_timeout'),
             ]);
 
-            // Set longer timeout for server connections
-            @set_time_limit(120);
-            @ini_set('default_socket_timeout', 60);
-            @ini_set('max_execution_time', 120);
+            // Set optimized timeout for faster response
+            @set_time_limit(30);
+            @ini_set('default_socket_timeout', 10);
+            @ini_set('max_execution_time', 30);
 
-            // Test connection first (optional diagnostic)
-            $host = config('mail.mailers.smtp.host');
-            $port = config('mail.mailers.smtp.port');
-            
-            \Log::info("Attempting to connect to {$host}:{$port}");
-
-            // Send test email with retry mechanism and alternative ports
-            $maxRetries = 3;
-            $retryCount = 0;
-            $lastException = null;
-            $alternativePorts = [587, 465, 25]; // Try different ports if needed
-
-            // Try SMTP first with retries
+            // Try SMTP first (single attempt for speed)
             $smtpSuccess = false;
-            while ($retryCount < $maxRetries && !$smtpSuccess) {
-                try {
-                    Mail::send([], [], function (Message $message) use ($validated) {
-                        $message
-                            ->to($validated['test_email'])
-                            ->subject('📧 Test Email from Cambridge College')
-                            ->html($this->getTestEmailHtml($validated['test_message']));
-                    });
-                    
-                    $smtpSuccess = true;
-                    break;
-                } catch (\Exception $e) {
-                    $lastException = $e;
-                    $retryCount++;
-                    
-                    $errorMessage = $e->getMessage();
-                    \Log::warning("Email send attempt {$retryCount} failed", [
-                        'error' => $errorMessage,
-                        'trace' => $e->getTraceAsString()
-                    ]);
-                    
-                    // If connection timeout, wait before retry
-                    if ($retryCount < $maxRetries && strpos($errorMessage, 'Connection timed out') !== false) {
-                        sleep(3);
-                    }
-                }
+            $lastException = null;
+
+            try {
+                Mail::send([], [], function (Message $message) use ($validated) {
+                    $message
+                        ->to($validated['test_email'])
+                        ->subject('📧 Test Email from Cambridge College')
+                        ->html($this->getTestEmailHtml($validated['test_message']));
+                });
+
+                $smtpSuccess = true;
+            } catch (\Exception $e) {
+                $lastException = $e;
+                Log::warning("SMTP send failed, trying alternative method", [
+                    'error' => $e->getMessage()
+                ]);
             }
 
-            // If SMTP failed, try alternative methods
+            // If SMTP failed, try alternative methods (quickly)
             if (!$smtpSuccess && isset($lastException)) {
-                \Log::info('SMTP failed, trying alternative mail methods...');
-                
+                Log::info('SMTP failed, trying alternative mail methods...');
+
+                // Set shorter timeout for alternative methods
+                @ini_set('default_socket_timeout', 5);
+                @set_time_limit(10);
+
                 // Try using alternative mail service (sendmail or PHP mail)
                 $alternativeSuccess = AlternativeMailService::sendWithFallback(
                     $validated['test_email'],
@@ -156,18 +139,17 @@ class SettingsController extends Controller
                     config('mail.from.address'),
                     config('mail.from.name')
                 );
-                
+
                 if ($alternativeSuccess) {
-                    \Log::info('Email sent successfully using alternative method');
+                    Log::info('Email sent successfully using alternative method');
                     return response()->json([
                         'success' => true,
-                        'message' => 'Test email sent successfully using alternative method (sendmail/PHP mail). SMTP connection failed, but email was delivered.',
-                        'warning' => 'SMTP connection failed. Consider using SMTP service or contact your hosting provider.',
+                        'message' => 'تم إرسال البريد بنجاح باستخدام طريقة بديلة (sendmail/PHP mail). فشل الاتصال بـ SMTP لكن البريد تم تسليمه.',
                     ]);
                 } else {
                     // All methods failed
                     $errorMsg = $lastException->getMessage();
-                    
+
                     // Add helpful suggestions based on error type
                     if (strpos($errorMsg, 'Connection timed out') !== false) {
                         $errorMsg .= "\n\n💡 الحلول المقترحة:\n";
@@ -183,19 +165,19 @@ class SettingsController extends Controller
                         $errorMsg .= "- لـ Office365، استخدم App Password إذا كان لديك تفعيل المصادقة الثنائية\n";
                         $errorMsg .= "- تحقق من أن الحساب يسمح بالوصول من التطبيقات الخارجية";
                     }
-                    
+
                     throw new \Exception($errorMsg);
                 }
             }
 
-            \Log::info('Test email sent successfully to: ' . $validated['test_email']);
+            Log::info('Test email sent successfully to: ' . $validated['test_email']);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Test email sent successfully to ' . $validated['test_email'],
             ]);
         } catch (\Exception $e) {
-            \Log::error('Test email failed: ' . $e->getMessage());
+            Log::error('Test email failed: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,

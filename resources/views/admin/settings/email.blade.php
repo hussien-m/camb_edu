@@ -265,6 +265,7 @@ $(document).ready(function() {
         $.ajax({
             url: '{{ route("admin.settings.test-email") }}',
             method: 'POST',
+            timeout: 15000, // 15 seconds timeout
             data: {
                 _token: '{{ csrf_token() }}',
                 test_email: $('input[name="test_email"]').val(),
@@ -288,14 +289,21 @@ $(document).ready(function() {
                     }
                 }
             },
-            error: function(xhr) {
+            error: function(xhr, status, error) {
                 btn.html(originalText).prop('disabled', false);
-                var message = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred. Check console for details.';
+                var message = 'حدث خطأ أثناء الإرسال';
+                
+                if (status === 'timeout') {
+                    message = 'انتهت مهلة الاتصال. قد تكون الرسالة قيد الإرسال في الخلفية. تحقق من صندوق الوارد بعد قليل.';
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                
                 console.error('Email test error:', xhr);
                 if(typeof toastr !== 'undefined') {
-                    toastr.error(message);
+                    toastr.warning(message);
                 } else {
-                    alert('❌ Error: ' + message);
+                    alert('⚠️ ' + message);
                 }
             }
         });
