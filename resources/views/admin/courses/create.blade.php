@@ -183,66 +183,12 @@
 @endpush
 
 @push('scripts')
-    <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+    @include('admin.partials.ckeditor5-full')
     <script>
-        // CKEditor with Image Upload Support
-        class UploadAdapter {
-            constructor(loader) {
-                this.loader = loader;
-            }
-
-            upload() {
-                return this.loader.file.then(file => new Promise((resolve, reject) => {
-                    const data = new FormData();
-                    data.append('upload', file);
-                    data.append('_token', '{{ csrf_token() }}');
-
-                    fetch('{{ route("admin.upload.image") }}', {
-                        method: 'POST',
-                        body: data
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        resolve({
-                            default: result.url
-                        });
-                    })
-                    .catch(error => {
-                        reject(error);
-                    });
-                }));
-            }
-        }
-
-        function MyCustomUploadAdapterPlugin(editor) {
-            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                return new UploadAdapter(loader);
-            };
-        }
-
-        ClassicEditor
-            .create(document.querySelector('#description'), {
-                extraPlugins: [MyCustomUploadAdapterPlugin],
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'link', '|',
-                        'bulletedList', 'numberedList', '|',
-                        'uploadImage', 'blockQuote', 'insertTable', '|',
-                        'undo', 'redo'
-                    ]
-                },
-                image: {
-                    toolbar: [
-                        'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side'
-                    ]
-                },
-                table: {
-                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-                }
-            })
-            .catch(error => {
-                console.error(error);
+        // Initialize CKEditor for description field
+        initFullCKEditor('#description', 500)
+            .then(editor => {
+                window.descriptionEditor = editor;
             });
 
         // Auto-generate slug from title
