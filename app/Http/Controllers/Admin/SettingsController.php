@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\Mail\AlternativeMailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Artisan;
@@ -33,6 +34,14 @@ class SettingsController extends Controller
         ]);
 
         try {
+            // Determine encryption based on port
+            $encryption = 'tls';
+            if ($validated['mail_port'] == 465) {
+                $encryption = 'ssl';
+            } elseif ($validated['mail_port'] == 25) {
+                $encryption = null;
+            }
+            
             // Update .env file
             $this->updateEnvFile([
                 'MAIL_MAILER' => 'smtp',
@@ -40,12 +49,13 @@ class SettingsController extends Controller
                 'MAIL_PORT' => $validated['mail_port'],
                 'MAIL_USERNAME' => $validated['mail_username'],
                 'MAIL_PASSWORD' => $validated['mail_password'] ?? config('mail.mailers.smtp.password'),
-                'MAIL_ENCRYPTION' => 'tls',
+                'MAIL_ENCRYPTION' => $encryption ?: 'null',
                 'MAIL_FROM_ADDRESS' => $validated['mail_from_address'],
                 'MAIL_FROM_NAME' => $validated['mail_from_name'],
-                'MAIL_TIMEOUT' => '60',
-                'MAIL_VERIFY_PEER' => 'true',
-                'MAIL_VERIFY_PEER_NAME' => 'true',
+                'MAIL_TIMEOUT' => '30',
+                'MAIL_VERIFY_PEER' => 'false',
+                'MAIL_VERIFY_PEER_NAME' => 'false',
+                'MAIL_SSL_ALLOW_SELF_SIGNED' => 'true',
             ]);
 
             // Clear config cache
@@ -104,7 +114,9 @@ class SettingsController extends Controller
             $lastException = null;
             $alternativePorts = [587, 465, 25]; // Try different ports if needed
 
-            while ($retryCount < $maxRetries) {
+            // Try SMTP first with retries
+            $smtpSuccess = false;
+            while ($retryCount < $maxRetries && !$smtpSuccess) {
                 try {
                     Mail::send([], [], function (Message $message) use ($validated) {
                         $message
@@ -113,7 +125,7 @@ class SettingsController extends Controller
                             ->html($this->getTestEmailHtml($validated['test_message']));
                     });
                     
-                    // Success - break out of retry loop
+                    $smtpSuccess = true;
                     break;
                 } catch (\Exception $e) {
                     $lastException = $e;
@@ -125,35 +137,55 @@ class SettingsController extends Controller
                         'trace' => $e->getTraceAsString()
                     ]);
                     
-                    // If connection timeout, try alternative port on last retry
+                    // If connection timeout, wait before retry
                     if ($retryCount < $maxRetries && strpos($errorMessage, 'Connection timed out') !== false) {
-                        // Wait before retry
                         sleep(3);
-                    } else {
-                        break;
                     }
                 }
             }
 
-            // If all retries failed, throw the last exception with helpful message
-            if ($retryCount >= $maxRetries && isset($lastException)) {
-                $errorMsg = $lastException->getMessage();
+            // If SMTP failed, try alternative methods
+            if (!$smtpSuccess && isset($lastException)) {
+                \Log::info('SMTP failed, trying alternative mail methods...');
                 
-                // Add helpful suggestions based on error type
-                if (strpos($errorMsg, 'Connection timed out') !== false) {
-                    $errorMsg .= "\n\n💡 Suggestions:\n";
-                    $errorMsg .= "- Check if port " . config('mail.mailers.smtp.port') . " is blocked by firewall\n";
-                    $errorMsg .= "- Try using port 465 with SSL encryption\n";
-                    $errorMsg .= "- Verify SMTP host is correct: " . config('mail.mailers.smtp.host') . "\n";
-                    $errorMsg .= "- Contact your hosting provider to allow outbound SMTP connections";
-                } elseif (strpos($errorMsg, 'Could not authenticate') !== false) {
-                    $errorMsg .= "\n\n💡 Suggestions:\n";
-                    $errorMsg .= "- Verify username and password are correct\n";
-                    $errorMsg .= "- For Office365, use App Password if 2FA is enabled\n";
-                    $errorMsg .= "- Check if account allows less secure apps";
+                // Try using alternative mail service (sendmail or PHP mail)
+                $alternativeSuccess = AlternativeMailService::sendWithFallback(
+                    $validated['test_email'],
+                    '📧 Test Email from Cambridge College',
+                    $this->getTestEmailHtml($validated['test_message']),
+                    config('mail.from.address'),
+                    config('mail.from.name')
+                );
+                
+                if ($alternativeSuccess) {
+                    \Log::info('Email sent successfully using alternative method');
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Test email sent successfully using alternative method (sendmail/PHP mail). SMTP connection failed, but email was delivered.',
+                        'warning' => 'SMTP connection failed. Consider using SMTP service or contact your hosting provider.',
+                    ]);
+                } else {
+                    // All methods failed
+                    $errorMsg = $lastException->getMessage();
+                    
+                    // Add helpful suggestions based on error type
+                    if (strpos($errorMsg, 'Connection timed out') !== false) {
+                        $errorMsg .= "\n\n💡 الحلول المقترحة:\n";
+                        $errorMsg .= "- المنفذ " . config('mail.mailers.smtp.port') . " محظور من قبل Firewall\n";
+                        $errorMsg .= "- جرب استخدام المنفذ 465 مع SSL\n";
+                        $errorMsg .= "- تحقق من صحة عنوان SMTP: " . config('mail.mailers.smtp.host') . "\n";
+                        $errorMsg .= "- اتصل بمزود الاستضافة لفتح الاتصالات الخارجية\n";
+                        $errorMsg .= "- استخدم SMTP service مثل SendGrid أو Mailgun\n";
+                        $errorMsg .= "- استخدم SMTP الخاص بالاستضافة";
+                    } elseif (strpos($errorMsg, 'Could not authenticate') !== false) {
+                        $errorMsg .= "\n\n💡 الحلول المقترحة:\n";
+                        $errorMsg .= "- تحقق من صحة اسم المستخدم وكلمة المرور\n";
+                        $errorMsg .= "- لـ Office365، استخدم App Password إذا كان لديك تفعيل المصادقة الثنائية\n";
+                        $errorMsg .= "- تحقق من أن الحساب يسمح بالوصول من التطبيقات الخارجية";
+                    }
+                    
+                    throw new \Exception($errorMsg);
                 }
-                
-                throw new \Exception($errorMsg);
             }
 
             \Log::info('Test email sent successfully to: ' . $validated['test_email']);

@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Mail\MailManager;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+use Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream;
 
 class MailServiceProvider extends ServiceProvider
 {
@@ -20,17 +23,21 @@ class MailServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Set default stream context options for SMTP connections
-        // This helps with server compatibility issues, especially with Office365
+        // Disable SSL verification by default for shared hosting compatibility
+        $verifyPeer = filter_var(env('MAIL_VERIFY_PEER', false), FILTER_VALIDATE_BOOLEAN);
+        $verifyPeerName = filter_var(env('MAIL_VERIFY_PEER_NAME', false), FILTER_VALIDATE_BOOLEAN);
+        $allowSelfSigned = filter_var(env('MAIL_SSL_ALLOW_SELF_SIGNED', true), FILTER_VALIDATE_BOOLEAN);
+
         $streamContextOptions = [
             'ssl' => [
-                'verify_peer' => env('MAIL_VERIFY_PEER', true),
-                'verify_peer_name' => env('MAIL_VERIFY_PEER_NAME', true),
-                'allow_self_signed' => env('MAIL_SSL_ALLOW_SELF_SIGNED', false),
+                'verify_peer' => $verifyPeer,
+                'verify_peer_name' => $verifyPeerName,
+                'allow_self_signed' => $allowSelfSigned,
                 'cafile' => env('MAIL_SSL_CAFILE'),
                 'capath' => env('MAIL_SSL_CAPATH'),
                 'SNI_enabled' => true,
                 'disable_compression' => true,
-                'peer_name' => env('MAIL_HOST'),
+                'peer_name' => env('MAIL_HOST', 'smtp.office365.com'),
             ],
             'socket' => [
                 'tcp_nodelay' => true,
@@ -43,8 +50,8 @@ class MailServiceProvider extends ServiceProvider
             @stream_context_set_default($streamContextOptions);
         }
 
-        // Also set socket timeout for better server compatibility
-        @ini_set('default_socket_timeout', env('MAIL_TIMEOUT', 60));
+        // Also set socket timeout for better server compatibility (shorter for shared hosting)
+        @ini_set('default_socket_timeout', env('MAIL_TIMEOUT', 30));
 
         // Set additional PHP settings for better SMTP connectivity on shared hosting
         @ini_set('max_execution_time', 120);
@@ -52,6 +59,12 @@ class MailServiceProvider extends ServiceProvider
         // Enable allow_url_fopen if possible (for some SMTP connections)
         if (ini_get('allow_url_fopen') == '0' && function_exists('ini_set')) {
             @ini_set('allow_url_fopen', '1');
+        }
+
+        // Set error reporting to help debug connection issues
+        if (config('app.debug')) {
+            error_reporting(E_ALL);
+            ini_set('display_errors', '0'); // Don't display, just log
         }
     }
 }
