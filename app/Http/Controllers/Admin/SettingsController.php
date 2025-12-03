@@ -43,6 +43,9 @@ class SettingsController extends Controller
                 'MAIL_ENCRYPTION' => 'tls',
                 'MAIL_FROM_ADDRESS' => $validated['mail_from_address'],
                 'MAIL_FROM_NAME' => $validated['mail_from_name'],
+                'MAIL_TIMEOUT' => '60',
+                'MAIL_VERIFY_PEER' => 'true',
+                'MAIL_VERIFY_PEER_NAME' => 'true',
             ]);
 
             // Clear config cache
@@ -76,16 +79,48 @@ class SettingsController extends Controller
                 'port' => config('mail.mailers.smtp.port'),
                 'encryption' => config('mail.mailers.smtp.encryption'),
                 'username' => config('mail.mailers.smtp.username'),
+                'timeout' => config('mail.mailers.smtp.timeout'),
                 'from' => config('mail.from'),
             ]);
 
-            // Send test email
-            Mail::send([], [], function (Message $message) use ($validated) {
-                $message
-                    ->to($validated['test_email'])
-                    ->subject('📧 Test Email from Cambridge College')
-                    ->html($this->getTestEmailHtml($validated['test_message']));
-            });
+            // Set longer timeout for server connections
+            set_time_limit(120);
+            ini_set('default_socket_timeout', 60);
+
+            // Send test email with retry mechanism
+            $maxRetries = 2;
+            $retryCount = 0;
+            $lastException = null;
+
+            while ($retryCount < $maxRetries) {
+                try {
+                    Mail::send([], [], function (Message $message) use ($validated) {
+                        $message
+                            ->to($validated['test_email'])
+                            ->subject('📧 Test Email from Cambridge College')
+                            ->html($this->getTestEmailHtml($validated['test_message']));
+                    });
+                    
+                    // Success - break out of retry loop
+                    break;
+                } catch (\Exception $e) {
+                    $lastException = $e;
+                    $retryCount++;
+                    
+                    if ($retryCount < $maxRetries) {
+                        // Wait before retry
+                        sleep(2);
+                        \Log::warning("Email send attempt {$retryCount} failed, retrying...", [
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                }
+            }
+
+            // If all retries failed, throw the last exception
+            if ($retryCount >= $maxRetries && isset($lastException)) {
+                throw $lastException;
+            }
 
             \Log::info('Test email sent successfully to: ' . $validated['test_email']);
 
