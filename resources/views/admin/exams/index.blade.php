@@ -17,6 +17,49 @@
     @endif
 
     <div class="card">
+        <!-- Search and Filters -->
+        <div class="card-body border-bottom">
+            <form method="GET" action="{{ route('admin.exams.index') }}" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Search exams..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="course_id" class="form-control">
+                        <option value="">All Courses</option>
+                        @foreach($courses as $course)
+                            <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
+                                {{ $course->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sort_by" class="form-control">
+                        <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Date</option>
+                        <option value="title" {{ request('sort_by') == 'title' ? 'selected' : '' }}>Title</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                @if(request()->hasAny(['search', 'course_id', 'status', 'sort_by']))
+                    <div class="col-md-2">
+                        <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary w-100">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
+                    </div>
+                @endif
+            </form>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">

@@ -1,0 +1,47 @@
+/* Admin Custom Styles */
+.brand-link .brand-image {
+    max-height: 33px;
+    width: auto;
+}
+
+.brand-text {
+    font-weight: 300 !important;
+    font-size: 1.1rem;
+}
+
+/* Loading Spinner */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+
+/* Form Loading State */
+form.processing {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+form.processing button[type="submit"] {
+    cursor: not-allowed;
+}
+

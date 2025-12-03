@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Contact;
+use Illuminate\Support\Facades\Cache;
 
 class ContactService
 {
@@ -32,6 +33,8 @@ class ContactService
     {
         if (!$contact->is_read) {
             $contact->markAsRead();
+            // Clear cache after marking as read
+            Cache::forget('admin.unread_messages');
         }
         return true;
     }
@@ -41,6 +44,9 @@ class ContactService
      */
     public function deleteContact(Contact $contact): bool
     {
-        return $contact->delete();
+        $result = $contact->delete();
+        // Clear cache after deletion
+        Cache::forget('admin.unread_messages');
+        return $result;
     }
 }

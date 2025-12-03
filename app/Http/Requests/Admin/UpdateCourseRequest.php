@@ -11,6 +11,13 @@ class UpdateCourseRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'is_featured' => $this->has('is_featured') ? filter_var($this->is_featured, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false : false,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -24,7 +31,7 @@ class UpdateCourseRequest extends FormRequest
             'mode' => 'nullable|string|max:50',
             'fee' => 'nullable|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_featured' => 'nullable|boolean',
+            'is_featured' => 'sometimes|boolean',
             'status' => 'required|in:active,inactive',
         ];
     }

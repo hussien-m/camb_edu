@@ -1,11 +1,20 @@
 @extends('admin.layouts.app')
 
+@section('title', 'Create Exam')
+@section('page-title', 'Create New Exam')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.exams.index') }}">Exams</a></li>
+    <li class="breadcrumb-item active">Create</li>
+@endsection
+
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Create New Exam</h2>
         <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Back to Exams
+            <i class="fas fa-arrow-left mr-2"></i>Back to Exams
         </a>
     </div>
 
@@ -17,11 +26,13 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
-                        <select class="form-select @error('course_id') is-invalid @enderror" id="course_id" name="course_id" required>
+                        <select class="form-control @error('course_id') is-invalid @enderror" id="course_id" name="course_id" required>
                             <option value="">-- Select Course --</option>
                             @forelse($courses as $course)
-                                <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
-                                    {{ $course->title }}
+                                <option value="{{ $course->id }}" 
+                                    data-level="{{ $course->level_id ?? '' }}"
+                                    {{ old('course_id', request('course_id')) == $course->id ? 'selected' : '' }}>
+                                    {{ $course->title }} @if($course->level) - {{ $course->level->name }}@endif
                                 </option>
                             @empty
                                 <option value="" disabled>No active courses available</option>
@@ -88,7 +99,7 @@
 
                 <div class="mb-3">
                     <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                    <select class="form-control @error('status') is-invalid @enderror" id="status" name="status" required>
                         <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
@@ -97,10 +108,10 @@
                     @enderror
                 </div>
 
-                <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary">Cancel</a>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary mr-2">Cancel</a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Create Exam
+                        <i class="fas fa-save mr-2"></i>Create Exam
                     </button>
                 </div>
             </form>
@@ -108,3 +119,40 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    // Auto-select course if course_id is in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseId = urlParams.get('course_id');
+    
+    if (courseId) {
+        $('#course_id').val(courseId);
+        
+        // Auto-fill exam title based on course name
+        const selectedCourse = $('#course_id option:selected').text().split(' - ')[0];
+        if (selectedCourse && !$('#title').val()) {
+            $('#title').val(selectedCourse + ' - Final Exam');
+        }
+        
+        // Highlight the form to show it's pre-filled
+        $('#course_id').addClass('is-valid');
+        
+        // Show success message
+        toastr.info('Course has been pre-selected from enrollment', 'Info', {
+            timeOut: 3000,
+            progressBar: true
+        });
+    }
+    
+    // Auto-fill title when course changes
+    $('#course_id').on('change', function() {
+        const selectedCourse = $(this).find('option:selected').text().split(' - ')[0];
+        if (selectedCourse && selectedCourse !== '-- Select Course --' && !$('#title').val()) {
+            $('#title').val(selectedCourse + ' - Final Exam');
+        }
+    });
+});
+</script>
+@endpush

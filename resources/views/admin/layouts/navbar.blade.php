@@ -11,14 +11,17 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+        <!-- Dark Mode Toggle -->
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="darkModeToggle" title="Toggle Dark Mode">
+                <i class="fas fa-moon" id="darkModeIcon"></i>
+            </a>
+        </li>
         <!-- Messages Dropdown Menu -->
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-bell"></i>
-                @php
-                    $unreadCount = \App\Models\Contact::where('is_read', false)->count();
-                @endphp
-                @if($unreadCount > 0)
+                @if(isset($unreadCount) && $unreadCount > 0)
                     <span class="badge badge-warning navbar-badge">{{ $unreadCount }}</span>
                 @endif
             </a>

@@ -13,6 +13,9 @@
         <div class="card-header">
             <h3 class="card-title">All Students</h3>
             <div class="card-tools">
+                <a href="{{ route('admin.export.students') }}" class="btn btn-success btn-sm mr-2">
+                    <i class="fas fa-download"></i> Export CSV
+                </a>
                 <form action="{{ route('admin.students.index') }}" method="GET" class="d-flex gap-2">
                     <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
                         <option value="">All Status</option>
@@ -29,6 +32,21 @@
             </div>
         </div>
         <div class="card-body">
+            <!-- Bulk Actions -->
+            <form id="bulkActionForm" method="POST" action="{{ route('admin.bulk.students') }}" style="display: none;">
+                @csrf
+                <div class="mb-3">
+                    <select name="action" class="form-control form-control-sm d-inline-block" style="width: auto;">
+                        <option value="">Select Action</option>
+                        <option value="delete">Delete Selected</option>
+                        <option value="activate">Activate Selected</option>
+                        <option value="pending">Set to Pending</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="clearSelection()">Clear</button>
+                </div>
+                <input type="hidden" name="ids" id="bulkIds">
+            </form>
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
@@ -41,6 +59,9 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
+                        <th style="width: 30px">
+                            <input type="checkbox" id="selectAll">
+                        </th>
                         <th style="width: 60px">ID</th>
                         <th>Name</th>
                         <th>Email</th>
@@ -56,6 +77,9 @@
                 <tbody>
                     @forelse($students as $student)
                         <tr>
+                            <td>
+                                <input type="checkbox" class="row-checkbox" value="{{ $student->id }}">
+                            </td>
                             <td>{{ $student->id }}</td>
                             <td>
                                 <strong>{{ $student->full_name }}</strong>
@@ -123,4 +147,53 @@
             {{ $students->links('vendor.pagination.adminlte') }}
         </div>
     </div>
+
+@push('scripts')
+<script>
+    // Select All checkbox
+    document.getElementById('selectAll')?.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateBulkActions();
+    });
+
+    // Individual checkboxes
+    document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateBulkActions);
+    });
+
+    function updateBulkActions() {
+        const checked = document.querySelectorAll('.row-checkbox:checked');
+        const bulkForm = document.getElementById('bulkActionForm');
+
+        if (checked.length > 0) {
+            bulkForm.style.display = 'block';
+            const ids = Array.from(checked).map(cb => cb.value);
+            document.getElementById('bulkIds').value = JSON.stringify(ids);
+        } else {
+            bulkForm.style.display = 'none';
+        }
+    }
+
+    function clearSelection() {
+        document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = false);
+        document.getElementById('selectAll').checked = false;
+        updateBulkActions();
+    }
+
+    // Bulk form submission
+    document.getElementById('bulkActionForm')?.addEventListener('submit', function(e) {
+        const action = this.querySelector('select[name="action"]').value;
+        if (!action) {
+            e.preventDefault();
+            alert('Please select an action');
+            return false;
+        }
+        if (!confirm(`Are you sure you want to ${action} the selected items?`)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
+@endpush
 @endsection

@@ -5,6 +5,7 @@ namespace App\Services\Student;
 use App\Mail\StudentVerificationMail;
 use App\Mail\StudentWelcomeMail;
 use App\Models\Student;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
@@ -53,10 +54,16 @@ class StudentEmailService
             return false; // Already verified
         }
 
+        $wasPending = $student->status === 'pending';
         $student->update([
             'email_verified_at' => now(),
             'status' => 'active',
         ]);
+        
+        // Clear cache if student was pending
+        if ($wasPending) {
+            Cache::forget('admin.pending_students');
+        }
 
         // Send welcome email
         $this->sendWelcomeEmail($student);

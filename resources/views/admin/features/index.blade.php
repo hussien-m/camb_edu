@@ -18,6 +18,39 @@
                 </a>
             </div>
         </div>
+        <!-- Search and Filters -->
+        <div class="card-body border-bottom">
+            <form method="GET" action="{{ route('admin.features.index') }}" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Search features..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="sort_by" class="form-control">
+                        <option value="order" {{ request('sort_by') == 'order' ? 'selected' : '' }}>Order</option>
+                        <option value="title" {{ request('sort_by') == 'title' ? 'selected' : '' }}>Title</option>
+                        <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Date</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sort_order" class="form-control">
+                        <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
+                        <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Descending</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                @if(request()->hasAny(['search', 'sort_by', 'sort_order']))
+                    <div class="col-md-2">
+                        <a href="{{ route('admin.features.index') }}" class="btn btn-secondary w-100">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
+                    </div>
+                @endif
+            </form>
+        </div>
         <div class="card-body">
             <table class="table table-bordered table-striped">
                 <thead>

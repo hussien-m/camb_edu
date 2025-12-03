@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Course;
+use App\Services\Admin\ActivityLogService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,7 +18,11 @@ class CourseService
             $data['image'] = $data['image']->store('courses', 'public');
         }
         $data['is_featured'] = isset($data['is_featured']) ? 1 : 0;
-        return Course::create($data);
+        $course = Course::create($data);
+
+        ActivityLogService::log('created', 'Course', $course->id, ['title' => $course->title]);
+
+        return $course;
     }
 
     public function updateCourse(Course $course, array $data): bool
@@ -32,14 +37,30 @@ class CourseService
             $data['image'] = $data['image']->store('courses', 'public');
         }
         $data['is_featured'] = isset($data['is_featured']) ? 1 : 0;
-        return $course->update($data);
+        $result = $course->update($data);
+
+        if ($result) {
+            ActivityLogService::log('updated', 'Course', $course->id, ['title' => $course->title]);
+        }
+
+        return $result;
     }
 
     public function deleteCourse(Course $course): bool
     {
+        $courseTitle = $course->title;
+        $courseId = $course->id;
+
         if ($course->image) {
             Storage::disk('public')->delete($course->image);
         }
-        return $course->delete();
+
+        $result = $course->delete();
+
+        if ($result) {
+            ActivityLogService::log('deleted', 'Course', $courseId, ['title' => $courseTitle]);
+        }
+
+        return $result;
     }
 }

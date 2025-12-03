@@ -10,7 +10,7 @@
 @endsection
 
 @section('content')
-    <form action="{{ route('admin.stories.update', $story) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.stories.update', $story) }}" method="POST" enctype="multipart/form-data" id="storyForm">
         @csrf
         @method('PUT')
         <div class="row">
@@ -38,10 +38,11 @@
                         <div class="form-group">
                             <label for="story">Story <span class="text-danger">*</span></label>
                             <textarea class="form-control @error('story') is-invalid @enderror"
-                                      id="story" name="story" required>{{ old('story', $story->story) }}</textarea>
+                                      id="story" name="story">{{ old('story', $story->story) }}</textarea>
                             @error('story')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
+                            <small class="text-danger" id="story-error" style="display:none;">Story content is required.</small>
                         </div>
                     </div>
                 </div>
@@ -155,6 +156,7 @@
         }
 
         // CKEditor with Image Support
+        let storyEditor;
         ClassicEditor
             .create(document.querySelector('#story'), {
                 extraPlugins: [UploadAdapterPlugin],
@@ -176,9 +178,27 @@
                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
                 }
             })
+            .then(editor => {
+                storyEditor = editor;
+            })
             .catch(error => {
                 console.error(error);
             });
+
+        // Form validation before submit
+        document.getElementById('storyForm').addEventListener('submit', function(e) {
+            if (storyEditor) {
+                const storyContent = storyEditor.getData().trim();
+                if (!storyContent || storyContent === '') {
+                    e.preventDefault();
+                    document.getElementById('story-error').style.display = 'block';
+                    document.querySelector('.ck-editor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                } else {
+                    document.getElementById('story-error').style.display = 'none';
+                }
+            }
+        });
 
         document.getElementById('image').addEventListener('change', function(e) {
             const file = e.target.files[0];

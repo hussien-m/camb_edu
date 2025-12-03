@@ -8,6 +8,8 @@ use App\Http\Requests\Admin\UpdateBannerRequest;
 use App\Models\Banner;
 use App\Services\Admin\BannerService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class BannerController extends Controller
@@ -19,10 +21,37 @@ class BannerController extends Controller
         $this->bannerService = $bannerService;
     }
 
-    public function index(): View
+    public function index(Request $request)
     {
-        $banners = Banner::ordered()->paginate(15);
-        return view('admin.banners.index', compact('banners'));
+        try {
+            $query = Banner::query();
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('subtitle', 'like', "%{$search}%");
+                });
+            }
+
+            $sortBy = $request->get('sort_by', 'order');
+            $sortOrder = $request->get('sort_order', 'asc');
+
+            // Validate sort_by to prevent SQL injection
+            $allowedSortFields = ['order', 'created_at', 'title', 'id'];
+            if (!in_array($sortBy, $allowedSortFields)) {
+                $sortBy = 'order';
+            }
+
+            $query->orderBy($sortBy, $sortOrder);
+
+            $banners = $query->paginate(15)->withQueryString();
+            return view('admin.banners.index', compact('banners'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching banners: ' . $e->getMessage());
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'An error occurred while loading banners.');
+        }
     }
 
     public function create(): View
@@ -32,11 +61,22 @@ class BannerController extends Controller
 
     public function store(StoreBannerRequest $request): RedirectResponse
     {
-        $this->bannerService->createBanner($request->validated());
+        try {
+            $this->bannerService->createBanner($request->validated());
 
-        return redirect()
-            ->route('admin.banners.index')
-            ->with('success', 'Banner created successfully.');
+            return redirect()
+                ->route('admin.banners.index')
+                ->with('success', 'Banner created successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error creating banner: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Failed to create banner. Please try again.');
+        }
     }
 
     public function edit(Banner $banner): View
@@ -46,19 +86,42 @@ class BannerController extends Controller
 
     public function update(UpdateBannerRequest $request, Banner $banner): RedirectResponse
     {
-        $this->bannerService->updateBanner($banner, $request->validated());
+        try {
+            $this->bannerService->updateBanner($banner, $request->validated());
 
-        return redirect()
-            ->route('admin.banners.index')
-            ->with('success', 'Banner updated successfully.');
+            return redirect()
+                ->route('admin.banners.index')
+                ->with('success', 'Banner updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error updating banner: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'banner_id' => $banner->id
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Failed to update banner. Please try again.');
+        }
     }
 
     public function destroy(Banner $banner): RedirectResponse
     {
-        $this->bannerService->deleteBanner($banner);
+        try {
+            $this->bannerService->deleteBanner($banner);
 
-        return redirect()
-            ->route('admin.banners.index')
-            ->with('success', 'Banner deleted successfully.');
+            return redirect()
+                ->route('admin.banners.index')
+                ->with('success', 'Banner deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error deleting banner: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'banner_id' => $banner->id
+            ]);
+
+            return back()
+                ->with('error', 'Failed to delete banner. Please try again.');
+        }
     }
 }

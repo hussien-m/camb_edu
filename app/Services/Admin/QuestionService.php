@@ -5,6 +5,8 @@ namespace App\Services\Admin;
 use App\Models\Exam;
 use App\Models\Question;
 use App\Models\QuestionOption;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QuestionService
 {
@@ -13,22 +15,34 @@ class QuestionService
      */
     public function createQuestion(Exam $exam, array $data): Question
     {
-        $question = $exam->questions()->create([
-            'question_text' => $data['question_text'],
-            'question_type' => $data['question_type'],
-            'points' => $data['points'],
-            'order' => $exam->questions()->max('order') + 1,
-        ]);
-
-        foreach ($data['options'] as $index => $option) {
-            $question->options()->create([
-                'option_text' => $option['text'],
-                'is_correct' => ($index == $data['correct_option']),
-                'order' => $index + 1,
+        try {
+            \DB::beginTransaction();
+            
+            $question = $exam->questions()->create([
+                'question_text' => $data['question_text'],
+                'question_type' => $data['question_type'],
+                'points' => $data['points'],
+                'order' => $exam->questions()->max('order') + 1,
             ]);
-        }
 
-        return $question;
+            foreach ($data['options'] as $index => $option) {
+                $question->options()->create([
+                    'option_text' => $option['option_text'],
+                    'is_correct' => (bool) $option['is_correct'],
+                    'order' => $index + 1,
+                ]);
+            }
+            
+            \DB::commit();
+            return $question;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Question creation failed: ' . $e->getMessage(), [
+                'data' => $data,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -36,36 +50,38 @@ class QuestionService
      */
     public function updateQuestion(Question $question, array $data): bool
     {
-        $question->update([
-            'question_text' => $data['question_text'],
-            'question_type' => $data['question_type'],
-            'points' => $data['points'],
-        ]);
+        try {
+            \DB::beginTransaction();
+            
+            $question->update([
+                'question_text' => $data['question_text'],
+                'question_type' => $data['question_type'],
+                'points' => $data['points'],
+            ]);
 
-        // Delete removed options
-        $keepIds = collect($data['options'])->pluck('id')->filter();
-        $question->options()->whereNotIn('id', $keepIds)->delete();
+            // Delete all old options and create new ones (simpler approach)
+            $question->options()->delete();
 
-        // Update or create options
-        foreach ($data['options'] as $index => $optionData) {
-            $isCorrect = ($index == $data['correct_option']);
-
-            if (isset($optionData['id'])) {
-                QuestionOption::find($optionData['id'])->update([
-                    'option_text' => $optionData['text'],
-                    'is_correct' => $isCorrect,
-                    'order' => $index + 1,
-                ]);
-            } else {
+            // Create new options
+            foreach ($data['options'] as $index => $option) {
                 $question->options()->create([
-                    'option_text' => $optionData['text'],
-                    'is_correct' => $isCorrect,
+                    'option_text' => $option['option_text'] ?? $option['text'] ?? '',
+                    'is_correct' => (bool) ($option['is_correct'] ?? false),
                     'order' => $index + 1,
                 ]);
             }
+            
+            \DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Question update failed: ' . $e->getMessage(), [
+                'question_id' => $question->id,
+                'data' => $data,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
-
-        return true;
     }
 
     /**

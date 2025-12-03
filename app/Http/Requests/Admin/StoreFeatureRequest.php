@@ -11,6 +11,13 @@ class StoreFeatureRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'is_active' => $this->has('is_active') ? filter_var($this->is_active, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false : true,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -18,7 +25,7 @@ class StoreFeatureRequest extends FormRequest
             'description' => 'required|string',
             'icon' => 'nullable|string|max:255',
             'order' => 'required|integer|min:0',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }

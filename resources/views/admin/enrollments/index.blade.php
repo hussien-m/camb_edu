@@ -8,14 +8,14 @@
 <li class="breadcrumb-item active">Enrollments</li>
 @endsection
 
-@push('css')
-<!-- Select2 (optional if not loaded) -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-5-theme/1.3.0/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+@push('styles')
+<!-- Select2 for Bootstrap 4 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 
-<!-- DataTables (optional if not loaded) -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" />
+<!-- DataTables for Bootstrap 4 -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css" />
 
 <style>
 /* Minor customizations to integrate AdminLTE look & feel */
@@ -199,9 +199,9 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($student->name) }}&size=64&background=3b82f6&color=fff&bold=true" alt="{{ $student->name }}" class="student-avatar me-3">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($student->full_name) }}&size=64&background=3b82f6&color=fff&bold=true" alt="{{ $student->full_name }}" class="student-avatar mr-3">
                                         <div>
-                                            <div class="font-weight-bold">{{ $student->name }}</div>
+                                            <div class="font-weight-bold">{{ $student->full_name }}</div>
                                             <div class="text-muted small">{{ $student->email }}</div>
                                         </div>
                                     </div>
@@ -219,19 +219,20 @@
 
                                 <td>
                                     @if($hasExam)
-                                    <span class="badge badge-success badge-status"><i class="fas fa-check me-1"></i> {{ $examsCount }} Active</span>
+                                    <span class="badge badge-success badge-status"><i class="fas fa-check mr-1"></i> {{ $examsCount }} Active</span>
                                     @else
-                                    <span class="badge badge-danger badge-status"><i class="fas fa-times me-1"></i> No Exam</span>
+                                    <span class="badge badge-danger badge-status"><i class="fas fa-times mr-1"></i> No Exam</span>
                                     @endif
                                 </td>
 
                                 <td>
                                     <div class="btn-group">
                                         @if(!$hasExam)
-                                        <a href="{{ route('admin.exams.create', ['course_id' => $course->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-plus"></i> Add</a>
+                                        <a href="{{ route('admin.exams.create') }}?course_id={{ $course->id }}" class="btn btn-sm btn-warning" title="Add Exam"><i class="fas fa-plus"></i></a>
                                         @else
-                                        <a href="{{ route('admin.exams.index', ['course_id' => $course->id]) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> View</a>
+                                        <a href="{{ route('admin.exams.index') }}?course_id={{ $course->id }}" class="btn btn-sm btn-info" title="View Exams"><i class="fas fa-eye"></i></a>
                                         @endif
+                                        <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-sm btn-primary" title="Edit Course"><i class="fas fa-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -267,15 +268,14 @@
 @endsection
 
 @push('scripts')
-<!-- jQuery (should be loaded by AdminLTE already) -->
 <!-- Select2 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<!-- DataTables + Buttons (optional) -->
+<!-- DataTables + Buttons -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
@@ -286,9 +286,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Select2 init
     $('.select2-basic').select2({
-        theme: 'bootstrap-5',
+        theme: 'bootstrap4',
         allowClear: true,
-        width: 'resolve',
+        width: '100%',
         minimumResultsForSearch: 6
     });
 

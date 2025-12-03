@@ -71,6 +71,30 @@
         </div>
     </div>
 
+    <!-- Charts Row -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Courses by Status</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="coursesChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Students by Status</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="studentsChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <!-- Recent Courses -->
         <div class="col-md-8">
@@ -159,4 +183,90 @@
             </div>
         </div>
     </div>
+
+    <!-- Recent Activities -->
+    @if(isset($recentActivities) && $recentActivities->count() > 0)
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Activities</h3>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="products-list product-list-in-card pl-2 pr-2">
+                        @foreach($recentActivities as $activity)
+                            <li class="item">
+                                <div class="product-info">
+                                    <span class="product-title">
+                                        <strong>{{ $activity->admin->name ?? 'System' }}</strong>
+                                        {{ $activity->action }} {{ $activity->model }}
+                                        @if($activity->model_id)
+                                            #{{ $activity->model_id }}
+                                        @endif
+                                    </span>
+                                    <span class="product-description">
+                                        {{ $activity->created_at->diffForHumans() }}
+                                    </span>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    // Courses Chart
+    const coursesCtx = document.getElementById('coursesChart');
+    if (coursesCtx) {
+        new Chart(coursesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Active', 'Inactive'],
+                datasets: [{
+                    data: [{{ $coursesByStatus['active'] }}, {{ $coursesByStatus['inactive'] }}],
+                    backgroundColor: ['#28a745', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    // Students Chart
+    const studentsCtx = document.getElementById('studentsChart');
+    if (studentsCtx) {
+        new Chart(studentsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Active', 'Pending', 'Suspended'],
+                datasets: [{
+                    label: 'Students',
+                    data: [
+                        {{ $studentsByStatus['active'] }},
+                        {{ $studentsByStatus['pending'] }},
+                        {{ $studentsByStatus['suspended'] ?? 0 }}
+                    ],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+</script>
+@endpush

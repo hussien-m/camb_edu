@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Student;
+use Illuminate\Support\Facades\Cache;
 
 class StudentManagementService
 {
@@ -43,7 +44,14 @@ class StudentManagementService
     public function updateStudent($id, $data)
     {
         $student = Student::findOrFail($id);
+        $oldStatus = $student->status;
         $student->update($data);
+
+        // Clear cache if status changed
+        if (isset($data['status']) && $data['status'] !== $oldStatus) {
+            Cache::forget('admin.pending_students');
+        }
+
         return $student;
     }
 
@@ -53,7 +61,14 @@ class StudentManagementService
     public function deleteStudent($id)
     {
         $student = Student::findOrFail($id);
+        $wasPending = $student->status === 'pending';
         $student->delete();
+
+        // Clear cache if deleted student was pending
+        if ($wasPending) {
+            Cache::forget('admin.pending_students');
+        }
+
         return true;
     }
 
@@ -63,7 +78,14 @@ class StudentManagementService
     public function updateStudentStatus($id, $status)
     {
         $student = Student::findOrFail($id);
+        $oldStatus = $student->status;
         $student->update(['status' => $status]);
+
+        // Clear cache if status changed to/from pending
+        if ($oldStatus === 'pending' || $status === 'pending') {
+            Cache::forget('admin.pending_students');
+        }
+
         return $student;
     }
 }

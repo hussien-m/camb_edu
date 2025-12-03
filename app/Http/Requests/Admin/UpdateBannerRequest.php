@@ -11,6 +11,13 @@ class UpdateBannerRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'is_active' => $this->has('is_active') ? filter_var($this->is_active, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false : false,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -19,7 +26,7 @@ class UpdateBannerRequest extends FormRequest
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'link' => 'nullable|string|max:255',
             'order' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }

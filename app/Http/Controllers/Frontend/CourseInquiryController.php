@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CourseInquiry;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CourseInquiryController extends Controller
 {
@@ -28,6 +29,9 @@ class CourseInquiryController extends Controller
             'message' => $request->message,
             'status' => 'new',
         ]);
+
+        // Clear cache after creating new inquiry
+        Cache::forget('admin.new_inquiries');
 
         // Check if it's an AJAX request
         if ($request->ajax()) {

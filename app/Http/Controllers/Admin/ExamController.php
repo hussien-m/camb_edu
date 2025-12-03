@@ -8,6 +8,8 @@ use App\Http\Requests\Admin\UpdateExamRequest;
 use App\Models\Course;
 use App\Models\Exam;
 use App\Services\Admin\ExamService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ExamController extends Controller
 {
@@ -18,15 +20,54 @@ class ExamController extends Controller
         $this->examService = $examService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $exams = Exam::with('course')->latest()->paginate(20);
-        return view('admin.exams.index', compact('exams'));
+        try {
+            $query = Exam::with('course');
+
+            // Search functionality
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhereHas('course', function($courseQuery) use ($search) {
+                          $courseQuery->where('title', 'like', "%{$search}%");
+                      });
+                });
+            }
+
+            // Filter by course
+            if ($request->filled('course_id')) {
+                $query->where('course_id', $request->course_id);
+            }
+
+            // Filter by status
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            $query->orderBy($sortBy, $sortOrder);
+
+            $exams = $query->paginate(20)->withQueryString();
+            $courses = Course::where('status', 'active')->orderBy('title')->get();
+
+            return view('admin.exams.index', compact('exams', 'courses'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching exams: ' . $e->getMessage());
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'An error occurred while loading exams. Please try again.');
+        }
     }
 
     public function create()
     {
-        $courses = Course::where('status', 'active')->orderBy('title')->get();
+        $courses = Course::with('level')
+            ->where('status', 'active')
+            ->orderBy('title')
+            ->get();
         return view('admin.exams.create', compact('courses'));
     }
 
@@ -46,7 +87,10 @@ class ExamController extends Controller
 
     public function edit(Exam $exam)
     {
-        $courses = Course::where('status', 'active')->orderBy('title')->get();
+        $courses = Course::with('level')
+            ->where('status', 'active')
+            ->orderBy('title')
+            ->get();
         return view('admin.exams.edit', compact('exam', 'courses'));
     }
 

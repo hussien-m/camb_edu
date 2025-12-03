@@ -11,6 +11,13 @@ class StorePageRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_published' => $this->has('is_published') ? true : false,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
@@ -19,7 +26,7 @@ class StorePageRequest extends FormRequest
             'content' => 'nullable|string',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
-            'is_published' => 'nullable|boolean',
+            'is_published' => 'boolean',
         ];
     }
 

@@ -16,10 +16,27 @@ class NewsletterController extends Controller
         $this->newsletterService = $newsletterService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $subscribers = NewsletterSubscriber::latest('subscribed_at')->paginate(50);
-        return view('admin.newsletter.index', compact('subscribers'));
+        try {
+            $query = NewsletterSubscriber::query();
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where('email', 'like', "%{$search}%");
+            }
+
+            $sortBy = $request->get('sort_by', 'subscribed_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+            $query->orderBy($sortBy, $sortOrder);
+
+            $subscribers = $query->paginate(50)->withQueryString();
+            return view('admin.newsletter.index', compact('subscribers'));
+        } catch (\Exception $e) {
+            \Log::error('Error fetching subscribers: ' . $e->getMessage());
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'An error occurred while loading subscribers.');
+        }
     }
 
     public function destroy($id)

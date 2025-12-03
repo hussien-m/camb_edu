@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 // Admin Authentication Routes
 Route::middleware('admin.guest')->group(function () {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
+    Route::post('login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 });
 
 // Admin Protected Routes
@@ -43,6 +43,8 @@ Route::middleware('admin')->group(function () {
 
     // Courses
     Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
+    Route::post('bulk-actions/courses', [App\Http\Controllers\Admin\BulkActionController::class, 'courses'])->name('bulk.courses');
+    Route::get('export/courses', [App\Http\Controllers\Admin\ExportController::class, 'courses'])->name('export.courses');
 
     // Enrollments
     Route::get('enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('enrollments.index');
@@ -58,6 +60,8 @@ Route::middleware('admin')->group(function () {
     Route::get('contacts/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'show'])->name('contacts.show');
     Route::delete('contacts/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'destroy'])->name('contacts.destroy');
     Route::post('contacts/{contact}/mark-read', [App\Http\Controllers\Admin\ContactController::class, 'markAsRead'])->name('contacts.mark-read');
+    Route::post('bulk-actions/contacts', [App\Http\Controllers\Admin\BulkActionController::class, 'contacts'])->name('bulk.contacts');
+    Route::get('export/contacts', [App\Http\Controllers\Admin\ExportController::class, 'contacts'])->name('export.contacts');
 
     // Course Inquiries
     Route::get('inquiries', [App\Http\Controllers\Admin\CourseInquiryController::class, 'index'])->name('inquiries.index');
@@ -91,6 +95,8 @@ Route::middleware('admin')->group(function () {
     Route::put('students/{student}', [App\Http\Controllers\Admin\StudentController::class, 'update'])->name('students.update');
     Route::delete('students/{student}', [App\Http\Controllers\Admin\StudentController::class, 'destroy'])->name('students.destroy');
     Route::put('students/{student}/status', [App\Http\Controllers\Admin\StudentController::class, 'updateStatus'])->name('students.update-status');
+    Route::post('bulk-actions/students', [App\Http\Controllers\Admin\BulkActionController::class, 'students'])->name('bulk.students');
+    Route::get('export/students', [App\Http\Controllers\Admin\ExportController::class, 'students'])->name('export.students');
 
     // Exams Management
     Route::resource('exams', App\Http\Controllers\Admin\ExamController::class);
@@ -98,8 +104,10 @@ Route::middleware('admin')->group(function () {
     // Questions Management
     Route::get('exams/{exam}/questions/create', [App\Http\Controllers\Admin\QuestionController::class, 'create'])->name('questions.create');
     Route::post('exams/{exam}/questions', [App\Http\Controllers\Admin\QuestionController::class, 'store'])->name('questions.store');
+    Route::post('exams/{exam}/questions/quick-add', [App\Http\Controllers\Admin\QuestionController::class, 'quickAdd'])->name('questions.quick-add');
     Route::get('exams/{exam}/questions/{question}/edit', [App\Http\Controllers\Admin\QuestionController::class, 'edit'])->name('questions.edit');
     Route::put('exams/{exam}/questions/{question}', [App\Http\Controllers\Admin\QuestionController::class, 'update'])->name('questions.update');
+    Route::post('exams/{exam}/questions/{question}/quick-update', [App\Http\Controllers\Admin\QuestionController::class, 'quickUpdate'])->name('questions.quick-update');
     Route::delete('exams/{exam}/questions/{question}', [App\Http\Controllers\Admin\QuestionController::class, 'destroy'])->name('questions.destroy');
 
     // Exam Results Management
@@ -109,4 +117,7 @@ Route::middleware('admin')->group(function () {
     Route::put('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'update'])->name('exam-results.update');
     Route::post('exam-results/{id}/recalculate', [App\Http\Controllers\Admin\ExamResultController::class, 'recalculate'])->name('exam-results.recalculate');
     Route::delete('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'destroy'])->name('exam-results.destroy');
+
+    // Activity Log
+    Route::get('activity-log', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-log.index');
 });

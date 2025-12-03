@@ -18,6 +18,38 @@
                 </a>
             </div>
         </div>
+        <!-- Search and Filters -->
+        <div class="card-body border-bottom">
+            <form method="GET" action="{{ route('admin.newsletter.index') }}" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Search by email..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="sort_by" class="form-control">
+                        <option value="subscribed_at" {{ request('sort_by') == 'subscribed_at' ? 'selected' : '' }}>Subscription Date</option>
+                        <option value="email" {{ request('sort_by') == 'email' ? 'selected' : '' }}>Email</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sort_order" class="form-control">
+                        <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Newest First</option>
+                        <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Oldest First</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                @if(request()->hasAny(['search', 'sort_by', 'sort_order']))
+                    <div class="col-md-2">
+                        <a href="{{ route('admin.newsletter.index') }}" class="btn btn-secondary w-100">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
+                    </div>
+                @endif
+            </form>
+        </div>
         <div class="card-body">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">

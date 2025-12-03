@@ -85,10 +85,7 @@
                         <i class="nav-icon fas fa-envelope"></i>
                         <p>
                             Messages
-                            @php
-                                $unreadCount = \App\Models\Contact::where('is_read', false)->count();
-                            @endphp
-                            @if($unreadCount > 0)
+                            @if(isset($unreadCount) && $unreadCount > 0)
                                 <span class="badge badge-warning right">{{ $unreadCount }}</span>
                             @endif
                         </p>
@@ -101,10 +98,7 @@
                         <i class="nav-icon fas fa-question-circle"></i>
                         <p>
                             Course Inquiries
-                            @php
-                                $newInquiriesCount = \App\Models\CourseInquiry::where('status', 'new')->count();
-                            @endphp
-                            @if($newInquiriesCount > 0)
+                            @if(isset($newInquiriesCount) && $newInquiriesCount > 0)
                                 <span class="badge badge-info right">{{ $newInquiriesCount }}</span>
                             @endif
                         </p>
@@ -141,10 +135,7 @@
                         <i class="nav-icon fas fa-user-graduate"></i>
                         <p>
                             Students
-                            @php
-                                $pendingCount = \App\Models\Student::where('status', 'pending')->count();
-                            @endphp
-                            @if($pendingCount > 0)
+                            @if(isset($pendingCount) && $pendingCount > 0)
                                 <span class="badge badge-warning right">{{ $pendingCount }}</span>
                             @endif
                         </p>
@@ -180,6 +171,14 @@
                             </a>
                         </li>
                     </ul>
+                </li>
+
+                <!-- Activity Log -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.activity-log.index') }}" class="nav-link {{ request()->routeIs('admin.activity-log.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-history"></i>
+                        <p>Activity Log</p>
+                    </a>
                 </li>
 
                 <!-- Divider -->

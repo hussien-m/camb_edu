@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\CourseInquiry;
+use Illuminate\Support\Facades\Cache;
 
 class CourseInquiryService
 {
@@ -11,7 +12,10 @@ class CourseInquiryService
      */
     public function updateInquiryStatus(CourseInquiry $inquiry, string $status): bool
     {
-        return $inquiry->update(['status' => $status]);
+        $result = $inquiry->update(['status' => $status]);
+        // Clear cache after status update
+        Cache::forget('admin.new_inquiries');
+        return $result;
     }
 
     /**
@@ -19,6 +23,9 @@ class CourseInquiryService
      */
     public function deleteInquiry(CourseInquiry $inquiry): bool
     {
-        return $inquiry->delete();
+        $result = $inquiry->delete();
+        // Clear cache after deletion
+        Cache::forget('admin.new_inquiries');
+        return $result;
     }
 }

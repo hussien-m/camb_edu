@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Services\Student\StudentEmailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -50,6 +51,9 @@ class RegisterController extends Controller
             'country' => $request->country,
             'status' => 'pending', // Pending until email verified
         ]);
+
+        // Clear cache after creating new pending student
+        Cache::forget('admin.pending_students');
 
         // Send verification email
         $this->emailService->sendVerificationEmail($student);
