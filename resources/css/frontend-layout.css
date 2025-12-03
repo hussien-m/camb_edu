@@ -656,16 +656,22 @@ footer .contact-info i {
 
 @media(max-width:768px) {
     .navbar-brand {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .navbar-brand img {
-        height: 40px;
-        width: 40px;
+        height: 35px;
+        width: 35px;
+        min-width: 35px;
     }
 
     .navbar .nav-link {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
+        padding: 8px 12px !important;
     }
 
     /* Pagination Mobile Responsive */
@@ -685,9 +691,104 @@ footer .contact-info i {
     .pagination .page-item {
         margin: 2px;
     }
+
+    /* Footer Mobile */
+    footer {
+        padding: 40px 0 20px;
+    }
+
+    footer h5 {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    footer p, footer a {
+        font-size: 0.85rem !important;
+    }
+
+    footer .col-lg-4,
+    footer .col-lg-2,
+    footer .col-lg-3 {
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    footer ul {
+        padding-left: 0;
+    }
+
+    footer ul li {
+        margin-bottom: 8px;
+    }
+
+    /* Newsletter Mobile */
+    .newsletter-section {
+        padding: 30px 0 !important;
+    }
+
+    .newsletter-section h3 {
+        font-size: 1.3rem !important;
+    }
+
+    .newsletter-section p {
+        font-size: 0.9rem !important;
+    }
+
+    .newsletter-form-wrapper {
+        flex-direction: column !important;
+    }
+
+    .newsletter-form-wrapper input {
+        margin-bottom: 10px;
+        width: 100% !important;
+    }
+
+    .newsletter-form-wrapper button {
+        width: 100% !important;
+    }
 }
 
 @media(max-width:576px) {
+    /* Navbar Extra Small */
+    .navbar {
+        padding: 5px 0;
+    }
+
+    .navbar-brand {
+        font-size: 0.8rem;
+        max-width: 160px;
+    }
+
+    .navbar-brand img {
+        height: 30px;
+        width: 30px;
+        min-width: 30px;
+    }
+
+    .navbar-toggler {
+        padding: 4px 8px;
+        font-size: 0.9rem;
+    }
+
+    .navbar-collapse {
+        padding: 8px 12px;
+    }
+
+    .navbar .nav-link {
+        font-size: 0.8rem;
+        padding: 6px 10px !important;
+    }
+
+    .navbar .nav-link i {
+        font-size: 0.75rem;
+    }
+
+    .btn-register {
+        font-size: 0.75rem !important;
+        padding: 5px 12px !important;
+        margin-right: 5px !important;
+    }
+
     /* Pagination Small Mobile */
     .pagination {
         gap: 2px;
@@ -716,5 +817,32 @@ footer .contact-info i {
     .pagination .page-item:nth-child(2),
     .pagination .page-item:nth-last-child(2) {
         display: block;
+    }
+
+    /* Footer Extra Small */
+    footer {
+        padding: 30px 0 15px;
+    }
+
+    footer h5 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+
+    footer p, footer a, footer li {
+        font-size: 0.8rem !important;
+        line-height: 1.5;
+    }
+
+    footer .social-links a {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    /* Copyright */
+    footer .text-center p {
+        font-size: 0.75rem !important;
     }
 }

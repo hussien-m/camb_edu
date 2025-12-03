@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-IAc3EYps.css",
+    "file": "assets/app-CKdIkIHt.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -36,7 +36,7 @@
     ]
   },
   "resources/css/frontend-home.css": {
-    "file": "assets/frontend-home-CeYHT03K.css",
+    "file": "assets/frontend-home-B_fwy3bR.css",
     "src": "resources/css/frontend-home.css",
     "isEntry": true,
     "name": "frontend-home",
@@ -45,7 +45,7 @@
     ]
   },
   "resources/css/frontend-layout.css": {
-    "file": "assets/frontend-layout-Cmm0Gk2r.css",
+    "file": "assets/frontend-layout-DJ4SQGDD.css",
     "src": "resources/css/frontend-layout.css",
     "isEntry": true,
     "name": "frontend-layout",
