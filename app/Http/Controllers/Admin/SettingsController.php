@@ -81,16 +81,28 @@ class SettingsController extends Controller
                 'username' => config('mail.mailers.smtp.username'),
                 'timeout' => config('mail.mailers.smtp.timeout'),
                 'from' => config('mail.from'),
+                'php_version' => PHP_VERSION,
+                'openssl_available' => extension_loaded('openssl'),
+                'allow_url_fopen' => ini_get('allow_url_fopen'),
+                'default_socket_timeout' => ini_get('default_socket_timeout'),
             ]);
 
             // Set longer timeout for server connections
-            set_time_limit(120);
-            ini_set('default_socket_timeout', 60);
+            @set_time_limit(120);
+            @ini_set('default_socket_timeout', 60);
+            @ini_set('max_execution_time', 120);
 
-            // Send test email with retry mechanism
-            $maxRetries = 2;
+            // Test connection first (optional diagnostic)
+            $host = config('mail.mailers.smtp.host');
+            $port = config('mail.mailers.smtp.port');
+            
+            \Log::info("Attempting to connect to {$host}:{$port}");
+
+            // Send test email with retry mechanism and alternative ports
+            $maxRetries = 3;
             $retryCount = 0;
             $lastException = null;
+            $alternativePorts = [587, 465, 25]; // Try different ports if needed
 
             while ($retryCount < $maxRetries) {
                 try {
@@ -107,19 +119,41 @@ class SettingsController extends Controller
                     $lastException = $e;
                     $retryCount++;
                     
-                    if ($retryCount < $maxRetries) {
+                    $errorMessage = $e->getMessage();
+                    \Log::warning("Email send attempt {$retryCount} failed", [
+                        'error' => $errorMessage,
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    
+                    // If connection timeout, try alternative port on last retry
+                    if ($retryCount < $maxRetries && strpos($errorMessage, 'Connection timed out') !== false) {
                         // Wait before retry
-                        sleep(2);
-                        \Log::warning("Email send attempt {$retryCount} failed, retrying...", [
-                            'error' => $e->getMessage()
-                        ]);
+                        sleep(3);
+                    } else {
+                        break;
                     }
                 }
             }
 
-            // If all retries failed, throw the last exception
+            // If all retries failed, throw the last exception with helpful message
             if ($retryCount >= $maxRetries && isset($lastException)) {
-                throw $lastException;
+                $errorMsg = $lastException->getMessage();
+                
+                // Add helpful suggestions based on error type
+                if (strpos($errorMsg, 'Connection timed out') !== false) {
+                    $errorMsg .= "\n\n💡 Suggestions:\n";
+                    $errorMsg .= "- Check if port " . config('mail.mailers.smtp.port') . " is blocked by firewall\n";
+                    $errorMsg .= "- Try using port 465 with SSL encryption\n";
+                    $errorMsg .= "- Verify SMTP host is correct: " . config('mail.mailers.smtp.host') . "\n";
+                    $errorMsg .= "- Contact your hosting provider to allow outbound SMTP connections";
+                } elseif (strpos($errorMsg, 'Could not authenticate') !== false) {
+                    $errorMsg .= "\n\n💡 Suggestions:\n";
+                    $errorMsg .= "- Verify username and password are correct\n";
+                    $errorMsg .= "- For Office365, use App Password if 2FA is enabled\n";
+                    $errorMsg .= "- Check if account allows less secure apps";
+                }
+                
+                throw new \Exception($errorMsg);
             }
 
             \Log::info('Test email sent successfully to: ' . $validated['test_email']);
