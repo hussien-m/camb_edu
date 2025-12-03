@@ -17,10 +17,13 @@ class StudentCourseService
 
         $courses = Course::with([
             'exams' => function($query) use ($student) {
-                $query->with(['attempts' => function($q) use ($student) {
-                    $q->where('student_id', $student->id)
-                      ->orderBy('created_at', 'desc');
-                }]);
+                // Only show exams that are ready (have questions and points = total_marks)
+                $query->whereHas('questions')
+                      ->whereRaw('(SELECT SUM(points) FROM questions WHERE exam_id = exams.id) = exams.total_marks')
+                      ->with(['attempts' => function($q) use ($student) {
+                          $q->where('student_id', $student->id)
+                            ->orderBy('created_at', 'desc');
+                      }]);
             },
             'enrollments' => function($query) use ($student) {
                 $query->where('student_id', $student->id);

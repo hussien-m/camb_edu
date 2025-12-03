@@ -30,6 +30,24 @@ class StudentExamService
             ];
         }
 
+        // Check if exam has questions
+        $totalQuestions = $exam->questions()->count();
+        if ($totalQuestions === 0) {
+            return [
+                'allowed' => false,
+                'message' => 'This exam is not ready yet. No questions have been added.'
+            ];
+        }
+
+        // Check if total points equal 100
+        $totalPoints = $exam->questions()->sum('points');
+        if ($totalPoints != $exam->total_marks) {
+            return [
+                'allowed' => false,
+                'message' => 'This exam is not ready yet. The questions points do not match the exam total marks.'
+            ];
+        }
+
         // Check max attempts
         $attemptCount = $this->getAttemptCount($student, $exam);
         if ($exam->max_attempts > 0 && $attemptCount >= $exam->max_attempts) {

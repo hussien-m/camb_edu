@@ -21,6 +21,39 @@
         </div>
     @endif
 
+    @php
+        $currentPoints = $exam->questions->sum('points');
+        $totalQuestions = $exam->questions->count();
+        $isExamReady = ($totalQuestions > 0 && $currentPoints == $exam->total_marks);
+    @endphp
+
+    @if(!$isExamReady)
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <h5 class="alert-heading"><i class="fas fa-exclamation-triangle mr-2"></i>Exam Not Ready for Students!</h5>
+            <hr>
+            <p class="mb-2">This exam will <strong>NOT be visible</strong> to students until:</p>
+            <ul class="mb-2">
+                @if($totalQuestions === 0)
+                    <li><strong>At least one question is added</strong> (Current: 0 questions)</li>
+                @endif
+                @if($currentPoints != $exam->total_marks)
+                    <li><strong>Total points equal {{ $exam->total_marks }}</strong> (Current: {{ $currentPoints }} points)</li>
+                @endif
+            </ul>
+            <p class="mb-0"><small><i class="fas fa-info-circle mr-1"></i>Students will see a message that the exam is not ready yet.</small></p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @else
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle mr-2"></i><strong>Exam is ready!</strong> Students can now take this exam.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-4">
@@ -622,6 +655,21 @@ $(document).ready(function() {
                 .addClass('badge-success')
                 .html('<i class="fas fa-check-circle"></i> Perfect!');
             $('#pointsProgress').removeClass('bg-warning bg-danger').addClass('bg-success');
+        }
+        
+        // Check exam readiness and update alert
+        checkExamReadiness(totalPoints);
+    }
+
+    // Check exam readiness and update page alert
+    function checkExamReadiness(totalPoints) {
+        const targetPoints = {{ $exam->total_marks }};
+        const questionsCount = parseInt($('#questionsCount').text()) || 0;
+        const isReady = questionsCount > 0 && totalPoints === targetPoints;
+        
+        // Reload page to update alert (simple solution)
+        if (isReady || (totalPoints === targetPoints && questionsCount > 0)) {
+            // Page will be reloaded to show updated status
         }
     }
 
