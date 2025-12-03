@@ -304,45 +304,69 @@ document.addEventListener('DOMContentLoaded', function() {
             $('#enrollmentsTable').DataTable().destroy();
         }
         
-        let table = $('#enrollmentsTable').DataTable({
-            destroy: true,
-            paging: false,
-            info: false,
-            searching: false,
-            responsive: true,
-            ordering: true,
-            columnDefs: [
-                { orderable: false, targets: -1 } // disable ordering on actions column
-            ],
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'csvHtml5',
-                    text: '<i class="fas fa-file-csv"></i> CSV',
-                    className: 'btn btn-sm btn-outline-secondary'
-                },
-                {
-                    extend: 'excelHtml5',
-                    text: '<i class="fas fa-file-excel"></i> Excel',
-                    className: 'btn btn-sm btn-outline-success'
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: '<i class="fas fa-file-pdf"></i> PDF',
-                    className: 'btn btn-sm btn-outline-danger'
-                },
-                {
-                    extend: 'print',
-                    text: '<i class="fas fa-print"></i> Print',
-                    className: 'btn btn-sm btn-outline-primary'
-                }
-            ],
-            // place buttons inside card header
-            initComplete: function() {
-                const btns = $('.dt-buttons').addClass('float-left mt-2');
-                $('#enrollmentsTable_wrapper .row').first().prepend(btns);
+        // Wait for DOM to be fully ready
+        setTimeout(function() {
+            try {
+                let table = $('#enrollmentsTable').DataTable({
+                    destroy: true,
+                    paging: false,
+                    info: false,
+                    searching: false,
+                    responsive: false,
+                    ordering: true,
+                    autoWidth: false,
+                    columnDefs: [
+                        { orderable: false, targets: 4 },
+                        { width: "25%", targets: 0 },
+                        { width: "25%", targets: 1 },
+                        { width: "20%", targets: 2 },
+                        { width: "15%", targets: 3 },
+                        { width: "15%", targets: 4 }
+                    ],
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'csvHtml5',
+                            text: '<i class="fas fa-file-csv"></i> CSV',
+                            className: 'btn btn-sm btn-outline-secondary',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            }
+                        },
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fas fa-file-excel"></i> Excel',
+                            className: 'btn btn-sm btn-outline-success',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            }
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            className: 'btn btn-sm btn-outline-danger',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i> Print',
+                            className: 'btn btn-sm btn-outline-primary',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            }
+                        }
+                    ],
+                    initComplete: function() {
+                        const btns = $('.dt-buttons').addClass('float-left mt-2');
+                        $('#enrollmentsTable_wrapper .row').first().prepend(btns);
+                    }
+                });
+            } catch(e) {
+                console.error('DataTable initialization error:', e);
             }
-        });
+        }, 100);
     }
 });
 </script>
