@@ -51,42 +51,21 @@ class ForgotPasswordController extends Controller
                 'created_at' => now(),
             ]);
 
-            // Try to send notification with fast fallback
+            // Send email via SMTP directly (most reliable for actual delivery)
             $emailSent = false;
-            $usedMethod = 'SMTP';
 
-            // Set short timeout for faster response
-            @ini_set('default_socket_timeout', 5);
-            @set_time_limit(15);
+            // Set reasonable timeout
+            @ini_set('default_socket_timeout', 10);
+            @set_time_limit(20);
 
             try {
-                // Try Laravel notification first (SMTP) with 5 second timeout
+                // Use Laravel notification (SMTP) - ensures email actually sends
                 $student->notify(new StudentResetPasswordNotification($token));
                 $emailSent = true;
                 \Log::info('Password reset email sent via SMTP to: ' . $student->email);
             } catch (\Exception $mailError) {
-                $usedMethod = 'Alternative';
-                \Log::warning('SMTP failed quickly, using alternative method immediately');
-
-                // Fallback: Use PHP mail directly (instant)
-                $resetUrl = route('student.password.reset', [
-                    'token' => $token,
-                    'email' => $student->email,
-                ]);
-
-                $emailHtml = $this->getPasswordResetEmailHtml($student, $resetUrl);
-
-                $emailSent = AlternativeMailService::sendWithFallback(
-                    $student->email,
-                    'Reset Your Password - ' . config('app.name'),
-                    $emailHtml,
-                    config('mail.from.address'),
-                    config('mail.from.name')
-                );
-
-                if ($emailSent) {
-                    \Log::info('Password reset email sent via PHP mail to: ' . $student->email);
-                }
+                \Log::error('Failed to send password reset email: ' . $mailError->getMessage());
+                $emailSent = false;
             }
 
             if (!$emailSent) {

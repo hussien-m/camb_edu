@@ -21,28 +21,18 @@ class StudentEmailService
     {
         $verificationUrl = $this->generateVerificationUrl($student);
 
-        // Set quick timeout
-        @ini_set('default_socket_timeout', 5);
-        @set_time_limit(15);
+        // Use SMTP only for reliable delivery
+        @ini_set('default_socket_timeout', 10);
+        @set_time_limit(20);
 
         try {
-            // Try Laravel mail first with 5 sec timeout
             Mail::to($student->email)->send(
                 new StudentVerificationMail($student, $verificationUrl)
             );
             Log::info('Verification email sent via SMTP to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::warning('SMTP failed, using PHP mail immediately');
-
-            // Fallback to PHP mail (instant)
-            $emailHtml = $this->getVerificationEmailHtml($student, $verificationUrl);
-            AlternativeMailService::sendWithFallback(
-                $student->email,
-                '✉️ Verify Your Email - ' . config('app.name'),
-                $emailHtml,
-                config('mail.from.address'),
-                config('mail.from.name')
-            );
+            Log::error('Failed to send verification email: ' . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -51,28 +41,18 @@ class StudentEmailService
      */
     public function sendWelcomeEmail(Student $student): void
     {
-        // Set quick timeout
-        @ini_set('default_socket_timeout', 5);
-        @set_time_limit(15);
+        // Use SMTP only for reliable delivery
+        @ini_set('default_socket_timeout', 10);
+        @set_time_limit(20);
 
         try {
-            // Try Laravel mail first with 5 sec timeout
             Mail::to($student->email)->send(
                 new StudentWelcomeMail($student)
             );
             Log::info('Welcome email sent via SMTP to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::warning('SMTP failed, using PHP mail immediately');
-
-            // Fallback to PHP mail (instant)
-            $emailHtml = $this->getWelcomeEmailHtml($student);
-            AlternativeMailService::sendWithFallback(
-                $student->email,
-                '🎉 Welcome to ' . config('app.name'),
-                $emailHtml,
-                config('mail.from.address'),
-                config('mail.from.name')
-            );
+            Log::error('Failed to send welcome email: ' . $e->getMessage());
+            // Don't throw - welcome email is not critical
         }
     }
 
