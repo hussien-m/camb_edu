@@ -9,11 +9,48 @@
 @section('content')
 
 <!-- ============================================
-     HERO SECTION
+     HERO SECTION WITH LOGO AND PROGRAMS
 ============================================ -->
 <section class="hero">
+    <!-- Animated Decorative Circles -->
+    <div class="hero-circle hero-circle-1"></div>
+    <div class="hero-circle hero-circle-2"></div>
+    <div class="hero-circle hero-circle-3"></div>
+    <div class="hero-circle hero-circle-4"></div>
+
     <div class="container">
         <div class="hero-content">
+            <!-- Logo in Hero -->
+            <div class="hero-logo mb-4">
+                @if(setting('site_logo'))
+                    <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name') }} Logo" class="hero-logo-img">
+                @else
+                    <img src="https://via.placeholder.com/150x150/1e3a8a/ffcc00?text=CC" alt="Logo" class="hero-logo-img">
+                @endif
+            </div>
+
+            <!-- Our Programs Section -->
+            <div class="programs-section">
+                <div class="programs-header mb-3">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    <span>Our Programs</span>
+                </div>
+
+                <div class="programs-grid">
+                    @php
+                        $levelsHero = \App\Models\CourseLevel::orderBy('sort_order')->get();
+                    @endphp
+                    @foreach($levelsHero as $level)
+                        <a href="{{ route('courses.index', ['level_id' => $level->id]) }}"
+                           class="program-card {{ request()->has('level_id') && request()->get('level_id') == $level->id ? 'active' : '' }}">
+                            <i class="fas fa-certificate"></i>
+                            <span>{{ $level->name }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Temporarily Hidden
             @if($banners && $banners->count() > 0)
                 <h1>{{ $banners->first()->title }}</h1>
                 <p class="lead">{{ $banners->first()->subtitle }}</p>
@@ -21,6 +58,7 @@
                 <h1>🎓 Learn Without Limits</h1>
                 <p class="lead">Discover courses that match your professional goals and develop your skills with the best trainers in Libya</p>
             @endif
+            --}}
 
             <!-- Advanced Search Box -->
             <div class="search-box">

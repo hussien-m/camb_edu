@@ -33,19 +33,18 @@
 <!-- Main Navbar - Professional Design -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('home') }}">
-            @if(setting('site_logo'))
-                <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name') }} Logo">
-            @else
-                <img src="https://via.placeholder.com/55x55/1e3a8a/ffcc00?text=CC" alt="Logo">
-            @endif
+        <!-- Brand Text - Mobile Only -->
+        <a class="navbar-brand d-lg-none" href="{{ route('home') }}">
             {{ setting('site_name', 'Cambridge College') }}
         </a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav ms-auto align-items-center">
+            <!-- Left Side - Navigation Links -->
+            <ul class="navbar-nav me-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
                         <i class="fas fa-home me-1"></i> Home
@@ -118,6 +117,29 @@
                     </div>
                 </li>
 
+                <!-- Auth Links - Mobile Only -->
+                @auth('student')
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link btn-register" href="{{ route('student.dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                        </a>
+                    </li>
+                @else
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link" href="{{ route('student.login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link btn-register" href="{{ route('student.register') }}">
+                            <i class="fas fa-user-plus me-1"></i> Register Now
+                        </a>
+                    </li>
+                @endauth
+            </ul>>
+
+            <!-- Right Side - Auth Buttons (Desktop Only) -->
+            <ul class="navbar-nav ms-auto align-items-center d-none d-lg-flex">
                 @auth('student')
                     <li class="nav-item">
                         <a class="nav-link btn-register" href="{{ route('student.dashboard') }}">
@@ -126,7 +148,7 @@
                     </li>
                 @else
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('student.login') }}">
+                        <a class="nav-link" href="{{ route('student.login') }}" style="margin-right: 10px;">
                             <i class="fas fa-sign-in-alt me-1"></i> Login
                         </a>
                     </li>
@@ -137,26 +159,6 @@
                     </li>
                 @endauth
             </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- Secondary Navbar for Desktop Only - Course Levels -->
-<nav class="navbar navbar-expand-lg navbar-dark courses-navbar d-none d-lg-block" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 10px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-    <div class="container">
-        <div class="navbar-nav mx-auto">
-            @php
-                $levelsMenu2 = \App\Models\CourseLevel::orderBy('sort_order')->get();
-            @endphp
-            @foreach($levelsMenu2 as $level)
-                <a class="nav-link text-white {{ request()->has('level_id') && request()->get('level_id') == $level->id ? 'fw-bold' : '' }}"
-                   href="{{ route('courses.index', ['level_id' => $level->id]) }}"
-                   style="padding: 8px 20px; transition: all 0.3s; border-radius: 8px; font-weight: 600;"
-                   onmouseover="this.style.background='rgba(255,255,255,0.2)'"
-                   onmouseout="this.style.background='transparent'">
-                    <i class="fas fa-certificate me-1"></i> {{ $level->name }}
-                </a>
-            @endforeach
         </div>
     </div>
 </nav>
@@ -172,10 +174,14 @@
         <div class="row">
             <!-- About Section -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <h5>
-                    <i class="fas fa-graduation-cap me-2"></i>
-                    {{ setting('site_name', 'Cambridge College') }}
-                </h5>
+                <div class="footer-logo mb-3">
+                    @if(setting('site_logo'))
+                        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name') }} Logo" class="footer-logo-img">
+                    @else
+                        <img src="https://via.placeholder.com/80x80/1e3a8a/ffcc00?text=CC" alt="Logo" class="footer-logo-img">
+                    @endif
+                </div>
+                <h5>{{ setting('site_name', 'Cambridge College') }}</h5>
                 <p>{{ setting('site_description', 'We provide the best training courses and educational programs in Libya. Join us and develop your skills with the best instructors.') }}</p>
 
                 <div class="social-links">

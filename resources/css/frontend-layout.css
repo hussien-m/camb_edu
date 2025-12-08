@@ -6,11 +6,43 @@ body {
 }
 
 /* ============================================
+   LOGO HEADER - Centered Above Navbar
+============================================ */
+.logo-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-bottom: 2px solid #ffcc00;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.logo-header .logo-link {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.logo-header .logo-link:hover {
+    transform: translateY(-5px);
+}
+
+.logo-header .main-logo {
+    max-height: 60px;
+    max-width: 200px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.08));
+    transition: all 0.3s ease;
+}
+
+.logo-header .logo-link:hover .main-logo {
+    filter: drop-shadow(0 6px 16px rgba(0,0,0,0.15));
+}
+
+/* ============================================
    MAIN NAVBAR - Compact Professional Design
 ============================================ */
 .navbar {
     background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%);
-    padding: 8px 0;
+    padding: 10px 0;
     box-shadow: 0 2px 15px rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
@@ -31,25 +63,24 @@ body {
     align-items: center;
     gap: 8px;
     transition: transform 0.3s;
+    padding: 0;
 }
 
 .navbar-brand:hover {
-    transform: scale(1.02);
+    transform: scale(1.05);
 }
 
-.navbar-brand img {
-    height: 40px;
-    width: 40px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #ffcc00;
-    box-shadow: 0 2px 8px rgba(255,204,0,0.2);
+.navbar-brand .navbar-logo {
+    height: 70px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px rgba(255,204,0,0.3));
     transition: all 0.3s;
 }
 
-.navbar-brand:hover img {
-    transform: rotate(3deg);
-    box-shadow: 0 4px 12px rgba(255,204,0,0.4);
+.navbar-brand:hover .navbar-logo {
+    filter: drop-shadow(0 4px 12px rgba(255,204,0,0.5));
 }
 
 /* Navbar Links - Compact */
@@ -387,6 +418,26 @@ footer::before {
     right: 0;
     height: 5px;
     background: linear-gradient(90deg, #ffcc00 0%, #e6b800 100%);
+}
+
+/* Footer Logo */
+footer .footer-logo {
+    margin-bottom: 15px;
+}
+
+footer .footer-logo-img {
+    max-height: 50px;
+    max-width: 130px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(255,204,0,0.25));
+    transition: all 0.3s ease;
+}
+
+footer .footer-logo-img:hover {
+    filter: drop-shadow(0 5px 12px rgba(255,204,0,0.5));
+    transform: scale(1.05);
 }
 
 footer h5 {
