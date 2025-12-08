@@ -180,44 +180,44 @@
 <footer id="contact">
     <div class="container">
         <div class="row">
-            <!-- About Section -->
+            <!-- Logo & Social Section -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <div class="footer-logo mb-3">
-                    @if(setting('site_logo'))
-                        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name') }} Logo" class="footer-logo-img">
-                    @else
-                        <img src="https://via.placeholder.com/80x80/1e3a8a/ffcc00?text=CC" alt="Logo" class="footer-logo-img">
-                    @endif
-                </div>
-                <h5>{{ setting('site_name', 'Cambridge College') }}</h5>
-                <p>{{ setting('site_description', 'We provide the best training courses and educational programs in Libya. Join us and develop your skills with the best instructors.') }}</p>
+                <div class="footer-logo-section">
+                    <div class="footer-logo mb-4">
+                        @if(setting('site_logo'))
+                            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name') }} Logo" class="footer-logo-img">
+                        @else
+                            <img src="https://via.placeholder.com/150x150/ffffff/1e3a8a?text=CC" alt="Logo" class="footer-logo-img">
+                        @endif
+                    </div>
 
-                <div class="social-links">
-                    @if(setting('social_facebook'))
-                        <a href="{{ setting('social_facebook') }}" target="_blank" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                    @endif
-                    @if(setting('social_instagram'))
-                        <a href="{{ setting('social_instagram') }}" target="_blank" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    @endif
-                    @if(setting('social_twitter'))
-                        <a href="{{ setting('social_twitter') }}" target="_blank" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    @endif
-                    @if(setting('social_linkedin'))
-                        <a href="{{ setting('social_linkedin') }}" target="_blank" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                    @endif
-                    @if(setting('social_youtube'))
-                        <a href="{{ setting('social_youtube') }}" target="_blank" title="YouTube">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    @endif
+                    <div class="social-links">
+                        @if(setting('social_facebook'))
+                            <a href="{{ setting('social_facebook') }}" target="_blank" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        @endif
+                        @if(setting('social_instagram'))
+                            <a href="{{ setting('social_instagram') }}" target="_blank" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        @endif
+                        @if(setting('social_twitter'))
+                            <a href="{{ setting('social_twitter') }}" target="_blank" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        @endif
+                        @if(setting('social_linkedin'))
+                            <a href="{{ setting('social_linkedin') }}" target="_blank" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        @endif
+                        @if(setting('social_youtube'))
+                            <a href="{{ setting('social_youtube') }}" target="_blank" title="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
 
