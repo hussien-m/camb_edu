@@ -51,28 +51,50 @@ class ForgotPasswordController extends Controller
                 'created_at' => now(),
             ]);
 
-            // Send email via SMTP directly (most reliable for actual delivery)
+            // Try to send email with fallback
             $emailSent = false;
 
-            // Set reasonable timeout
             @ini_set('default_socket_timeout', 10);
             @set_time_limit(20);
 
             try {
-                // Use Laravel notification (SMTP) - ensures email actually sends
+                // Try SMTP first
                 $student->notify(new StudentResetPasswordNotification($token));
                 $emailSent = true;
                 \Log::info('Password reset email sent via SMTP to: ' . $student->email);
             } catch (\Exception $mailError) {
-                \Log::error('Failed to send password reset email: ' . $mailError->getMessage());
-                $emailSent = false;
+                \Log::warning('SMTP failed, trying alternative method: ' . $mailError->getMessage());
+
+                // Fallback to alternative mail
+                try {
+                    $resetUrl = route('student.password.reset', [
+                        'token' => $token,
+                        'email' => $student->email,
+                    ]);
+
+                    $emailHtml = $this->getPasswordResetEmailHtml($student, $resetUrl);
+
+                    $emailSent = AlternativeMailService::sendWithFallback(
+                        $student->email,
+                        'Reset Your Password - ' . config('app.name'),
+                        $emailHtml,
+                        config('mail.from.address'),
+                        config('mail.from.name')
+                    );
+
+                    if ($emailSent) {
+                        \Log::info('Password reset email sent via alternative method');
+                    }
+                } catch (\Exception $altError) {
+                    \Log::error('All email methods failed: ' . $altError->getMessage());
+                }
             }
 
             if (!$emailSent) {
-                // Delete the token if all email methods failed
+                // Delete the token if email failed
                 DB::table('student_password_reset_tokens')->where('email', $request->email)->delete();
 
-                return back()->withErrors(['email' => 'Failed to send email after trying all methods. Please contact support or try again later.']);
+                return back()->withErrors(['email' => 'Failed to send email. Please try again or contact support.']);
             }
 
             return back()->with('success', 'We have emailed your password reset link! Please check your inbox.');

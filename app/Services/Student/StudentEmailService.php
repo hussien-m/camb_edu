@@ -21,18 +21,33 @@ class StudentEmailService
     {
         $verificationUrl = $this->generateVerificationUrl($student);
 
-        // Use SMTP only for reliable delivery
         @ini_set('default_socket_timeout', 10);
         @set_time_limit(20);
 
         try {
+            // Try SMTP first
             Mail::to($student->email)->send(
                 new StudentVerificationMail($student, $verificationUrl)
             );
             Log::info('Verification email sent via SMTP to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::error('Failed to send verification email: ' . $e->getMessage());
-            throw $e;
+            Log::warning('SMTP failed, trying alternative method: ' . $e->getMessage());
+
+            // Fallback to alternative mail
+            try {
+                $emailHtml = $this->getVerificationEmailHtml($student, $verificationUrl);
+                AlternativeMailService::sendWithFallback(
+                    $student->email,
+                    '✉️ Verify Your Email - ' . config('app.name'),
+                    $emailHtml,
+                    config('mail.from.address'),
+                    config('mail.from.name')
+                );
+                Log::info('Verification email sent via alternative method');
+            } catch (\Exception $altError) {
+                Log::error('All email methods failed: ' . $altError->getMessage());
+                // Don't throw - let registration continue
+            }
         }
     }
 
