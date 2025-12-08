@@ -31,24 +31,29 @@ class ForgotPasswordController extends Controller
             'email.exists' => 'We could not find an account with that email address.',
         ]);
 
-        $student = Student::where('email', $request->email)->first();
+        try {
+            $student = Student::where('email', $request->email)->first();
 
-        // Delete any existing token for this email
-        DB::table('student_password_reset_tokens')->where('email', $request->email)->delete();
+            // Delete any existing token for this email
+            DB::table('student_password_reset_tokens')->where('email', $request->email)->delete();
 
-        // Create new token
-        $token = Str::random(64);
+            // Create new token
+            $token = Str::random(64);
 
-        DB::table('student_password_reset_tokens')->insert([
-            'email' => $request->email,
-            'token' => Hash::make($token),
-            'created_at' => now(),
-        ]);
+            DB::table('student_password_reset_tokens')->insert([
+                'email' => $request->email,
+                'token' => Hash::make($token),
+                'created_at' => now(),
+            ]);
 
-        // Send notification
-        $student->notify(new StudentResetPasswordNotification($token));
+            // Send notification
+            $student->notify(new StudentResetPasswordNotification($token));
 
-        return back()->with('success', 'We have emailed your password reset link! Please check your inbox.');
+            return back()->with('success', 'We have emailed your password reset link! Please check your inbox.');
+        } catch (\Exception $e) {
+            \Log::error('Password reset failed: ' . $e->getMessage());
+            return back()->withErrors(['email' => 'An error occurred. Please try again or contact support.']);
+        }
     }
 
     /**
