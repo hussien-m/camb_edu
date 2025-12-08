@@ -35,12 +35,14 @@
     <div class="container">
         <!-- Register Button - Mobile Only (Left Side) -->
         @guest('student')
-            <a class="navbar-brand d-lg-none" href="{{ route('student.register') }}" style="color: #ffcc00; font-weight: 700;">
-                <i class="fas fa-user-plus me-1"></i> Register Now
+            <a class="mobile-register-btn d-lg-none" href="{{ route('student.register') }}">
+                <i class="fas fa-user-plus"></i>
+                <span>Register</span>
             </a>
         @else
-            <a class="navbar-brand d-lg-none" href="{{ route('student.dashboard') }}" style="color: #ffcc00; font-weight: 700;">
-                <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+            <a class="mobile-register-btn d-lg-none" href="{{ route('student.dashboard') }}">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
             </a>
         @endguest
 

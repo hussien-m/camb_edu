@@ -83,6 +83,38 @@ body {
     filter: drop-shadow(0 4px 12px rgba(255,204,0,0.5));
 }
 
+/* Mobile Register Button - Beautiful Design */
+.mobile-register-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #ffcc00 0%, #ffd700 100%);
+    color: #1e3a8a !important;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 15px rgba(255,204,0,0.4);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.mobile-register-btn:hover {
+    background: linear-gradient(135deg, #ffd700 0%, #ffcc00 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,204,0,0.6);
+    border-color: rgba(255,255,255,0.3);
+}
+
+.mobile-register-btn i {
+    font-size: 1rem;
+}
+
+.mobile-register-btn span {
+    font-weight: 700;
+}
+
 /* Navbar Links - Compact */
 .navbar .nav-link {
     color: rgba(255,255,255,0.95) !important;
