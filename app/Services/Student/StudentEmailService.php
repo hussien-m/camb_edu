@@ -21,16 +21,20 @@ class StudentEmailService
     {
         $verificationUrl = $this->generateVerificationUrl($student);
 
+        // Set quick timeout
+        @ini_set('default_socket_timeout', 5);
+        @set_time_limit(15);
+
         try {
-            // Try Laravel mail first
+            // Try Laravel mail first with 5 sec timeout
             Mail::to($student->email)->send(
                 new StudentVerificationMail($student, $verificationUrl)
             );
             Log::info('Verification email sent via SMTP to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::warning('SMTP failed for verification email, using alternative method: ' . $e->getMessage());
+            Log::warning('SMTP failed, using PHP mail immediately');
 
-            // Fallback to alternative mail service
+            // Fallback to PHP mail (instant)
             $emailHtml = $this->getVerificationEmailHtml($student, $verificationUrl);
             AlternativeMailService::sendWithFallback(
                 $student->email,
@@ -47,16 +51,20 @@ class StudentEmailService
      */
     public function sendWelcomeEmail(Student $student): void
     {
+        // Set quick timeout
+        @ini_set('default_socket_timeout', 5);
+        @set_time_limit(15);
+
         try {
-            // Try Laravel mail first
+            // Try Laravel mail first with 5 sec timeout
             Mail::to($student->email)->send(
                 new StudentWelcomeMail($student)
             );
             Log::info('Welcome email sent via SMTP to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::warning('SMTP failed for welcome email, using alternative method: ' . $e->getMessage());
+            Log::warning('SMTP failed, using PHP mail immediately');
 
-            // Fallback to alternative mail service
+            // Fallback to PHP mail (instant)
             $emailHtml = $this->getWelcomeEmailHtml($student);
             AlternativeMailService::sendWithFallback(
                 $student->email,
@@ -124,7 +132,7 @@ class StudentEmailService
     private function getVerificationEmailHtml($student, $verificationUrl)
     {
         $appName = config('app.name', 'Cambridge College');
-        
+
         return <<<HTML
 <!DOCTYPE html>
 <html>
@@ -136,23 +144,23 @@ class StudentEmailService
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
         <h1 style="color: white; margin: 0; font-size: 24px;">✉️ Verify Your Email</h1>
     </div>
-    
+
     <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
         <p style="font-size: 16px; margin-bottom: 20px;">Hello <strong>{$student->first_name}</strong>!</p>
-        
+
         <p style="margin-bottom: 20px;">Thank you for registering with {$appName}! Please verify your email address to activate your account.</p>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="{$verificationUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Verify Email Address</a>
         </div>
-        
+
         <p style="margin-bottom: 10px; color: #666; font-size: 14px;">Or copy and paste this URL into your browser:</p>
         <p style="word-break: break-all; background: #f5f5f5; padding: 10px; border-radius: 5px; font-size: 12px;">{$verificationUrl}</p>
-        
+
         <p style="color: #666; font-size: 14px; margin-top: 20px;">If you did not create an account, no further action is required.</p>
-        
+
         <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
-        
+
         <p style="color: #999; font-size: 12px; text-align: center;">
             Best Regards,<br>
             <strong>{$appName} Team</strong>
@@ -170,7 +178,7 @@ HTML;
     {
         $appName = config('app.name', 'Cambridge College');
         $dashboardUrl = route('student.dashboard');
-        
+
         return <<<HTML
 <!DOCTYPE html>
 <html>
@@ -182,22 +190,22 @@ HTML;
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
         <h1 style="color: white; margin: 0; font-size: 24px;">🎉 Welcome to {$appName}!</h1>
     </div>
-    
+
     <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
         <p style="font-size: 16px; margin-bottom: 20px;">Hello <strong>{$student->first_name}</strong>!</p>
-        
+
         <p style="margin-bottom: 20px;">Your email has been verified successfully! Welcome to {$appName}.</p>
-        
+
         <p style="margin-bottom: 20px;">You can now access your dashboard and start exploring our courses.</p>
-        
+
         <div style="text-align: center; margin: 30px 0;">
             <a href="{$dashboardUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Go to Dashboard</a>
         </div>
-        
+
         <p style="color: #666; font-size: 14px; margin-top: 20px;">If you have any questions, feel free to contact our support team.</p>
-        
+
         <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
-        
+
         <p style="color: #999; font-size: 12px; text-align: center;">
             Best Regards,<br>
             <strong>{$appName} Team</strong>

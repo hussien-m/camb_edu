@@ -51,40 +51,41 @@ class ForgotPasswordController extends Controller
                 'created_at' => now(),
             ]);
 
-            // Try to send notification with fallback to alternative methods
+            // Try to send notification with fast fallback
             $emailSent = false;
-            $emailError = null;
+            $usedMethod = 'SMTP';
+
+            // Set short timeout for faster response
+            @ini_set('default_socket_timeout', 5);
+            @set_time_limit(15);
 
             try {
-                // Try Laravel notification first (SMTP)
+                // Try Laravel notification first (SMTP) with 5 second timeout
                 $student->notify(new StudentResetPasswordNotification($token));
                 $emailSent = true;
+                \Log::info('Password reset email sent via SMTP to: ' . $student->email);
             } catch (\Exception $mailError) {
-                $emailError = $mailError->getMessage();
-                \Log::warning('SMTP notification failed, trying alternative methods: ' . $emailError);
+                $usedMethod = 'Alternative';
+                \Log::warning('SMTP failed quickly, using alternative method immediately');
 
-                // Fallback: Use alternative mail service (sendmail/PHP mail)
-                try {
-                    $resetUrl = route('student.password.reset', [
-                        'token' => $token,
-                        'email' => $student->email,
-                    ]);
+                // Fallback: Use PHP mail directly (instant)
+                $resetUrl = route('student.password.reset', [
+                    'token' => $token,
+                    'email' => $student->email,
+                ]);
 
-                    $emailHtml = $this->getPasswordResetEmailHtml($student, $resetUrl);
+                $emailHtml = $this->getPasswordResetEmailHtml($student, $resetUrl);
 
-                    $emailSent = AlternativeMailService::sendWithFallback(
-                        $student->email,
-                        'Reset Your Password - ' . config('app.name'),
-                        $emailHtml,
-                        config('mail.from.address'),
-                        config('mail.from.name')
-                    );
+                $emailSent = AlternativeMailService::sendWithFallback(
+                    $student->email,
+                    'Reset Your Password - ' . config('app.name'),
+                    $emailHtml,
+                    config('mail.from.address'),
+                    config('mail.from.name')
+                );
 
-                    if ($emailSent) {
-                        \Log::info('Password reset email sent via alternative method to: ' . $student->email);
-                    }
-                } catch (\Exception $altError) {
-                    \Log::error('Alternative email method also failed: ' . $altError->getMessage());
+                if ($emailSent) {
+                    \Log::info('Password reset email sent via PHP mail to: ' . $student->email);
                 }
             }
 
