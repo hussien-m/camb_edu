@@ -21,33 +21,14 @@ class StudentEmailService
     {
         $verificationUrl = $this->generateVerificationUrl($student);
 
-        @ini_set('default_socket_timeout', 10);
-        @set_time_limit(20);
-
         try {
-            // Try SMTP first
             Mail::to($student->email)->send(
                 new StudentVerificationMail($student, $verificationUrl)
             );
-            Log::info('Verification email sent via SMTP to: ' . $student->email);
+            Log::info('Verification email sent to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::warning('SMTP failed, trying alternative method: ' . $e->getMessage());
-
-            // Fallback to alternative mail
-            try {
-                $emailHtml = $this->getVerificationEmailHtml($student, $verificationUrl);
-                AlternativeMailService::sendWithFallback(
-                    $student->email,
-                    '✉️ Verify Your Email - ' . config('app.name'),
-                    $emailHtml,
-                    config('mail.from.address'),
-                    config('mail.from.name')
-                );
-                Log::info('Verification email sent via alternative method');
-            } catch (\Exception $altError) {
-                Log::error('All email methods failed: ' . $altError->getMessage());
-                // Don't throw - let registration continue
-            }
+            Log::error('Failed to send verification email: ' . $e->getMessage());
+            // Don't throw - let registration continue
         }
     }
 
@@ -56,15 +37,11 @@ class StudentEmailService
      */
     public function sendWelcomeEmail(Student $student): void
     {
-        // Use SMTP only for reliable delivery
-        @ini_set('default_socket_timeout', 10);
-        @set_time_limit(20);
-
         try {
             Mail::to($student->email)->send(
                 new StudentWelcomeMail($student)
             );
-            Log::info('Welcome email sent via SMTP to: ' . $student->email);
+            Log::info('Welcome email sent to: ' . $student->email);
         } catch (\Exception $e) {
             Log::error('Failed to send welcome email: ' . $e->getMessage());
             // Don't throw - welcome email is not critical
