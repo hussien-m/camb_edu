@@ -34,6 +34,10 @@ class ForgotPasswordController extends Controller
         try {
             $student = Student::where('email', $request->email)->first();
 
+            if (!$student) {
+                return back()->withErrors(['email' => 'Student not found.']);
+            }
+
             // Delete any existing token for this email
             DB::table('student_password_reset_tokens')->where('email', $request->email)->delete();
 
@@ -46,13 +50,28 @@ class ForgotPasswordController extends Controller
                 'created_at' => now(),
             ]);
 
-            // Send notification
-            $student->notify(new StudentResetPasswordNotification($token));
+            // Send notification synchronously (not queued)
+            try {
+                $student->notify(new StudentResetPasswordNotification($token));
+            } catch (\Exception $mailError) {
+                \Log::error('Email sending failed: ' . $mailError->getMessage(), [
+                    'email' => $request->email,
+                    'trace' => $mailError->getTraceAsString()
+                ]);
+
+                // Delete the token if email fails
+                DB::table('student_password_reset_tokens')->where('email', $request->email)->delete();
+
+                return back()->withErrors(['email' => 'Failed to send email. Please check your email configuration or contact support.']);
+            }
 
             return back()->with('success', 'We have emailed your password reset link! Please check your inbox.');
         } catch (\Exception $e) {
-            \Log::error('Password reset failed: ' . $e->getMessage());
-            return back()->withErrors(['email' => 'An error occurred. Please try again or contact support.']);
+            \Log::error('Password reset failed: ' . $e->getMessage(), [
+                'email' => $request->email ?? 'unknown',
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(['email' => 'An error occurred: ' . $e->getMessage()]);
         }
     }
 
