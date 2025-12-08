@@ -280,70 +280,53 @@
     margin-right: auto;
 }
 
-/* Search Box - Modern Glass Design */
+/* Search Box - Modern Elegant Design */
 .search-box {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 25px;
-    padding: 40px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3),
-                0 0 0 1px rgba(255,255,255,0.5);
+    background: white;
+    backdrop-filter: none;
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.25);
     margin-top: 35px;
     animation: fadeInUp 1.2s ease;
     max-width: 1100px;
     margin-left: auto;
     margin-right: auto;
     position: relative;
-    border: 2px solid rgba(255,204,0,0.2);
-}
-
-.search-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 25px;
-    padding: 2px;
-    background: linear-gradient(135deg, rgba(255,204,0,0.3), rgba(102,126,234,0.3));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
+    border: none;
 }
 
 .search-box .form-control,
 .search-box .form-select {
-    height: 60px;
-    border: 2px solid rgba(102,126,234,0.2);
-    border-radius: 15px;
+    height: 58px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
     font-size: 1rem;
     transition: all 0.3s;
     padding: 0 20px;
-    background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(10px);
+    background: white;
+    backdrop-filter: none;
 }
 
 .search-box .form-control:focus,
 .search-box .form-select:focus {
     border-color: #667eea;
-    box-shadow: 0 0 0 0.25rem rgba(102,126,234,0.15);
+    box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.15);
     background: white;
-    transform: translateY(-2px);
+    transform: none;
 }
 
 .search-box .btn-search {
-    height: 60px;
-    background: linear-gradient(135deg, #ffcc00 0%, #ffd700 100%);
+    height: 58px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    color: #1e3a8a;
+    color: white;
     font-weight: 700;
-    border-radius: 15px;
+    border-radius: 12px;
     font-size: 1.05rem;
     transition: all 0.3s;
     padding: 0 35px;
-    box-shadow: 0 4px 15px rgba(255,204,0,0.4);
+    box-shadow: 0 6px 20px rgba(102,126,234,0.4);
     position: relative;
     overflow: hidden;
 }
@@ -356,7 +339,7 @@
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.3);
     transform: translate(-50%, -50%);
     transition: width 0.6s, height 0.6s;
 }
@@ -367,22 +350,10 @@
 }
 
 .search-box .btn-search:hover {
-    background: linear-gradient(135deg, #ffd700 0%, #ffcc00 100%);
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(255,204,0,0.5);
-}
-
-.search-box .btn-search i {
-    position: relative;
-    z-index: 1;
-}
-
-.search-box .btn-search span {
-    position: relative;
-    z-index: 1;
-}
-
-/* ============================================
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102,126,234,0.5);
+}/* ============================================
    SECTION HEADERS - Elegant
 ============================================ */
 .section-header {
@@ -866,56 +837,33 @@ section {
         font-size: 0.85rem;
     }
 
-    /* Hide some decorative circles on mobile */
+    /* Hide all decorative circles on mobile */
+    .hero-circle-1,
+    .hero-circle-2,
     .hero-circle-3,
     .hero-circle-4 {
         display: none;
-    }
-
-    .hero-circle-1 {
-        width: 150px;
-        height: 150px;
-        top: 5%;
-        left: -30px;
-        animation: floatMobile 15s ease-in-out infinite;
-    }
-
-    .hero-circle-2 {
-        width: 120px;
-        height: 120px;
-        top: auto;
-        bottom: 10%;
-        right: -30px;
-        animation: floatMobile 12s ease-in-out infinite reverse;
-    }
-
-    /* Reduced float animation for mobile */
-    @keyframes floatMobile {
-        0%, 100% {
-            transform: translateY(0) translateX(0) scale(1);
-        }
-        50% {
-            transform: translateY(-10px) translateX(5px) scale(1);
-        }
     }
 
     .search-box {
         padding: 25px 20px;
         border-radius: 18px;
         margin-top: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     .search-box .form-control,
     .search-box .form-select {
-        height: 50px;
+        height: 52px;
         font-size: 0.9rem;
         margin-bottom: 10px;
         border-radius: 12px;
         padding: 0 15px;
+        border-color: #e0e0e0;
     }
 
     .search-box .btn-search {
-        height: 50px;
+        height: 52px;
         font-size: 0.95rem;
         width: 100%;
         border-radius: 12px;
@@ -1085,52 +1033,33 @@ section {
         font-size: 0.75rem;
     }
 
-    /* Keep only one circle on small mobile */
-    .hero-circle-1 {
-        width: 100px;
-        height: 100px;
-        top: 10%;
-        left: -20px;
-        opacity: 0.5;
-        animation: floatMobileSmall 15s ease-in-out infinite;
-    }
-
-    .hero-circle-2 {
-        width: 80px;
-        height: 80px;
-        bottom: 15%;
-        right: -20px;
-        opacity: 0.5;
-        animation: floatMobileSmall 12s ease-in-out infinite reverse;
-    }
-
-    /* Minimal float animation for small mobile */
-    @keyframes floatMobileSmall {
-        0%, 100% {
-            transform: translateY(0) translateX(0);
-        }
-        50% {
-            transform: translateY(-5px) translateX(3px);
-        }
+    /* Hide all circles on small mobile */
+    .hero-circle-1,
+    .hero-circle-2,
+    .hero-circle-3,
+    .hero-circle-4 {
+        display: none !important;
     }
 
     .search-box {
         padding: 20px 15px;
         margin-top: 20px;
         border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
 
     .search-box .form-control,
     .search-box .form-select {
-        height: 48px;
+        height: 50px;
         font-size: 0.85rem;
         padding: 0 12px;
         border-radius: 10px;
         margin-bottom: 8px;
+        border-color: #e0e0e0;
     }
 
     .search-box .btn-search {
-        height: 48px;
+        height: 50px;
         font-size: 0.9rem;
         padding: 0 20px;
         border-radius: 10px;
