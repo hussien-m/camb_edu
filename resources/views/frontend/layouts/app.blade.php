@@ -33,10 +33,16 @@
 <!-- Main Navbar - Professional Design -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <!-- Brand Text - Mobile Only -->
-        <a class="navbar-brand d-lg-none" href="{{ route('home') }}">
-            {{ setting('site_name', 'Cambridge College') }}
-        </a>
+        <!-- Register Button - Mobile Only (Left Side) -->
+        @guest('student')
+            <a class="navbar-brand d-lg-none" href="{{ route('student.register') }}" style="color: #ffcc00; font-weight: 700;">
+                <i class="fas fa-user-plus me-1"></i> Register Now
+            </a>
+        @else
+            <a class="navbar-brand d-lg-none" href="{{ route('student.dashboard') }}" style="color: #ffcc00; font-weight: 700;">
+                <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+            </a>
+        @endguest
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
