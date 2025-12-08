@@ -845,6 +845,13 @@ section {
         display: none;
     }
 
+    /* Hide pseudo-element circles */
+    .hero::after,
+    .hero-content::before,
+    .hero-content::after {
+        display: none !important;
+    }
+
     .search-box {
         padding: 25px 20px;
         border-radius: 18px;
@@ -1038,6 +1045,13 @@ section {
     .hero-circle-2,
     .hero-circle-3,
     .hero-circle-4 {
+        display: none !important;
+    }
+
+    /* Hide pseudo-element circles */
+    .hero::after,
+    .hero-content::before,
+    .hero-content::after {
         display: none !important;
     }
 
