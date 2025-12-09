@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\Mail\AlternativeMailService;
+use App\Services\Mail\ProfessionalMailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Artisan;
@@ -83,105 +83,36 @@ class SettingsController extends Controller
         ]);
 
         try {
-            // Log mail configuration for debugging
-            Log::info('Mail Config:', [
-                'mailer' => config('mail.default'),
-                'host' => config('mail.mailers.smtp.host'),
-                'port' => config('mail.mailers.smtp.port'),
-                'encryption' => config('mail.mailers.smtp.encryption'),
-                'username' => config('mail.mailers.smtp.username'),
-                'timeout' => config('mail.mailers.smtp.timeout'),
-                'from' => config('mail.from'),
-                'php_version' => PHP_VERSION,
-                'openssl_available' => extension_loaded('openssl'),
-                'allow_url_fopen' => ini_get('allow_url_fopen'),
-                'default_socket_timeout' => ini_get('default_socket_timeout'),
-            ]);
+            Log::info('Sending test email via Professional Mail Service');
 
-            // Set optimized timeout for faster response
-            @set_time_limit(30);
-            @ini_set('default_socket_timeout', 10);
-            @ini_set('max_execution_time', 30);
-
-            // Try SMTP first (single attempt for speed)
-            $smtpSuccess = false;
-            $lastException = null;
-
-            try {
-                Mail::send([], [], function (Message $message) use ($validated) {
-                    $message
-                        ->to($validated['test_email'])
-                        ->subject('📧 Test Email from Cambridge College')
-                        ->html($this->getTestEmailHtml($validated['test_message']));
-                });
-
-                $smtpSuccess = true;
-            } catch (\Exception $e) {
-                $lastException = $e;
-                Log::warning("SMTP send failed, trying alternative method", [
-                    'error' => $e->getMessage()
-                ]);
-            }
-
-            // If SMTP failed, try alternative methods (quickly)
-            if (!$smtpSuccess && isset($lastException)) {
-                Log::info('SMTP failed, trying alternative mail methods...');
-
-                // Set shorter timeout for alternative methods
-                @ini_set('default_socket_timeout', 5);
-                @set_time_limit(10);
-
-                // Try using alternative mail service (sendmail or PHP mail)
-                $alternativeSuccess = AlternativeMailService::sendWithFallback(
-                    $validated['test_email'],
-                    '📧 Test Email from Cambridge College',
-                    $this->getTestEmailHtml($validated['test_message']),
-                    config('mail.from.address'),
-                    config('mail.from.name')
-                );
-
-                if ($alternativeSuccess) {
-                    Log::info('Email sent successfully using alternative method');
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'تم إرسال البريد بنجاح باستخدام طريقة بديلة (sendmail/PHP mail). فشل الاتصال بـ SMTP لكن البريد تم تسليمه.',
-                    ]);
-                } else {
-                    // All methods failed
-                    $errorMsg = $lastException->getMessage();
-
-                    // Add helpful suggestions based on error type
-                    if (strpos($errorMsg, 'Connection timed out') !== false) {
-                        $errorMsg .= "\n\n💡 الحلول المقترحة:\n";
-                        $errorMsg .= "- المنفذ " . config('mail.mailers.smtp.port') . " محظور من قبل Firewall\n";
-                        $errorMsg .= "- جرب استخدام المنفذ 465 مع SSL\n";
-                        $errorMsg .= "- تحقق من صحة عنوان SMTP: " . config('mail.mailers.smtp.host') . "\n";
-                        $errorMsg .= "- اتصل بمزود الاستضافة لفتح الاتصالات الخارجية\n";
-                        $errorMsg .= "- استخدم SMTP service مثل SendGrid أو Mailgun\n";
-                        $errorMsg .= "- استخدم SMTP الخاص بالاستضافة";
-                    } elseif (strpos($errorMsg, 'Could not authenticate') !== false) {
-                        $errorMsg .= "\n\n💡 الحلول المقترحة:\n";
-                        $errorMsg .= "- تحقق من صحة اسم المستخدم وكلمة المرور\n";
-                        $errorMsg .= "- لـ Office365، استخدم App Password إذا كان لديك تفعيل المصادقة الثنائية\n";
-                        $errorMsg .= "- تحقق من أن الحساب يسمح بالوصول من التطبيقات الخارجية";
-                    }
-
-                    throw new \Exception($errorMsg);
-                }
-            }
+            // Use the new professional mail service
+            ProfessionalMailService::send(
+                $validated['test_email'],
+                '📧 Test Email from ' . config('app.name'),
+                $this->getTestEmailHtml($validated['test_message']),
+                config('mail.from.address'),
+                config('mail.from.name')
+            );
 
             Log::info('Test email sent successfully to: ' . $validated['test_email']);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Test email sent successfully to ' . $validated['test_email'],
+                'message' => '✅ Test email sent successfully to ' . $validated['test_email'] . '! Check your inbox (and spam folder).',
             ]);
         } catch (\Exception $e) {
             Log::error('Test email failed: ' . $e->getMessage());
 
+            $errorMsg = $e->getMessage();
+
+            // Add helpful suggestions
+            if (strpos($errorMsg, 'Connection') !== false || strpos($errorMsg, 'timeout') !== false) {
+                $errorMsg .= "\n\n💡 Try using SendGrid or Mailgun API instead of SMTP for better delivery.";
+            }
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send email: ' . $e->getMessage(),
+                'message' => 'Failed to send email: ' . $errorMsg,
             ], 400);
         }
     }
