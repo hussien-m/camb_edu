@@ -5,7 +5,7 @@ namespace App\Services\Student;
 use App\Mail\StudentVerificationMail;
 use App\Mail\StudentWelcomeMail;
 use App\Models\Student;
-use App\Services\Mail\AlternativeMailService;
+use App\Services\Mail\ProfessionalMailService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -22,13 +22,20 @@ class StudentEmailService
         $verificationUrl = $this->generateVerificationUrl($student);
 
         try {
-            Mail::to($student->email)->send(
-                new StudentVerificationMail($student, $verificationUrl)
+            // Queue email for background sending (instant response)
+            $emailHtml = $this->getVerificationEmailHtml($student, $verificationUrl);
+
+            ProfessionalMailService::queue(
+                $student->email,
+                '✉️ Verify Your Email - ' . config('app.name'),
+                $emailHtml,
+                config('mail.from.address'),
+                config('mail.from.name')
             );
-            Log::info('Verification email sent to: ' . $student->email);
+
+            Log::info('Verification email queued for: ' . $student->email);
         } catch (\Exception $e) {
-            Log::error('Failed to send verification email: ' . $e->getMessage());
-            // Don't throw - let registration continue
+            Log::error('Failed to queue verification email: ' . $e->getMessage());
         }
     }
 
@@ -38,13 +45,20 @@ class StudentEmailService
     public function sendWelcomeEmail(Student $student): void
     {
         try {
-            Mail::to($student->email)->send(
-                new StudentWelcomeMail($student)
+            // Queue welcome email
+            $emailHtml = $this->getWelcomeEmailHtml($student);
+
+            ProfessionalMailService::queue(
+                $student->email,
+                '🎉 Welcome to ' . config('app.name'),
+                $emailHtml,
+                config('mail.from.address'),
+                config('mail.from.name')
             );
-            Log::info('Welcome email sent to: ' . $student->email);
+
+            Log::info('Welcome email queued for: ' . $student->email);
         } catch (\Exception $e) {
-            Log::error('Failed to send welcome email: ' . $e->getMessage());
-            // Don't throw - welcome email is not critical
+            Log::error('Failed to queue welcome email: ' . $e->getMessage());
         }
     }
 

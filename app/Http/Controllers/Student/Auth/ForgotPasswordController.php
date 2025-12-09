@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Student\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Notifications\StudentResetPasswordNotification;
-use App\Services\Mail\AlternativeMailService;
+use App\Services\Mail\ProfessionalMailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -51,14 +51,28 @@ class ForgotPasswordController extends Controller
                 'created_at' => now(),
             ]);
 
-            // Send email notification
+            // Queue password reset email (instant response)
             try {
-                $student->notify(new StudentResetPasswordNotification($token));
-                \Log::info('Password reset email sent to: ' . $student->email);
-            } catch (\Exception $mailError) {
-                \Log::error('Failed to send password reset email: ' . $mailError->getMessage());
+                $resetUrl = route('student.password.reset', [
+                    'token' => $token,
+                    'email' => $student->email,
+                ]);
 
-                // Delete the token if email failed
+                $emailHtml = $this->getPasswordResetEmailHtml($student, $resetUrl);
+
+                ProfessionalMailService::queue(
+                    $student->email,
+                    '🔐 Reset Your Password - ' . config('app.name'),
+                    $emailHtml,
+                    config('mail.from.address'),
+                    config('mail.from.name')
+                );
+
+                \Log::info('Password reset email queued for: ' . $student->email);
+            } catch (\Exception $mailError) {
+                \Log::error('Failed to queue password reset email: ' . $mailError->getMessage());
+
+                // Delete token if queueing failed
                 DB::table('student_password_reset_tokens')->where('email', $request->email)->delete();
 
                 return back()->withErrors(['email' => 'Failed to send email. Please try again later.']);
