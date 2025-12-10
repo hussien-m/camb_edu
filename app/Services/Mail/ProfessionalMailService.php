@@ -20,23 +20,41 @@ class ProfessionalMailService
         $fromName = $fromName ?? config('mail.from.name');
 
         // Try SendGrid API first if configured
-        if (config('services.sendgrid.api_key')) {
+        $apiKey = config('services.sendgrid.api_key');
+
+        Log::info("Checking SendGrid API Key", [
+            'api_key_exists' => !empty($apiKey),
+            'api_key_length' => $apiKey ? strlen($apiKey) : 0,
+            'api_key_prefix' => $apiKey ? substr($apiKey, 0, 10) : 'null'
+        ]);
+
+        if (!empty($apiKey)) {
             try {
-                Log::info("Attempting to send email via SendGrid API", [
+                Log::info("✅ Attempting to send email via SendGrid API", [
                     'to' => $to,
-                    'subject' => $subject
+                    'subject' => $subject,
+                    'from' => $from
                 ]);
 
                 $sendgrid = new SendGridApiService();
                 $result = $sendgrid->send($to, $subject, $html, $from, $fromName);
 
-                Log::info("Email sent successfully via SendGrid API to: {$to}");
+                Log::info("✅ Email sent successfully via SendGrid API to: {$to}", [
+                    'result' => $result
+                ]);
                 return true;
 
             } catch (\Exception $e) {
-                Log::warning("SendGrid API failed, falling back to SMTP: " . $e->getMessage());
+                Log::error("❌ SendGrid API failed, falling back to SMTP", [
+                    'error' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]);
                 // Fall through to SMTP
             }
+        } else {
+            Log::warning("⚠️ SendGrid API Key not configured, using SMTP fallback");
         }
 
         // Fallback to SMTP
