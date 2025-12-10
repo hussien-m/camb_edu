@@ -73,7 +73,7 @@ class SettingsController extends Controller
     }
 
     /**
-     * Send test email
+     * Send test email with detailed error reporting
      */
     public function testEmail(Request $request)
     {
@@ -83,9 +83,18 @@ class SettingsController extends Controller
         ]);
 
         try {
-            Log::info('Sending test email via Professional Mail Service');
+            Log::info('=== Test Email Started ===', [
+                'to' => $validated['test_email'],
+                'config' => [
+                    'mailer' => config('mail.default'),
+                    'host' => config('mail.mailers.smtp.host'),
+                    'port' => config('mail.mailers.smtp.port'),
+                    'encryption' => config('mail.mailers.smtp.encryption'),
+                    'from' => config('mail.from.address'),
+                ]
+            ]);
 
-            // Use the new professional mail service
+            // Send email
             ProfessionalMailService::send(
                 $validated['test_email'],
                 '📧 Test Email from ' . config('app.name'),
@@ -94,42 +103,121 @@ class SettingsController extends Controller
                 config('mail.from.name')
             );
 
-            Log::info('Test email sent successfully to: ' . $validated['test_email']);
+            Log::info('=== Test Email Sent Successfully ===', [
+                'to' => $validated['test_email'],
+                'timestamp' => now()->toDateTimeString()
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => '✅ Test email sent successfully to ' . $validated['test_email'] . '! Check your inbox (and spam folder).',
+                'details' => [
+                    'sent_at' => now()->toDateTimeString(),
+                    'to' => $validated['test_email'],
+                    'from' => config('mail.from.address'),
+                ]
             ]);
-        } catch (\Exception $e) {
-            // Log full error details
-            Log::error('Test email failed: ' . $e->getMessage(), [
+
+        } catch (\Symfony\Component\Mailer\Exception\TransportException $e) {
+            // SMTP Transport errors
+            Log::error('=== SMTP Transport Error ===', [
+                'error' => $e->getMessage(),
                 'exception' => get_class($e),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'file' => $e->getFile() . ':' . $e->getLine(),
+                'config' => [
+                    'host' => config('mail.mailers.smtp.host'),
+                    'port' => config('mail.mailers.smtp.port'),
+                    'encryption' => config('mail.mailers.smtp.encryption'),
+                ]
             ]);
-
-            // Get detailed error message
-            $errorMsg = $e->getMessage();
-            $errorDetails = '';
-
-            // Check for specific error types
-            if ($e instanceof \Swift_TransportException || strpos(get_class($e), 'Transport') !== false) {
-                $errorDetails = "\n\n🔧 SMTP Connection Error";
-            } elseif (strpos($errorMsg, 'authentication') !== false || strpos($errorMsg, 'auth') !== false) {
-                $errorDetails = "\n\n🔐 Authentication Failed - Check username/password";
-            } elseif (strpos($errorMsg, 'timeout') !== false) {
-                $errorDetails = "\n\n⏱️ Connection Timeout - Server not responding";
-            } elseif (strpos($errorMsg, 'Connection refused') !== false) {
-                $errorDetails = "\n\n❌ Connection Refused - Port may be blocked";
-            }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send email: ' . $errorMsg . $errorDetails,
-                'error_type' => get_class($e),
-                'error_file' => $e->getFile() . ':' . $e->getLine(),
-            ], 400);
+                'message' => '❌ SMTP Connection Error',
+                'error' => $e->getMessage(),
+                'details' => [
+                    'type' => 'SMTP Transport Exception',
+                    'server' => config('mail.mailers.smtp.host') . ':' . config('mail.mailers.smtp.port'),
+                    'encryption' => config('mail.mailers.smtp.encryption'),
+                    'suggestion' => 'Check SMTP server address, port, and firewall settings'
+                ]
+            ], 500);
+
+        } catch (\Swift_TransportException $e) {
+            // Swift Mailer transport errors (legacy)
+            Log::error('=== Swift Transport Error ===', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => '❌ Email Transport Error',
+                'error' => $e->getMessage(),
+                'details' => [
+                    'type' => 'Swift Transport Exception',
+                    'suggestion' => 'SMTP connection failed - check server settings'
+                ]
+            ], 500);
+
+        } catch (\Exception $e) {
+            // Generic errors
+            $errorMsg = $e->getMessage();
+            $errorType = 'Unknown Error';
+            $suggestion = 'Check email configuration and logs';
+
+            // Analyze error message
+            if (stripos($errorMsg, 'authentication') !== false || stripos($errorMsg, 'auth') !== false) {
+                $errorType = 'Authentication Failed';
+                $suggestion = 'Username or password is incorrect';
+            } elseif (stripos($errorMsg, 'timeout') !== false) {
+                $errorType = 'Connection Timeout';
+                $suggestion = 'Server is not responding - check host and port';
+            } elseif (stripos($errorMsg, 'connection') !== false && stripos($errorMsg, 'refused') !== false) {
+                $errorType = 'Connection Refused';
+                $suggestion = 'Port may be blocked by firewall';
+            } elseif (stripos($errorMsg, 'ssl') !== false || stripos($errorMsg, 'tls') !== false) {
+                $errorType = 'SSL/TLS Error';
+                $suggestion = 'Check encryption settings (TLS/SSL)';
+            } elseif (stripos($errorMsg, '535') !== false) {
+                $errorType = 'Authentication Error (535)';
+                $suggestion = 'Invalid username or password';
+            } elseif (stripos($errorMsg, '550') !== false) {
+                $errorType = 'Sender Verification Failed (550)';
+                $suggestion = 'From address must be verified on SMTP server';
+            }
+
+            Log::error('=== Email Test Failed ===', [
+                'error' => $errorMsg,
+                'error_type' => $errorType,
+                'exception_class' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'config' => [
+                    'host' => config('mail.mailers.smtp.host'),
+                    'port' => config('mail.mailers.smtp.port'),
+                    'username' => config('mail.mailers.smtp.username'),
+                ]
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => '❌ ' . $errorType,
+                'error' => $errorMsg,
+                'details' => [
+                    'type' => $errorType,
+                    'exception' => get_class($e),
+                    'location' => basename($e->getFile()) . ':' . $e->getLine(),
+                    'suggestion' => $suggestion,
+                    'config' => [
+                        'Host' => config('mail.mailers.smtp.host'),
+                        'Port' => config('mail.mailers.smtp.port'),
+                        'Encryption' => config('mail.mailers.smtp.encryption'),
+                        'Username' => config('mail.mailers.smtp.username'),
+                        'From' => config('mail.from.address'),
+                    ]
+                ]
+            ], 500);
         }
     }
 
