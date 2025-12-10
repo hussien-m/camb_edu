@@ -4,20 +4,42 @@ namespace App\Services\Mail;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Services\Mail\SendGridApiService;
 
 /**
- * Simple Email Service using SMTP only
+ * Email Service with SendGrid API fallback
  */
 class ProfessionalMailService
 {
     /**
-     * Send email via SMTP
+     * Send email via SendGrid API or SMTP fallback
      */
     public static function send($to, $subject, $html, $from = null, $fromName = null)
     {
         $from = $from ?? config('mail.from.address');
         $fromName = $fromName ?? config('mail.from.name');
 
+        // Try SendGrid API first if configured
+        if (config('services.sendgrid.api_key')) {
+            try {
+                Log::info("Attempting to send email via SendGrid API", [
+                    'to' => $to,
+                    'subject' => $subject
+                ]);
+
+                $sendgrid = new SendGridApiService();
+                $result = $sendgrid->send($to, $subject, $html, $from, $fromName);
+
+                Log::info("Email sent successfully via SendGrid API to: {$to}");
+                return true;
+
+            } catch (\Exception $e) {
+                Log::warning("SendGrid API failed, falling back to SMTP: " . $e->getMessage());
+                // Fall through to SMTP
+            }
+        }
+
+        // Fallback to SMTP
         Log::info("Sending email via SMTP", [
             'to' => $to,
             'subject' => $subject
