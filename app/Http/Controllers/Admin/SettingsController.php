@@ -101,18 +101,34 @@ class SettingsController extends Controller
                 'message' => '✅ Test email sent successfully to ' . $validated['test_email'] . '! Check your inbox (and spam folder).',
             ]);
         } catch (\Exception $e) {
-            Log::error('Test email failed: ' . $e->getMessage());
+            // Log full error details
+            Log::error('Test email failed: ' . $e->getMessage(), [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
+            // Get detailed error message
             $errorMsg = $e->getMessage();
+            $errorDetails = '';
 
-            // Add helpful suggestions
-            if (strpos($errorMsg, 'Connection') !== false || strpos($errorMsg, 'timeout') !== false) {
-                $errorMsg .= "\n\n💡 Try using SendGrid or Mailgun API instead of SMTP for better delivery.";
+            // Check for specific error types
+            if ($e instanceof \Swift_TransportException || strpos(get_class($e), 'Transport') !== false) {
+                $errorDetails = "\n\n🔧 SMTP Connection Error";
+            } elseif (strpos($errorMsg, 'authentication') !== false || strpos($errorMsg, 'auth') !== false) {
+                $errorDetails = "\n\n🔐 Authentication Failed - Check username/password";
+            } elseif (strpos($errorMsg, 'timeout') !== false) {
+                $errorDetails = "\n\n⏱️ Connection Timeout - Server not responding";
+            } elseif (strpos($errorMsg, 'Connection refused') !== false) {
+                $errorDetails = "\n\n❌ Connection Refused - Port may be blocked";
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send email: ' . $errorMsg,
+                'message' => 'Failed to send email: ' . $errorMsg . $errorDetails,
+                'error_type' => get_class($e),
+                'error_file' => $e->getFile() . ':' . $e->getLine(),
             ], 400);
         }
     }
