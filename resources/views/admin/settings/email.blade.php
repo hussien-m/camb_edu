@@ -265,7 +265,7 @@ $(document).ready(function() {
         $.ajax({
             url: '{{ route("admin.settings.test-email") }}',
             method: 'POST',
-            timeout: 15000, // 15 seconds timeout
+            timeout: 60000, // 60 seconds timeout
             data: {
                 _token: '{{ csrf_token() }}',
                 test_email: $('input[name="test_email"]').val(),
@@ -275,30 +275,57 @@ $(document).ready(function() {
                 btn.html(originalText).prop('disabled', false);
                 if(response.success) {
                     $('#testEmailModal').modal('hide');
-                    // Show success message
+
+                    // Show detailed success message
+                    var successMsg = response.message;
+                    if(response.details) {
+                        successMsg += '\n\nDetails:\n' +
+                            'Sent at: ' + response.details.sent_at + '\n' +
+                            'To: ' + response.details.to + '\n' +
+                            'From: ' + response.details.from;
+                    }
+
                     if(typeof toastr !== 'undefined') {
-                        toastr.success(response.message);
+                        toastr.success(successMsg);
                     } else {
-                        alert('✅ ' + response.message);
+                        alert('✅ ' + successMsg);
                     }
                 } else {
-                    if(typeof toastr !== 'undefined') {
-                        toastr.error(response.message);
-                    } else {
-                        alert('❌ ' + response.message);
-                    }
+                    showDetailedError(response);
                 }
             },
             error: function(xhr, status, error) {
                 btn.html(originalText).prop('disabled', false);
-                var message = 'حدث خطأ أثناء الإرسال';
-                
+
                 if (status === 'timeout') {
-                    message = 'انتهت مهلة الاتصال. قد تكون الرسالة قيد الإرسال في الخلفية. تحقق من صندوق الوارد بعد قليل.';
-                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                    message = xhr.responseJSON.message;
+                    var timeoutMsg = '⏱️ Connection Timeout\n\n' +
+                        'The email server is taking too long to respond.\n\n' +
+                        'Possible causes:\n' +
+                        '• SMTP server is slow or unresponsive\n' +
+                        '• Port may be blocked by firewall\n' +
+                        '• Server is under heavy load\n\n' +
+                        'Try:\n' +
+                        '1. Check SMTP settings\n' +
+                        '2. Try a different port (587, 465, or 25)\n' +
+                        '3. Contact your hosting provider';
+
+                    if(typeof toastr !== 'undefined') {
+                        toastr.error(timeoutMsg, 'Connection Timeout', {timeOut: 0, extendedTimeOut: 0, closeButton: true});
+                    } else {
+                        alert('❌ ' + timeoutMsg);
+                    }
+                } else if (xhr.responseJSON) {
+                    showDetailedError(xhr.responseJSON);
+                } else {
+                    var genericMsg = 'An error occurred while sending the email.\n\nError: ' + error;
+                    if(typeof toastr !== 'undefined') {
+                        toastr.error(genericMsg);
+                    } else {
+                        alert('❌ ' + genericMsg);
+                    }
                 }
-                
+
+
                 console.error('Email test error:', xhr);
                 if(typeof toastr !== 'undefined') {
                     toastr.warning(message);
@@ -308,6 +335,52 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Function to show detailed error
+    function showDetailedError(response) {
+        var errorMsg = response.message || 'Unknown error occurred';
+        var errorHtml = '<div style="text-align: left;">';
+        errorHtml += '<strong>' + errorMsg + '</strong><br><br>';
+
+        if(response.error) {
+            errorHtml += '<strong>Error:</strong><br>' + response.error + '<br><br>';
+        }
+
+        if(response.details) {
+            errorHtml += '<strong>Details:</strong><br>';
+            errorHtml += 'Type: ' + (response.details.type || 'N/A') + '<br>';
+
+            if(response.details.suggestion) {
+                errorHtml += 'Suggestion: ' + response.details.suggestion + '<br>';
+            }
+
+            if(response.details.config) {
+                errorHtml += '<br><strong>Configuration:</strong><br>';
+                for(var key in response.details.config) {
+                    errorHtml += key + ': ' + response.details.config[key] + '<br>';
+                }
+            }
+        }
+
+        errorHtml += '</div>';
+
+        if(typeof toastr !== 'undefined') {
+            toastr.error(errorHtml, 'Email Test Failed', {
+                timeOut: 0,
+                extendedTimeOut: 0,
+                closeButton: true,
+                escapeHtml: false
+            });
+        } else {
+            // Fallback to alert with plain text
+            var plainMsg = errorMsg + '\n\n';
+            if(response.error) plainMsg += 'Error: ' + response.error + '\n\n';
+            if(response.details && response.details.suggestion) {
+                plainMsg += 'Suggestion: ' + response.details.suggestion;
+            }
+            alert('❌ ' + plainMsg);
+        }
+    }
 });
 </script>
 @endpush
