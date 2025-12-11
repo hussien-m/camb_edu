@@ -71,7 +71,7 @@ class HomeController extends Controller
         ));
     }
 
-    public function search(Request $request): View
+    public function search(Request $request)
     {
         // Cache categories and levels (don't change often)
         $categories = Cache::remember('courses_page_categories', 3600, function () {
@@ -82,8 +82,10 @@ class HomeController extends Controller
             return CourseLevel::orderBy('sort_order')->get();
         });
 
-        // Build query
-        $query = Course::with(['category', 'level'])->where('status', 'active');
+        // Build query with eager loading for better performance
+        $query = Course::with(['category', 'level'])
+            ->select('id', 'title', 'slug', 'description', 'image', 'duration', 'is_featured', 'category_id', 'level_id', 'status')
+            ->where('status', 'active');
 
         // Apply filters
         $hasFilters = false;
@@ -99,24 +101,31 @@ class HomeController extends Controller
         }
 
         if ($request->filled('keyword')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->keyword . '%')
-                  ->orWhere('description', 'like', '%' . $request->keyword . '%');
+            $keyword = $request->keyword;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', '%' . $keyword . '%')
+                  ->orWhere('description', 'like', '%' . $keyword . '%');
             });
             $hasFilters = true;
         }
 
-        // Cache only if no filters (default courses list)
-        if (!$hasFilters) {
-            $cacheKey = 'courses_page_default_p' . ($request->get('page', 1));
-            $courses = Cache::remember($cacheKey, 1800, function () use ($query) {
-                return $query->paginate(12);
-            });
-        } else {
-            // Don't cache filtered results
-            $courses = $query->paginate(12);
+        // Paginate (12 per page for better UX)
+        $courses = $query->latest()->paginate(12);
+
+        // AJAX Request: Return JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('frontend.partials.course-grid', compact('courses'))->render();
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'hasMore' => $courses->hasMorePages(),
+                'currentPage' => $courses->currentPage(),
+                'total' => $courses->total()
+            ]);
         }
 
+        // Normal Request: Return view
         return view('frontend.courses', compact('courses', 'categories', 'levels'));
     }
 

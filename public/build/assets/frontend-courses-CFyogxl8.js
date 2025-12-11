@@ -1,0 +1,19 @@
+document.addEventListener("DOMContentLoaded",function(){const m=document.getElementById("filterForm"),f=document.getElementById("mobileFilterForm"),p=document.getElementById("coursesWrapper"),l=document.getElementById("coursesContainer");let c=1,u=!1,a=!0;v();function v(){h(),L(),E()}function h(){const e=[m,f].filter(t=>t);e.forEach(t=>{t.addEventListener("submit",function(n){n.preventDefault(),c=1,a=!0,d(new FormData(this),!0)}),t.querySelectorAll("select.filter-input").forEach(n=>{n.addEventListener("change",function(){c=1,a=!0,d(new FormData(t),!0)})});const o=t.querySelector('[name="keyword"]');if(o){let n;o.addEventListener("input",function(){clearTimeout(n),n=setTimeout(()=>{c=1,a=!0,d(new FormData(t),!0)},600)})}}),document.querySelectorAll('[id^="resetBtn"], .btn-filter-reset').forEach(t=>{t.addEventListener("click",function(r){r.preventDefault(),e.forEach(o=>o&&o.reset()),c=1,a=!0,d(new FormData,!0)})})}function L(){const e=new IntersectionObserver(r=>{r.forEach(o=>{o.isIntersecting&&!u&&a&&(c++,d(null,!1))})},{rootMargin:"100px"}),t=document.createElement("div");t.id="scroll-trigger",t.style.height="1px",p.appendChild(t),e.observe(t)}function E(){const e=document.querySelector(".btn-mobile-filter");e&&e.addEventListener("click",function(){this.classList.toggle("active")})}function d(e=null,t=!0){if(u)return;if(u=!0,!e){const s=m||f;e=s?new FormData(s):new FormData}Object.fromEntries(e);const r=new URLSearchParams(e);r.set("page",c);const n=`${(m||f).getAttribute("data-url")}?${r.toString()}`;t?w():b(),fetch(n,{headers:{"X-Requested-With":"XMLHttpRequest",Accept:"application/json"}}).then(s=>s.json()).then(s=>{if(t?y(s.html,!0):y(s.html,!1),a=s.hasMore,t){const i=n.replace("&page=1","").replace("page=1&","").replace("?page=1","");window.history.pushState({},"",i||n)}u=!1}).catch(s=>{console.error("Error:",s),g(),u=!1})}function y(e,t){const r=document.createElement("div");r.innerHTML=e;const o=r.querySelector(".row.g-4");if(t)l.style.opacity="0",l.style.transition="opacity 0.3s",setTimeout(()=>{const n=l.querySelector(".row.g-4");n&&o&&(n.innerHTML=o.innerHTML);const s=r.querySelector(".result-info"),i=l.querySelector(".result-info");s&&i?i.outerHTML=s.outerHTML:s&&l.insertBefore(s,l.firstChild),l.style.opacity="1",g(),p.scrollIntoView({behavior:"smooth",block:"start"})},300);else{const n=l.querySelector(".row.g-4");n&&o&&o.querySelectorAll(".col-lg-4").forEach((i,k)=>{i.style.opacity="0",i.style.transform="translateY(20px)",n.appendChild(i),setTimeout(()=>{i.style.transition="all 0.5s ease",i.style.opacity="1",i.style.transform="translateY(0)"},100+k*50)}),g()}}function w(){const e=l.querySelector(".row.g-4");e&&(e.innerHTML=Array(6).fill(0).map(()=>`
+                <div class="col-lg-4 col-md-6">
+                    <div class="course-card-skeleton">
+                        <div class="skeleton skeleton-img"></div>
+                        <div class="skeleton-body">
+                            <div class="skeleton skeleton-badge"></div>
+                            <div class="skeleton skeleton-title"></div>
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-button"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join(""))}function b(){let e=document.getElementById("load-more-spinner");e||(e=document.createElement("div"),e.id="load-more-spinner",e.className="text-center py-4",e.innerHTML=`
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading more courses...</p>
+            `,p.appendChild(e))}function g(){const e=document.getElementById("load-more-spinner");e&&e.remove()}});
