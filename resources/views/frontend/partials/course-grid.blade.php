@@ -19,10 +19,12 @@
                     <img src="{{ asset('storage/' . $course->image) }}"
                          alt="{{ $course->title }}"
                          loading="lazy"
+                         decoding="async"
                          width="400"
-                         height="300">
+                         height="300"
+                         style="object-fit: cover;">
                 @else
-                    <img src="{{ asset('images/course-placeholder.jpg') }}"
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23e5e7eb' width='400' height='300'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E"
                          alt="{{ $course->title }}"
                          loading="lazy"
                          width="400"
