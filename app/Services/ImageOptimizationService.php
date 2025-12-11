@@ -2,11 +2,19 @@
 
 namespace App\Services;
 
-use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Storage;
 
 class ImageOptimizationService
 {
+    protected $manager;
+
+    public function __construct()
+    {
+        $this->manager = new ImageManager(new Driver());
+    }
+
     /**
      * Optimize and save uploaded image
      *
@@ -23,7 +31,7 @@ class ImageOptimizationService
         $fullPath = $path . '/' . $filename;
 
         // Load image
-        $image = Image::read($file);
+        $image = $this->manager->read($file);
 
         // Resize if needed (maintain aspect ratio)
         if ($image->width() > $maxWidth) {
@@ -47,7 +55,7 @@ class ImageOptimizationService
         $filename = time() . '_thumb_' . uniqid() . '.jpg';
         $fullPath = $path . '/' . $filename;
 
-        $image = Image::read($file);
+        $image = $this->manager->read($file);
         $image->cover($width, $height);
         $encoded = $image->toJpeg(75);
 
@@ -68,7 +76,7 @@ class ImageOptimizationService
                 return false;
             }
 
-            $image = Image::read($fullPath);
+            $image = $this->manager->read($fullPath);
 
             // Resize if too large
             if ($image->width() > 800) {
