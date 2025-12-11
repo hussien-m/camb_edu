@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function init() {
         setupFilterListeners();
-        setupInfiniteScroll();
+        setupLoadMoreButton();
         setupMobileFilters();
     }
 
@@ -68,25 +68,68 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Setup infinite scroll
-    function setupInfiniteScroll() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !isLoading && hasMorePages) {
-                    currentPage++;
-                    loadCourses(null, false); // Append mode
-                }
-            });
-        }, {
-            rootMargin: '100px' // Load before reaching bottom
+    // Setup Load More button
+    function setupLoadMoreButton() {
+        // Create Load More button
+        const loadMoreContainer = document.createElement('div');
+        loadMoreContainer.id = 'loadMoreContainer';
+        loadMoreContainer.className = 'text-center mt-5';
+        loadMoreContainer.innerHTML = `
+            <button type="button" id="loadMoreBtn" class="btn btn-primary btn-lg px-5 py-3">
+                <i class="fas fa-plus-circle me-2"></i>
+                <span class="load-more-text">Load More Courses</span>
+                <span class="load-more-count ms-2"></span>
+            </button>
+        `;
+        coursesWrapper.appendChild(loadMoreContainer);
+
+        // Button click handler
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        loadMoreBtn.addEventListener('click', function() {
+            if (!isLoading && hasMorePages) {
+                currentPage++;
+                loadCourses(null, false); // Append mode
+            }
         });
 
-        // Observe scroll trigger
-        const trigger = document.createElement('div');
-        trigger.id = 'scroll-trigger';
-        trigger.style.height = '1px';
-        coursesWrapper.appendChild(trigger);
-        observer.observe(trigger);
+        // Check initial state - show/hide based on hasMorePages
+        // Get initial pagination state from page
+        checkInitialPagination();
+    }
+
+    // Check if there are more pages on initial load
+    function checkInitialPagination() {
+        const coursesContainer = document.getElementById('coursesContainer');
+        const resultInfo = coursesContainer ? coursesContainer.querySelector('.result-info') : null;
+
+        if (resultInfo) {
+            // Try to detect if there are more pages
+            const text = resultInfo.textContent;
+            const match = text.match(/Showing \d+-(\d+) of (\d+)/);
+            if (match) {
+                const showing = parseInt(match[1]);
+                const total = parseInt(match[2]);
+                hasMorePages = showing < total;
+
+                const loadMoreContainer = document.getElementById('loadMoreContainer');
+                if (loadMoreContainer) {
+                    loadMoreContainer.style.display = hasMorePages ? 'block' : 'none';
+
+                    if (hasMorePages) {
+                        const remaining = total - showing;
+                        const nextBatch = Math.min(remaining, 12);
+                        const loadMoreBtn = document.getElementById('loadMoreBtn');
+                        if (loadMoreBtn) {
+                            loadMoreBtn.innerHTML = `
+                                <i class="fas fa-plus-circle me-2"></i>
+                                <span class="load-more-text">Load More Courses</span>
+                                <span class="load-more-count ms-2">(${nextBatch} more)</span>
+                            `;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Setup mobile filters
@@ -165,6 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Update pagination state
             hasMorePages = data.hasMore;
+
+            // Update Load More button
+            updateLoadMoreButton(data);
 
             // Update URL
             if (replace) {
@@ -259,20 +305,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Update Load More button
+    function updateLoadMoreButton(data) {
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+        if (!loadMoreContainer || !loadMoreBtn) return;
+
+        if (data.hasMore) {
+            loadMoreContainer.style.display = 'block';
+
+            // Calculate remaining courses
+            const loaded = currentPage * 12; // 12 per page
+            const remaining = data.total - loaded;
+            const nextBatch = Math.min(remaining, 12);
+
+            // Update button text
+            loadMoreBtn.disabled = false;
+            loadMoreBtn.innerHTML = `
+                <i class="fas fa-plus-circle me-2"></i>
+                <span class="load-more-text">Load More Courses</span>
+                <span class="load-more-count ms-2">(${nextBatch} more)</span>
+            `;
+        } else {
+            loadMoreContainer.style.display = 'none';
+        }
+    }
+
     // Show load more spinner
     function showLoadMoreSpinner() {
-        let spinner = document.getElementById('load-more-spinner');
-        if (!spinner) {
-            spinner = document.createElement('div');
-            spinner.id = 'load-more-spinner';
-            spinner.className = 'text-center py-4';
-            spinner.innerHTML = `
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2 text-muted">Loading more courses...</p>
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        if (loadMoreBtn) {
+            loadMoreBtn.disabled = true;
+            loadMoreBtn.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                Loading...
             `;
-            coursesWrapper.appendChild(spinner);
         }
     }
 

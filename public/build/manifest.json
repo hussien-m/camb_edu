@@ -27,7 +27,7 @@
     ]
   },
   "resources/css/frontend-courses.css": {
-    "file": "assets/frontend-courses-DQ_khkJc.css",
+    "file": "assets/frontend-courses-CKxGTQYa.css",
     "src": "resources/css/frontend-courses.css",
     "isEntry": true,
     "name": "frontend-courses",
@@ -96,7 +96,7 @@
     "isEntry": true
   },
   "resources/js/frontend-courses.js": {
-    "file": "assets/frontend-courses-C9_MS8B9.js",
+    "file": "assets/frontend-courses-CsZgfXho.js",
     "name": "frontend-courses",
     "src": "resources/js/frontend-courses.js",
     "isEntry": true
