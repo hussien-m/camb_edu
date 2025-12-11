@@ -21,10 +21,11 @@ class Setting extends Model
 
     /**
      * Get setting value by key
+     * Cache for 24 hours (86400 seconds)
      */
     public static function get(string $key, $default = null)
     {
-        return Cache::remember("setting_{$key}", 3600, function () use ($key, $default) {
+        return Cache::remember("setting_{$key}", 86400, function () use ($key, $default) {
             $setting = self::where('key', $key)->first();
             return $setting ? $setting->value : $default;
         });
@@ -48,10 +49,11 @@ class Setting extends Model
 
     /**
      * Get all settings by group
+     * Cache for 24 hours
      */
     public static function getByGroup(string $group): array
     {
-        return Cache::remember("settings_group_{$group}", 3600, function () use ($group) {
+        return Cache::remember("settings_group_{$group}", 86400, function () use ($group) {
             return self::where('group', $group)->pluck('value', 'key')->toArray();
         });
     }
@@ -66,14 +68,15 @@ class Setting extends Model
             Cache::forget("setting_{$setting->key}");
         });
     }
-
     /**
      * Get all settings as key-value array
+     * Cache for 24 hours
      */
     public static function getAllSettings(): array
     {
-        return Cache::remember('settings_all', 3600, function () {
+        return Cache::remember('settings_all', 86400, function () {
             return self::pluck('value', 'key')->toArray();
         });
+    }   });
     }
 }

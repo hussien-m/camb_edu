@@ -11,45 +11,54 @@ use App\Models\Feature;
 use App\Models\Page;
 use App\Models\SuccessStory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
     public function index(): View
     {
-        // Get active banners
-        $banners = Banner::where('is_active', true)
-            ->orderBy('order')
-            ->get();
+        // Cache homepage data for 1 hour (3600 seconds)
+        $banners = Cache::remember('home_banners', 3600, function () {
+            return Banner::where('is_active', true)
+                ->orderBy('order')
+                ->get();
+        });
 
-        // Get course categories
-        $categories = CourseCategory::all();
+        $categories = Cache::remember('home_categories', 3600, function () {
+            return CourseCategory::all();
+        });
 
-        // Get course levels
-        $levels = CourseLevel::orderBy('sort_order')->get();
+        $levels = Cache::remember('home_levels', 3600, function () {
+            return CourseLevel::orderBy('sort_order')->get();
+        });
 
-        // Get featured courses
-        $featuredCourses = Course::with(['category', 'level'])
-            ->where('status', 'active')
-            ->where('is_featured', true)
-            ->limit(8)
-            ->get();
+        $featuredCourses = Cache::remember('home_featured_courses', 1800, function () {
+            return Course::with(['category', 'level'])
+                ->where('status', 'active')
+                ->where('is_featured', true)
+                ->limit(8)
+                ->get();
+        });
 
-        // Get latest courses
-        $latestCourses = Course::with(['category', 'level'])
-            ->where('status', 'active')
-            ->latest()
-            ->limit(4)
-            ->get();
+        $latestCourses = Cache::remember('home_latest_courses', 1800, function () {
+            return Course::with(['category', 'level'])
+                ->where('status', 'active')
+                ->latest()
+                ->limit(4)
+                ->get();
+        });
 
-        // Get published success stories
-        $successStories = SuccessStory::where('is_published', true)
-            ->latest()
-            ->limit(3)
-            ->get();
+        $successStories = Cache::remember('home_success_stories', 3600, function () {
+            return SuccessStory::where('is_published', true)
+                ->latest()
+                ->limit(3)
+                ->get();
+        });
 
-        // Get active features
-        $features = Feature::active()->ordered()->get();
+        $features = Cache::remember('home_features', 3600, function () {
+            return Feature::active()->ordered()->get();
+        });
 
         return view('frontend.home', compact(
             'banners',

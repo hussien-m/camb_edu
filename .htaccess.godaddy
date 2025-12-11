@@ -1,0 +1,37 @@
+# ========================================
+# Laravel Protection - GoDaddy Compatible
+# نسخة مبسطة ومتوافقة 100% مع GoDaddy
+# ========================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # منع الوصول لـ .env
+    RewriteRule ^\.env$ - [F,L]
+
+    # منع الوصول للمجلدات الحساسة
+    RewriteRule ^(app|bootstrap|config|database|routes|storage|tests|vendor)/ - [F,L]
+
+    # منع الوصول لمجلد public من المتصفح
+    RewriteCond %{THE_REQUEST} ^[A-Z]+\ /public/ [NC]
+    RewriteRule ^public/(.*)$ /$1 [R=404,L]
+
+    # توجيه كل الطلبات لمجلد public داخلياً
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# منع الوصول لملفات حساسة
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<FilesMatch "(composer|artisan|package(-lock)?\.json|phpunit\.xml)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# منع عرض قائمة المجلدات
+Options -Indexes
