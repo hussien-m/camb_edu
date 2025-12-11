@@ -99,11 +99,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Disable/Enable filters
+    function setFiltersDisabled(disabled) {
+        const forms = [filterForm, mobileFilterForm].filter(f => f);
+        forms.forEach(form => {
+            const inputs = form.querySelectorAll('input, select, button');
+            inputs.forEach(input => {
+                input.disabled = disabled;
+                if (disabled) {
+                    input.style.opacity = '0.6';
+                    input.style.cursor = 'not-allowed';
+                } else {
+                    input.style.opacity = '';
+                    input.style.cursor = '';
+                }
+            });
+        });
+    }
+
     // Load courses function
     function loadCourses(formData = null, replace = true) {
         if (isLoading) return;
 
         isLoading = true;
+        setFiltersDisabled(true);
 
         // Get form data
         if (!formData) {
@@ -154,11 +173,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             isLoading = false;
+            setFiltersDisabled(false);
         })
         .catch(error => {
             console.error('Error:', error);
             hideLoading();
             isLoading = false;
+            setFiltersDisabled(false);
         });
     }
 
