@@ -77,6 +77,5 @@ class Setting extends Model
         return Cache::remember('settings_all', 86400, function () {
             return self::pluck('value', 'key')->toArray();
         });
-    }   });
     }
 }
