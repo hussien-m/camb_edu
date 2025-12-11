@@ -14,7 +14,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register console commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \App\Console\Commands\OptimizeImages::class,
+                \App\Console\Commands\ClearAppCache::class,
+            ]);
+        }
     }
 
     /**
