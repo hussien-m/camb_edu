@@ -53,6 +53,14 @@ class ClearAppCache extends Command
         Cache::forget('home_success_stories');
         Cache::forget('home_features');
 
+        $this->info('→ Clearing courses page cache...');
+        Cache::forget('courses_page_categories');
+        Cache::forget('courses_page_levels');
+        // Clear paginated courses cache (up to 10 pages)
+        for ($i = 1; $i <= 10; $i++) {
+            Cache::forget("courses_page_default_p{$i}");
+        }
+
         $this->info('→ Clearing settings cache...');
         Setting::clearCache();
 

@@ -73,14 +73,29 @@ class HomeController extends Controller
 
     public function search(Request $request): View
     {
+        // Cache categories and levels (don't change often)
+        $categories = Cache::remember('courses_page_categories', 3600, function () {
+            return CourseCategory::all();
+        });
+
+        $levels = Cache::remember('courses_page_levels', 3600, function () {
+            return CourseLevel::orderBy('sort_order')->get();
+        });
+
+        // Build query
         $query = Course::with(['category', 'level'])->where('status', 'active');
+
+        // Apply filters
+        $hasFilters = false;
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
+            $hasFilters = true;
         }
 
         if ($request->filled('level_id')) {
             $query->where('level_id', $request->level_id);
+            $hasFilters = true;
         }
 
         if ($request->filled('keyword')) {
@@ -88,11 +103,19 @@ class HomeController extends Controller
                 $q->where('title', 'like', '%' . $request->keyword . '%')
                   ->orWhere('description', 'like', '%' . $request->keyword . '%');
             });
+            $hasFilters = true;
         }
 
-        $courses = $query->paginate(12);
-        $categories = CourseCategory::all();
-        $levels = CourseLevel::orderBy('sort_order')->get();
+        // Cache only if no filters (default courses list)
+        if (!$hasFilters) {
+            $cacheKey = 'courses_page_default_p' . ($request->get('page', 1));
+            $courses = Cache::remember($cacheKey, 1800, function () use ($query) {
+                return $query->paginate(12);
+            });
+        } else {
+            // Don't cache filtered results
+            $courses = $query->paginate(12);
+        }
 
         return view('frontend.courses', compact('courses', 'categories', 'levels'));
     }
