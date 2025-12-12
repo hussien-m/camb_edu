@@ -89,7 +89,7 @@ class HomeController extends Controller
         );
 
         // Build query with eager loading
-        $query = Course::with(['category:id,name', 'level:id,name'])
+        $query = Course::with(['category:id,name,slug', 'level:id,name,slug'])
             ->select('id', 'title', 'slug', 'description', 'image', 'duration', 'is_featured', 'category_id', 'level_id', 'status')
             ->where('status', 'active');
 
@@ -134,14 +134,23 @@ class HomeController extends Controller
     {
         // Find course by slug with relationships
         $course = Course::with(['category', 'level'])
-            ->whereHas('category', function ($q) use ($categorySlug) {
-                $q->where('slug', $categorySlug);
-            })
-            ->whereHas('level', function ($q) use ($levelSlug) {
-                $q->where('slug', $levelSlug);
-            })
             ->where('slug', $courseSlug)
             ->where('status', 'active')
+            ->where(function ($query) use ($categorySlug, $levelSlug) {
+                // If category slug is not 'general', verify it matches
+                if ($categorySlug !== 'general') {
+                    $query->whereHas('category', function ($q) use ($categorySlug) {
+                        $q->where('slug', $categorySlug);
+                    });
+                }
+
+                // If level slug is not 'beginner', verify it matches
+                if ($levelSlug !== 'beginner') {
+                    $query->whereHas('level', function ($q) use ($levelSlug) {
+                        $q->where('slug', $levelSlug);
+                    });
+                }
+            })
             ->firstOrFail();
 
         // Get related courses from same category

@@ -50,8 +50,12 @@
                     </span>
                 </div>
 
-                <a href="{{ route('courses.show', [$course->category->slug ?? 'general', $course->level->slug ?? 'course', $course->slug]) }}"
-                   class="btn btn-course">
+                @php
+                    $categorySlug = $course->category?->slug ?? 'general';
+                    $levelSlug = $course->level?->slug ?? 'beginner';
+                    $courseSlug = $course->slug ?? 'course-' . $course->id;
+                @endphp
+                <a href="{{ route('courses.show', [$categorySlug, $levelSlug, $courseSlug]) }}" class="btn btn-course">
                     <i class="fas fa-arrow-right"></i> View Details
                 </a>
             </div>
