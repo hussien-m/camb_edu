@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CCPYjkMG.css",
+    "file": "assets/app-MT3K3vEj.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -27,7 +27,7 @@
     ]
   },
   "resources/css/frontend-courses.css": {
-    "file": "assets/frontend-courses-CKxGTQYa.css",
+    "file": "assets/frontend-courses-CIB_O2hv.css",
     "src": "resources/css/frontend-courses.css",
     "isEntry": true,
     "name": "frontend-courses",
@@ -96,7 +96,7 @@
     "isEntry": true
   },
   "resources/js/frontend-courses.js": {
-    "file": "assets/frontend-courses-CsZgfXho.js",
+    "file": "assets/frontend-courses-TQDdvBkJ.js",
     "name": "frontend-courses",
     "src": "resources/js/frontend-courses.js",
     "isEntry": true

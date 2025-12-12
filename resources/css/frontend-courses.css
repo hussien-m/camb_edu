@@ -602,6 +602,44 @@
     font-weight: 700;
 }
 
+/* End of Results */
+.end-of-results {
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    border: 2px dashed #dee2e6;
+}
+
+.end-icon {
+    font-size: 3rem;
+    color: #28a745;
+    animation: scaleIn 0.5s ease;
+}
+
+.end-of-results h5 {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.end-of-results p {
+    font-size: 1rem;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 /* Smooth transitions */
 #coursesContainer {
     transition: opacity 0.3s ease-in-out;

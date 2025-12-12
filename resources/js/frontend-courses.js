@@ -12,9 +12,41 @@ document.addEventListener('DOMContentLoaded', function() {
     init();
 
     function init() {
+        // Get initial filters from URL/form on page load
+        initializeFilters();
         setupFilterListeners();
         setupLoadMoreButton();
         setupMobileFilters();
+    }
+
+    // Initialize filters from current page URL or form values
+    function initializeFilters() {
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Store filters from URL
+        const filters = {};
+        for (const [key, value] of urlParams.entries()) {
+            if (key !== 'page' && value) {
+                filters[key] = value;
+            }
+        }
+
+        // If no URL params, get from form
+        if (Object.keys(filters).length === 0) {
+            const form = filterForm || mobileFilterForm;
+            if (form) {
+                const formData = new FormData(form);
+                for (const [key, value] of formData.entries()) {
+                    if (value) {
+                        filters[key] = value;
+                    }
+                }
+            }
+        }
+
+        currentFilters = filters;
+        console.log('🔧 Initial filters:', currentFilters);
     }
 
     // Setup filter listeners
@@ -86,9 +118,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Button click handler
         const loadMoreBtn = document.getElementById('loadMoreBtn');
         loadMoreBtn.addEventListener('click', function() {
+            console.log('🔘 Load More clicked:', { isLoading, hasMorePages, currentPage });
+
             if (!isLoading && hasMorePages) {
                 currentPage++;
+                console.log('➡️ Loading page:', currentPage);
                 loadCourses(null, false); // Append mode
+            } else {
+                console.log('⛔ Cannot load more:', { isLoading, hasMorePages });
             }
         });
 
@@ -102,14 +139,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const coursesContainer = document.getElementById('coursesContainer');
         const resultInfo = coursesContainer ? coursesContainer.querySelector('.result-info') : null;
 
+        console.log('🔍 Checking initial pagination...');
+
         if (resultInfo) {
             // Try to detect if there are more pages
             const text = resultInfo.textContent;
             const match = text.match(/Showing \d+-(\d+) of (\d+)/);
+
+            console.log('📝 Result info text:', text);
+            console.log('🔢 Match:', match);
+
             if (match) {
                 const showing = parseInt(match[1]);
                 const total = parseInt(match[2]);
                 hasMorePages = showing < total;
+
+                console.log('📊 Initial state:', { showing, total, hasMorePages });
 
                 const loadMoreContainer = document.getElementById('loadMoreContainer');
                 if (loadMoreContainer) {
@@ -169,20 +214,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Get form data
         if (!formData) {
-            const form = filterForm || mobileFilterForm;
-            formData = form ? new FormData(form) : new FormData();
+            // If no formData provided, use stored filters or get from form
+            if (Object.keys(currentFilters).length > 0 && !replace) {
+                // Use stored filters for "Load More"
+                formData = new FormData();
+                for (const [key, value] of Object.entries(currentFilters)) {
+                    if (value) formData.append(key, value);
+                }
+            } else {
+                // Get fresh data from form for new search
+                const form = filterForm || mobileFilterForm;
+                formData = form ? new FormData(form) : new FormData();
+            }
         }
 
         // Store current filters
         currentFilters = Object.fromEntries(formData);
 
         // Build URL with page
-        const params = new URLSearchParams(formData);
+        const params = new URLSearchParams(currentFilters);
         params.set('page', currentPage);
         const baseUrl = (filterForm || mobileFilterForm).getAttribute('data-url');
         const url = `${baseUrl}?${params.toString()}`;
 
-        // Show loading
+        console.log('🌐 Request URL:', url);
+        console.log('📋 Filters:', currentFilters);
+        console.log('📄 Page:', currentPage);        // Show loading
         if (replace) {
             showSkeletonLoader();
         } else {
@@ -198,16 +255,40 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            if (replace) {
-                // Replace all courses
-                renderCourses(data.html, true);
-            } else {
-                // Append courses
-                renderCourses(data.html, false);
+            console.log('📦 Response:', {
+                success: data.success,
+                hasMore: data.hasMore,
+                currentPage: data.currentPage,
+                lastPage: data.lastPage,
+                total: data.total,
+                coursesInResponse: data.html ? 'yes' : 'no'
+            });
+
+            // Check if we actually got data
+            if (!data.success) {
+                console.error('Failed to load courses');
+                isLoading = false;
+                setFiltersDisabled(false);
+                return;
             }
 
-            // Update pagination state
-            hasMorePages = data.hasMore;
+            // Update pagination state FIRST
+            // Use lastPage as the authoritative source
+            hasMorePages = data.currentPage < data.lastPage;
+
+            console.log('📊 State after update:', {
+                hasMorePages,
+                currentPage,
+                lastPage: data.lastPage,
+                total: data.total,
+                calculation: `${data.currentPage} < ${data.lastPage} = ${hasMorePages}`
+            });            if (replace) {
+                // Replace all courses
+                renderCourses(data.html, true, data);
+            } else {
+                // Append if there are more pages
+                renderCourses(data.html, false, data);
+            }
 
             // Update Load More button
             updateLoadMoreButton(data);
@@ -230,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Render courses
-    function renderCourses(html, replace) {
+    function renderCourses(html, replace, data) {
         const temp = document.createElement('div');
         temp.innerHTML = html;
         const newCourses = temp.querySelector('.row.g-4');
@@ -267,19 +348,54 @@ document.addEventListener('DOMContentLoaded', function() {
             const existingGrid = coursesContainer.querySelector('.row.g-4');
             if (existingGrid && newCourses) {
                 const newCards = newCourses.querySelectorAll('.col-lg-4');
+
+                // Check if we actually have new cards
+                if (newCards.length === 0) {
+                    console.log('No new courses to append');
+                    hideLoading();
+                    return;
+                }
+
+                // Get existing course links to prevent duplicates
+                const existingLinks = new Set();
+                existingGrid.querySelectorAll('a[href]').forEach(link => {
+                    existingLinks.add(link.getAttribute('href'));
+                });
+
+                let addedCount = 0;
                 newCards.forEach((card, index) => {
+                    // Check if this course is already displayed
+                    const cardLink = card.querySelector('a[href]');
+                    const href = cardLink ? cardLink.getAttribute('href') : null;
+
+                    if (href && existingLinks.has(href)) {
+                        return; // Skip duplicate
+                    }
+
                     card.style.opacity = '0';
                     card.style.transform = 'translateY(20px)';
                     existingGrid.appendChild(card);
+                    addedCount++;
 
                     // Animate in with stagger
                     setTimeout(() => {
                         card.style.transition = 'all 0.5s ease';
                         card.style.opacity = '1';
                         card.style.transform = 'translateY(0)';
-                    }, 100 + (index * 50));
+                    }, 100 + (addedCount * 50));
                 });
             }
+
+            // Update result info with correct total count
+            const existingInfo = coursesContainer.querySelector('.result-info h5');
+            if (existingInfo && data) {
+                const totalShown = existingGrid.querySelectorAll('.col-lg-4').length;
+                existingInfo.innerHTML = `
+                    <i class="fas fa-graduation-cap"></i>
+                    Showing 1-${totalShown} of ${data.total} courses
+                `;
+            }
+
             hideLoading();
         }
     }
@@ -312,11 +428,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!loadMoreContainer || !loadMoreBtn) return;
 
-        if (data.hasMore) {
+        // Recalculate based on fresh data
+        const actuallyHasMore = data.currentPage < data.lastPage;
+
+        console.log('🔄 Update button:', {
+            currentPage: data.currentPage,
+            lastPage: data.lastPage,
+            total: data.total,
+            actuallyHasMore
+        });
+
+        if (actuallyHasMore) {
             loadMoreContainer.style.display = 'block';
+            loadMoreContainer.className = 'text-center mt-5';
 
             // Calculate remaining courses
-            const loaded = currentPage * 12; // 12 per page
+            const loaded = data.currentPage * 12; // 12 per page
             const remaining = data.total - loaded;
             const nextBatch = Math.min(remaining, 12);
 
@@ -328,7 +455,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 <span class="load-more-count ms-2">(${nextBatch} more)</span>
             `;
         } else {
-            loadMoreContainer.style.display = 'none';
+            // Show end message instead of hiding
+            loadMoreContainer.style.display = 'block';
+            loadMoreContainer.className = 'text-center mt-5';
+            loadMoreContainer.innerHTML = `
+                <div class="end-of-results">
+                    <div class="end-icon mb-3">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h5 class="mb-2">You've reached the end!</h5>
+                    <p class="text-muted mb-0">You've viewed all ${data.total || 0} available courses</p>
+                </div>
+            `;
         }
     }
 

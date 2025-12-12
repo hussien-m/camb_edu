@@ -4,7 +4,7 @@
 <div class="result-info">
     <h5>
         <i class="fas fa-graduation-cap"></i>
-        Showing {{ $courses->count() }} of {{ $courses->total() }} courses
+        Showing {{ ($courses->currentPage() - 1) * $courses->perPage() + 1 }}-{{ min($courses->currentPage() * $courses->perPage(), $courses->total()) }} of {{ $courses->total() }} courses
     </h5>
     <span class="badge">{{ $courses->total() }} courses</span>
 </div>

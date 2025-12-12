@@ -73,46 +73,45 @@ class HomeController extends Controller
 
     public function search(Request $request)
     {
-        // Cache categories and levels (don't change often)
-        $categories = Cache::remember('courses_page_categories', 3600, function () {
-            return CourseCategory::all();
-        });
+        // Cache categories and levels (select only needed columns)
+        $categories = Cache::remember(
+            'courses_page_categories',
+            3600,
+            fn() =>
+            CourseCategory::select('id', 'name')->get()
+        );
 
-        $levels = Cache::remember('courses_page_levels', 3600, function () {
-            return CourseLevel::orderBy('sort_order')->get();
-        });
+        $levels = Cache::remember(
+            'courses_page_levels',
+            3600,
+            fn() =>
+            CourseLevel::select('id', 'name', 'sort_order')->orderBy('sort_order')->get()
+        );
 
-        // Build query with eager loading for better performance
-        $query = Course::with(['category', 'level'])
+        // Build query with eager loading
+        $query = Course::with(['category:id,name', 'level:id,name'])
             ->select('id', 'title', 'slug', 'description', 'image', 'duration', 'is_featured', 'category_id', 'level_id', 'status')
             ->where('status', 'active');
 
-        // Apply filters
-        $hasFilters = false;
+        // Apply filters dynamically
+        $query->when($request->category_id, fn($q, $categoryId) => $q->where('category_id', $categoryId))
+            ->when($request->level_id, fn($q, $levelId) => $q->where('level_id', $levelId))
+            ->when($request->keyword, fn($q, $keyword) => $q->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%$keyword%")
+                    ->orWhere('description', 'like', "%$keyword%");
+            }));
 
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-            $hasFilters = true;
-        }
+        // Debug: Log SQL query
+        \Log::info('Courses Query', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+            'filters' => $request->only(['category_id', 'level_id', 'keyword'])
+        ]);
 
-        if ($request->filled('level_id')) {
-            $query->where('level_id', $request->level_id);
-            $hasFilters = true;
-        }
-
-        if ($request->filled('keyword')) {
-            $keyword = $request->keyword;
-            $query->where(function ($q) use ($keyword) {
-                $q->where('title', 'like', '%' . $keyword . '%')
-                  ->orWhere('description', 'like', '%' . $keyword . '%');
-            });
-            $hasFilters = true;
-        }
-
-        // Paginate (12 per page for better UX)
+        // Paginate results
         $courses = $query->latest()->paginate(12);
 
-        // AJAX Request: Return JSON
+        // AJAX request
         if ($request->ajax() || $request->wantsJson()) {
             $html = view('frontend.partials.course-grid', compact('courses'))->render();
 
@@ -121,22 +120,24 @@ class HomeController extends Controller
                 'html' => $html,
                 'hasMore' => $courses->hasMorePages(),
                 'currentPage' => $courses->currentPage(),
-                'total' => $courses->total()
+                'total' => $courses->total(),
+                'lastPage' => $courses->lastPage(),
             ]);
         }
 
-        // Normal Request: Return view
+        // Normal request
         return view('frontend.courses', compact('courses', 'categories', 'levels'));
     }
+
 
     public function show($categorySlug, $levelSlug, $courseSlug): View
     {
         // Find course by slug with relationships
         $course = Course::with(['category', 'level'])
-            ->whereHas('category', function($q) use ($categorySlug) {
+            ->whereHas('category', function ($q) use ($categorySlug) {
                 $q->where('slug', $categorySlug);
             })
-            ->whereHas('level', function($q) use ($levelSlug) {
+            ->whereHas('level', function ($q) use ($levelSlug) {
                 $q->where('slug', $levelSlug);
             })
             ->where('slug', $courseSlug)
