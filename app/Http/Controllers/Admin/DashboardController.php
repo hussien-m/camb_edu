@@ -61,13 +61,80 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Analytics Data (Last 7 days)
+        $startDate = now()->subDays(7);
+
+        // Page views stats
+        $analyticsStats = [
+            'total_views' => PageView::where('created_at', '>=', $startDate)->count(),
+            'unique_visitors' => PageView::where('created_at', '>=', $startDate)
+                ->distinct('ip_address')->count('ip_address'),
+        ];
+
+        // Top 5 Cities
+        $topCities = PageView::query()
+            ->select('city', 'country', DB::raw('count(*) as views'))
+            ->where('created_at', '>=', $startDate)
+            ->whereNotNull('city')
+            ->where('city', '!=', 'Unknown')
+            ->where('city', '!=', 'Localhost')
+            ->groupBy('city', 'country')
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
+        // Browser distribution
+        $browserStats = PageView::query()
+            ->select('browser', DB::raw('count(*) as count'))
+            ->where('created_at', '>=', $startDate)
+            ->whereNotNull('browser')
+            ->where('browser', '!=', 'Unknown')
+            ->groupBy('browser')
+            ->orderBy('count', 'desc')
+            ->get();
+
+        // OS distribution
+        $osStats = PageView::query()
+            ->select('os', DB::raw('count(*) as count'))
+            ->where('created_at', '>=', $startDate)
+            ->whereNotNull('os')
+            ->where('os', '!=', 'Unknown')
+            ->groupBy('os')
+            ->orderBy('count', 'desc')
+            ->get();
+
+        // Average time on page
+        $avgTimeOnPage = PageView::query()
+            ->where('created_at', '>=', $startDate)
+            ->whereNotNull('time_on_page')
+            ->where('time_on_page', '>', 0)
+            ->avg('time_on_page');
+
+        // Top Countries
+        $topCountries = PageView::query()
+            ->select('country', DB::raw('count(*) as views'))
+            ->where('created_at', '>=', $startDate)
+            ->whereNotNull('country')
+            ->where('country', '!=', 'Unknown')
+            ->where('country', '!=', 'Local')
+            ->groupBy('country')
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'recentCourses',
             'recentMessages',
             'coursesByStatus',
             'studentsByStatus',
-            'recentActivities'
+            'recentActivities',
+            'analyticsStats',
+            'topCities',
+            'browserStats',
+            'osStats',
+            'avgTimeOnPage',
+            'topCountries'
         ));
     }
 }
