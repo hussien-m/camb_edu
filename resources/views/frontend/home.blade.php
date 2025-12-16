@@ -1,6 +1,16 @@
 @extends('frontend.layouts.app')
 
-@section('title', setting('site_title', 'Cambridge College - Best Education in Libya'))
+@section('title', setting('site_title', 'Cambridge International College in UK'))
+
+@section('description', setting('site_description', 'Cambridge International College in UK offers top-quality education and professional training courses in UK. Accredited programs with international certificates.'))
+
+@section('keywords', setting('seo_keywords', 'education, courses, UAE, cambridge, college, training, certificates'))
+
+@section('canonical', route('home'))
+
+@section('og_type', 'website')
+@section('og_title', setting('site_title', 'Cambridge College'))
+@section('og_description', setting('site_description', 'Top-quality education and courses in UK'))
 
 @push('styles')
     @vite('resources/css/frontend-home.css')
@@ -111,9 +121,19 @@
                 <div class="card course-card">
                     <div class="card-img-wrapper">
                         @if($course->image)
-                            <img src="{{ asset('storage/' . $course->image) }}" alt="{{ $course->title }}">
+                            <img src="{{ asset('storage/' . $course->image) }}"
+                                 alt="{{ $course->title }}"
+                                 width="400"
+                                 height="300"
+                                 loading="lazy"
+                                 decoding="async">
                         @else
-                            <img src="https://picsum.photos/seed/{{ $course->title }}/400/300" alt="{{ $course->title }}">
+                            <img src="https://picsum.photos/seed/{{ $course->title }}/400/300"
+                                 alt="{{ $course->title }}"
+                                 width="400"
+                                 height="300"
+                                 loading="lazy"
+                                 decoding="async">
                         @endif
                         <span class="badge-featured">⭐ Featured</span>
                     </div>

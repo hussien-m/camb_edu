@@ -2,10 +2,41 @@
 
 @section('title', $course->title . ' - ' . setting('site_name', 'Cambridge College'))
 
-@section('description', Str::limit(strip_tags($course->short_description ?? $course->description), 160))
+@section('description', App\Helpers\SeoHelper::cleanDescription($course->short_description ?? $course->description))
+
+@section('keywords', $course->category->name . ', ' . $course->level->name . ', ' . setting('seo_keywords', 'education, courses'))
+
+@section('canonical', route('courses.show', [$course->category->slug, $course->level->slug, $course->slug]))
+
+@section('og_type', 'article')
+@section('og_title', $course->title)
+@section('og_description', App\Helpers\SeoHelper::cleanDescription($course->short_description ?? $course->description))
+@section('og_image', $course->image ? asset('storage/' . $course->image) : asset('images/default-course.jpg'))
+
+@section('twitter_card', 'summary_large_image')
+@section('twitter_title', $course->title)
+@section('twitter_description', App\Helpers\SeoHelper::cleanDescription($course->short_description ?? $course->description))
+@section('twitter_image', $course->image ? asset('storage/' . $course->image) : asset('images/default-course.jpg'))
 
 @push('styles')
 @vite('resources/css/frontend-course-detail.css')
+@endpush
+
+@push('schema')
+<!-- Course Schema.org JSON-LD -->
+<script type="application/ld+json">
+{!! App\Helpers\SeoHelper::generateCourseSchema($course) !!}
+</script>
+
+<!-- Breadcrumb Schema.org JSON-LD -->
+<script type="application/ld+json">
+{!! App\Helpers\SeoHelper::generateBreadcrumbSchema([
+    ['name' => 'Home', 'url' => route('home')],
+    ['name' => 'Courses', 'url' => route('courses.index')],
+    ['name' => $course->category->name, 'url' => route('courses.index', ['category_id' => $course->category->id])],
+    ['name' => $course->title, 'url' => route('courses.show', [$course->category->slug, $course->level->slug, $course->slug])]
+]) !!}
+</script>
 @endpush
 
 @section('content')
@@ -51,11 +82,21 @@
                     <!-- Course Image -->
                     @if($course->image)
                     <div class="course-image-wrapper">
-                        <img src="{{ asset('storage/' . $course->image) }}" class="course-image" alt="{{ $course->title }}">
+                        <img src="{{ asset('storage/' . $course->image) }}"
+                             class="course-image"
+                             alt="{{ $course->title }}"
+                             width="800"
+                             height="450"
+                             loading="eager">
                     </div>
                     @else
                     <div class="course-image-wrapper">
-                        <img src="https://picsum.photos/seed/{{ $course->id }}/800/450" class="course-image" alt="{{ $course->title }}">
+                        <img src="https://picsum.photos/seed/{{ $course->id }}/800/450"
+                             class="course-image"
+                             alt="{{ $course->title }}"
+                             width="800"
+                             height="450"
+                             loading="eager">
                     </div>
                     @endif
 

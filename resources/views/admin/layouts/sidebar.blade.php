@@ -32,6 +32,14 @@
                     </a>
                 </li>
 
+                <!-- Analytics -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.analytics.index') }}" class="nav-link {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>Analytics</p>
+                    </a>
+                </li>
+
                 <!-- Courses Management -->
                 <li class="nav-item {{ request()->routeIs('admin.courses.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.levels.*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->routeIs('admin.courses.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.levels.*') ? 'active' : '' }}">

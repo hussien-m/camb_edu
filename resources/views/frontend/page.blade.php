@@ -2,6 +2,25 @@
 
 @section('title', $page->title . ' - ' . setting('site_name', 'Cambridge College'))
 
+@section('description', App\Helpers\SeoHelper::cleanDescription($page->content))
+
+@section('keywords', $page->title . ', ' . setting('seo_keywords', 'cambridge college'))
+
+@section('canonical', route('page.show', $page->slug))
+
+@section('og_title', $page->title)
+@section('og_description', App\Helpers\SeoHelper::cleanDescription($page->content))
+
+@push('schema')
+<!-- Breadcrumb Schema for Page -->
+<script type="application/ld+json">
+{!! App\Helpers\SeoHelper::generateBreadcrumbSchema([
+    ['name' => 'Home', 'url' => route('home')],
+    ['name' => $page->title, 'url' => route('page.show', $page->slug)]
+]) !!}
+</script>
+@endpush
+
 @push('styles')
 <style>
     /* Page Header Styles */

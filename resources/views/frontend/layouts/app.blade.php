@@ -4,15 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', setting('site_title', 'Cambridge College - Best Education in Libya'))</title>
+
+    <!-- Title -->
+    <title>@yield('title', setting('site_title', 'Cambridge International College in UK - Bst Education in UK'))</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="@yield('description', setting('site_description', 'Cambridge College offers top-quality education and courses in Libya'))">
-    <meta name="keywords" content="{{ setting('seo_keywords', 'education, courses, libya, cambridge, college') }}">
+    <meta name="description" content="@yield('description', setting('site_description', 'Cambridge International College in UK'))">
+    <meta name="keywords" content="@yield('keywords', setting('seo_keywords', 'education, courses, UAE, cambridge, college'))">
+    <meta name="author" content="{{ setting('site_name', 'Cambridge International College in UK') }}">
+    <meta name="robots" content="index, follow">
 
+    <!-- Canonical URL -->
+    <link rel="canonical" href="@yield('canonical', url()->current())">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:url" content="@yield('og_url', url()->current())">
+    <meta property="og:title" content="@yield('og_title', setting('site_title', 'Cambridge International College in UK'))">
+    <meta property="og:description" content="@yield('og_description', setting('site_description', 'Cambridge International College in UK offers top-quality education'))">
+    <meta property="og:image" content="@yield('og_image', asset('storage/' . setting('site_logo', 'images/og-default.jpg')))">
+    <meta property="og:site_name" content="{{ setting('site_name', 'Cambridge International College in UK') }}">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="@yield('twitter_card', 'summary_large_image')">
+    <meta name="twitter:url" content="@yield('twitter_url', url()->current())">
+    <meta name="twitter:title" content="@yield('twitter_title', setting('site_title', 'Cambridge International College in UK'))">
+    <meta name="twitter:description" content="@yield('twitter_description', setting('site_description', 'Cambridge International College in UK offers top-quality education'))">
+    <meta name="twitter:image" content="@yield('twitter_image', asset('storage/' . setting('site_logo', 'images/og-default.jpg')))">
+    @if(setting('social_twitter'))
+    <meta name="twitter:site" content="{{ '@' . basename(setting('social_twitter')) }}">
+    @endif
+
+    <!-- Favicon -->
     @if(setting('site_favicon'))
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
     @endif
+
+    <!-- Google Site Verification -->
     <meta name="google-site-verification" content="kAM8Q1Df2Hat02O5vk047QGP0-Pze5RZQ7pblkAkHMg" />
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -314,7 +343,7 @@
         <!-- Footer Bottom -->
         <div class="footer-bottom">
             <p class="mb-0">
-                {{ setting('footer_text', '© ' . date('Y') . ' Cambridge College. All rights reserved.') }}
+                {{ setting('footer_text', '© ' . date('Y') . ' All rights reserved.') }}
                 <br>
                 <small>Developed by
                     <a href="#" target="_blank">{{ setting('site_title') ?? 'Hussien Mohamed' }} Team</a>
@@ -329,6 +358,13 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Organization Schema.org JSON-LD -->
+<script type="application/ld+json">
+{!! App\Helpers\SeoHelper::generateOrganizationSchema() !!}
+</script>
+
+@stack('schema')
 
 <!-- Setup CSRF Token for AJAX & Newsletter Script -->
 @vite('resources/js/csrf-setup.js')

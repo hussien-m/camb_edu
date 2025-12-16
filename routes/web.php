@@ -4,12 +4,17 @@ use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\CourseInquiryController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\NewsletterController;
+use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('test-push',function(){
     return "Test 4";
 });
+
+// SEO Routes
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [HomeController::class, 'search'])->name('courses.index');

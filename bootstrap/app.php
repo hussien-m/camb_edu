@@ -30,6 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'student.guest' => \App\Http\Middleware\RedirectIfStudent::class,
             'student.verified' => \App\Http\Middleware\EnsureStudentIsVerified::class,
         ]);
+
+        // Track page views on web routes
+        $middleware->appendToGroup('web', \App\Http\Middleware\TrackPageViews::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

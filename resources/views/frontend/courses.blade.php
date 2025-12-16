@@ -1,6 +1,15 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Our Courses - ' . setting('site_name', 'Cambridge College'))
+@section('title', 'Our Courses - ' . setting('site_name', 'Cambridge International College in UK'))
+
+@section('description', 'Browse our comprehensive catalog of professional courses and training programs. Find the perfect course to advance your career.')
+
+@section('keywords', 'courses, training, education, professional development, ' . setting('seo_keywords', 'Cambridge International College in UK'))
+
+@section('canonical', route('courses.index'))
+
+@section('og_title', 'Our Courses - ' . setting('site_name', 'Cambridge College'))
+@section('og_description', 'Browse our comprehensive catalog of professional courses and training programs')
 
 @push('styles')
 @vite('resources/css/frontend-courses.css')

@@ -1,2 +1,28 @@
+# Allow all search engines
 User-agent: *
-Disallow:
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /student/dashboard
+Disallow: /student/profile
+Disallow: /student/exams
+Disallow: /student/certificates
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /storage-link
+
+# Disallow vendor and system files
+Disallow: /vendor/
+Disallow: /.env
+Disallow: /bootstrap/cache/
+
+# Allow important pages
+Allow: /courses
+Allow: /course/
+Allow: /page/
+Allow: /success-stories
+
+# Sitemap location
+Sitemap: {{ config('app.url') }}/sitemap.xml

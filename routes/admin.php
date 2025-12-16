@@ -35,6 +35,10 @@ Route::middleware('admin')->group(function () {
     // Logout
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
+    // Analytics
+    Route::get('analytics', [App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('analytics/realtime', [App\Http\Controllers\Admin\AnalyticsController::class, 'realtime'])->name('analytics.realtime');
+
     // Course Categories
     Route::resource('categories', App\Http\Controllers\Admin\CourseCategoryController::class);
 
