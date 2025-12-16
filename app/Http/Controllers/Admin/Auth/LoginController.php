@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,4 +53,9 @@ class LoginController extends Controller
 
         return redirect()->route('admin.login');
     }
+
+    //create function calculate all users
+
+
+
 }

@@ -13,7 +13,7 @@
     @if(setting('site_favicon'))
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
     @endif
-
+    <meta name="google-site-verification" content="kAM8Q1Df2Hat02O5vk047QGP0-Pze5RZQ7pblkAkHMg" />
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
