@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\CourseCategory;
+use App\Models\CourseLevel;
 use App\Models\Page;
 use App\Models\SuccessStory;
 use Illuminate\Support\Facades\Cache;
@@ -38,6 +40,20 @@ class SitemapController extends Controller
 
         // Courses index page
         $xml .= $this->addUrl(route('courses.index'), now(), 'daily', '0.9');
+
+        // All course categories (SEO-friendly URLs)
+        $categories = CourseCategory::all();
+        foreach ($categories as $category) {
+            $url = route('courses.category', $category->slug);
+            $xml .= $this->addUrl($url, $category->updated_at, 'daily', '0.85');
+        }
+
+        // All course levels (SEO-friendly URLs)
+        $levels = CourseLevel::all();
+        foreach ($levels as $level) {
+            $url = route('courses.level', $level->slug);
+            $xml .= $this->addUrl($url, $level->updated_at, 'daily', '0.85');
+        }
 
         // Success Stories page
         $xml .= $this->addUrl(route('success.stories'), now(), 'weekly', '0.8');

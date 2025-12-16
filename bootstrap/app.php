@@ -33,6 +33,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Track page views on web routes
         $middleware->appendToGroup('web', \App\Http\Middleware\TrackPageViews::class);
+
+        // Redirect old course URLs to new SEO-friendly URLs (must be before TrackPageViews)
+        $middleware->prependToGroup('web', \App\Http\Middleware\RedirectOldCourseUrls::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
