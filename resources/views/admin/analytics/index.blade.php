@@ -679,6 +679,11 @@
                                             <i class="fas fa-clock me-1"></i>Date & Time
                                         </div>
                                     </th>
+                                    <th class="py-3 px-3" style="width: 130px;">
+                                        <div class="text-uppercase text-primary" style="font-size: 0.75rem; font-weight: 700;">
+                                            <i class="fas fa-network-wired me-1"></i>IP Address
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-3" style="width: 250px;">
                                         <div class="text-uppercase text-primary" style="font-size: 0.75rem; font-weight: 700;">
                                             <i class="fas fa-map-marked-alt me-1"></i>Location
@@ -719,6 +724,11 @@
                                             <div class="text-dark fw-bold">{{ $visitor->created_at->format('M d, Y') }}</div>
                                             <div class="text-muted" style="font-size: 0.8rem;">{{ $visitor->created_at->format('h:i:s A') }}</div>
                                         </div>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <code class="d-inline-block px-2 py-1 rounded" style="background-color: #e3e6f0; color: #4e73df; font-size: 0.8rem; font-weight: 600;">
+                                            {{ $visitor->ip_address }}
+                                        </code>
                                     </td>
                                     <td class="py-3 px-3">
                                         <div style="line-height: 1.5;">
@@ -785,7 +795,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-5">
+                                    <td colspan="6" class="text-center py-5">
                                         <div style="padding: 2rem;">
                                             <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
                                             <p class="text-muted mb-1" style="font-size: 1rem;">No recent visitors found</p>
