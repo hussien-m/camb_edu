@@ -179,7 +179,7 @@
                         </a>
                     </li>
                 @endauth
-            </ul>>
+            </ul>
 
             <!-- Right Side - Auth Buttons (Desktop Only) -->
             <ul class="navbar-nav ms-auto align-items-center d-none d-lg-flex">
