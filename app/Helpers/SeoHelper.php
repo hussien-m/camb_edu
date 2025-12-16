@@ -167,8 +167,12 @@ class SeoHelper
     /**
      * Clean and limit text for meta descriptions
      */
-    public static function cleanDescription(string $text, int $limit = 160): string
+    public static function cleanDescription(?string $text, int $limit = 160): string
     {
+        if (empty($text)) {
+            return '';
+        }
+
         $text = strip_tags($text);
         $text = preg_replace('/\s+/', ' ', $text);
         $text = trim($text);

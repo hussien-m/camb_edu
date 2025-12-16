@@ -342,16 +342,38 @@
 
         <!-- Footer Bottom -->
         <div class="footer-bottom">
-            <p class="mb-0">
-                {{ setting('footer_text', '© ' . date('Y') . ' All rights reserved.') }}
-                <br>
-                <small>Developed by
-                    <a href="#" target="_blank">{{ setting('site_title') ?? 'Hussien Mohamed' }} Team</a>
-                </small>
-            </p>
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        <strong>{{ date('Y') }} {{ setting('site_name', 'Cambridge British International College') }}</strong>
+                        <span class="mx-2">|</span>
+                        <span style="opacity: 0.95;">All Rights Reserved</span>
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                    <p class="mb-0">
+                        <i class="fas fa-code me-1"></i>
+                        <span style="opacity: 0.9;">Developed with</span>
+                        <i class="fas fa-heart text-danger mx-1" style="animation: heartbeat 1.5s ease-in-out infinite;"></i>
+                        <span style="opacity: 0.9;">by</span>
+                        <a href="https://wa.me/970597092668" target="_blank" class="ms-1" style="color: #25d366; text-decoration: none; font-weight: 600;">
+                            <i class="fab fa-whatsapp me-1"></i>Hussien Mohamed
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
+
+<style>
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+}
+</style>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
