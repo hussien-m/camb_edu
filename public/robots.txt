@@ -25,4 +25,4 @@ Allow: /page/
 Allow: /success-stories
 
 # Sitemap location
-Sitemap: {{ config('app.url') }}/sitemap.xml
+Sitemap: https://cambridgecollage.com/sitemap.xml
