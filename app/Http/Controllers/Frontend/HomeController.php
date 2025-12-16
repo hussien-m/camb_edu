@@ -73,19 +73,19 @@ class HomeController extends Controller
 
     public function search(Request $request)
     {
-        // Cache categories and levels (select only needed columns)
+        // Cache categories and levels with slug
         $categories = Cache::remember(
             'courses_page_categories',
             3600,
             fn() =>
-            CourseCategory::select('id', 'name')->get()
+            CourseCategory::select('id', 'name', 'slug')->get()
         );
 
         $levels = Cache::remember(
             'courses_page_levels',
             3600,
             fn() =>
-            CourseLevel::select('id', 'name', 'sort_order')->orderBy('sort_order')->get()
+            CourseLevel::select('id', 'name', 'slug', 'sort_order')->orderBy('sort_order')->get()
         );
 
         // Build query with eager loading
@@ -129,6 +129,133 @@ class HomeController extends Controller
         return view('frontend.courses', compact('courses', 'categories', 'levels'));
     }
 
+    /**
+     * Filter courses by level slug (SEO-friendly URL)
+     */
+    public function filterByLevel(Request $request, $levelSlug)
+    {
+        $level = CourseLevel::where('slug', $levelSlug)->firstOrFail();
+
+        $categories = Cache::remember(
+            'courses_page_categories',
+            3600,
+            fn() => CourseCategory::select('id', 'name', 'slug')->get()
+        );
+
+        $levels = Cache::remember(
+            'courses_page_levels',
+            3600,
+            fn() => CourseLevel::select('id', 'name', 'slug', 'sort_order')->orderBy('sort_order')->get()
+        );
+
+        $courses = Course::with(['category:id,name,slug', 'level:id,name,slug'])
+            ->select('id', 'title', 'slug', 'description', 'image', 'duration', 'is_featured', 'category_id', 'level_id', 'status')
+            ->where('status', 'active')
+            ->where('level_id', $level->id)
+            ->latest()
+            ->paginate(12);
+
+        // AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('frontend.partials.course-grid', compact('courses'))->render();
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'hasMore' => $courses->hasMorePages(),
+                'currentPage' => $courses->currentPage(),
+                'total' => $courses->total(),
+                'lastPage' => $courses->lastPage(),
+            ]);
+        }
+
+        return view('frontend.courses', compact('courses', 'categories', 'levels', 'level'));
+    }
+
+    /**
+     * Filter courses by category slug (SEO-friendly URL)
+     */
+    public function filterByCategory(Request $request, $categorySlug)
+    {
+        $category = CourseCategory::where('slug', $categorySlug)->firstOrFail();
+
+        $categories = Cache::remember(
+            'courses_page_categories',
+            3600,
+            fn() => CourseCategory::select('id', 'name', 'slug')->get()
+        );
+
+        $levels = Cache::remember(
+            'courses_page_levels',
+            3600,
+            fn() => CourseLevel::select('id', 'name', 'slug', 'sort_order')->orderBy('sort_order')->get()
+        );
+
+        $courses = Course::with(['category:id,name,slug', 'level:id,name,slug'])
+            ->select('id', 'title', 'slug', 'description', 'image', 'duration', 'is_featured', 'category_id', 'level_id', 'status')
+            ->where('status', 'active')
+            ->where('category_id', $category->id)
+            ->latest()
+            ->paginate(12);
+
+        // AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('frontend.partials.course-grid', compact('courses'))->render();
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'hasMore' => $courses->hasMorePages(),
+                'currentPage' => $courses->currentPage(),
+                'total' => $courses->total(),
+                'lastPage' => $courses->lastPage(),
+            ]);
+        }
+
+        return view('frontend.courses', compact('courses', 'categories', 'levels', 'category'));
+    }
+
+    /**
+     * Filter courses by category AND level slug (SEO-friendly URL)
+     */
+    public function filterByCategoryAndLevel(Request $request, $categorySlug, $levelSlug)
+    {
+        $category = CourseCategory::where('slug', $categorySlug)->firstOrFail();
+        $level = CourseLevel::where('slug', $levelSlug)->firstOrFail();
+
+        $categories = Cache::remember(
+            'courses_page_categories',
+            3600,
+            fn() => CourseCategory::select('id', 'name', 'slug')->get()
+        );
+
+        $levels = Cache::remember(
+            'courses_page_levels',
+            3600,
+            fn() => CourseLevel::select('id', 'name', 'slug', 'sort_order')->orderBy('sort_order')->get()
+        );
+
+        $courses = Course::with(['category:id,name,slug', 'level:id,name,slug'])
+            ->select('id', 'title', 'slug', 'description', 'image', 'duration', 'is_featured', 'category_id', 'level_id', 'status')
+            ->where('status', 'active')
+            ->where('category_id', $category->id)
+            ->where('level_id', $level->id)
+            ->latest()
+            ->paginate(12);
+
+        // AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('frontend.partials.course-grid', compact('courses'))->render();
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'hasMore' => $courses->hasMorePages(),
+                'currentPage' => $courses->currentPage(),
+                'total' => $courses->total(),
+                'lastPage' => $courses->lastPage(),
+            ]);
+        }
+
+        return view('frontend.courses', compact('courses', 'categories', 'levels', 'category', 'level'));
+    }
 
     public function show($categorySlug, $levelSlug, $courseSlug): View
     {

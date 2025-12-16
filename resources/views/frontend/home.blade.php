@@ -51,7 +51,7 @@
                         $levelsHero = \App\Models\CourseLevel::orderBy('sort_order')->get();
                     @endphp
                     @foreach($levelsHero as $level)
-                        <a href="{{ route('courses.index', ['level_id' => $level->id]) }}"
+                        <a href="{{ route('courses.level', ['level' => $level->slug]) }}"
                            class="program-card {{ request()->has('level_id') && request()->get('level_id') == $level->id ? 'active' : '' }}">
                             <i class="fas fa-certificate"></i>
                             <span>{{ $level->name }}</span>

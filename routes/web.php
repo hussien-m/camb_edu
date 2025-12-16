@@ -19,6 +19,9 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [HomeController::class, 'search'])->name('courses.index');
 Route::get('/courses/search', [HomeController::class, 'search'])->name('courses.search');
+Route::get('/courses/level/{level}', [HomeController::class, 'filterByLevel'])->name('courses.level');
+Route::get('/courses/category/{category}', [HomeController::class, 'filterByCategory'])->name('courses.category');
+Route::get('/courses/category/{category}/level/{level}', [HomeController::class, 'filterByCategoryAndLevel'])->name('courses.category.level');
 Route::get('/course/{category}/{level}/{course}', [HomeController::class, 'show'])->name('courses.show');
 Route::get('/success-stories', [HomeController::class, 'successStories'])->name('success.stories');
 Route::get('/page/{slug}', [HomeController::class, 'showPage'])->name('page.show');

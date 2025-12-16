@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isLoading = false;
     let hasMorePages = true;
     let currentFilters = {};
+    let currentBaseUrl = '/courses'; // Track current URL for Load More
 
     // Initialize
     init();
@@ -21,8 +22,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize filters from current page URL or form values
     function initializeFilters() {
-        // Get URL parameters
+        // Get current URL path and search params
+        const currentPath = window.location.pathname;
         const urlParams = new URLSearchParams(window.location.search);
+
+        // Store current base URL (without page parameter)
+        currentBaseUrl = currentPath === '/courses' ? '/courses' : currentPath;
+
+        // If has keyword param, include it in base URL
+        const keyword = urlParams.get('keyword');
+        if (keyword) {
+            currentBaseUrl = `/courses?keyword=${encodeURIComponent(keyword)}`;
+        }
 
         // Store filters from URL
         const filters = {};
@@ -46,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         currentFilters = filters;
-        console.log('🔧 Initial filters:', currentFilters);
+        console.log('🔧 Initial state:', { currentBaseUrl, currentFilters });
     }
 
     // Setup filter listeners
@@ -57,18 +68,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Prevent default form submission
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                currentPage = 1;
-                hasMorePages = true;
-                loadCourses(new FormData(this), true);
+                handleFilterSubmit(form);
             });
 
             // Auto-submit on select change
             const selectInputs = form.querySelectorAll('select.filter-input');
             selectInputs.forEach(input => {
                 input.addEventListener('change', function() {
-                    currentPage = 1;
-                    hasMorePages = true;
-                    loadCourses(new FormData(form), true);
+                    handleFilterSubmit(form);
                 });
             });
 
@@ -91,12 +98,128 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('[id^="resetBtn"], .btn-filter-reset').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                forms.forEach(f => f && f.reset());
-                currentPage = 1;
-                hasMorePages = true;
-                currentFilters = {};
-                loadCourses(new FormData(), true);
+                window.location.href = '/courses';
             });
+        });
+    }
+
+    // Handle filter submission with SEO-friendly URLs
+    function handleFilterSubmit(form) {
+        const formData = new FormData(form);
+        const levelId = formData.get('level_id');
+        const categoryId = formData.get('category_id');
+        const keyword = formData.get('keyword');
+
+        // Get slugs
+        let levelSlug = null;
+        let categorySlug = null;
+
+        if (levelId) {
+            const levelSelect = form.querySelector('[name="level_id"]');
+            const selectedOption = levelSelect.options[levelSelect.selectedIndex];
+            levelSlug = selectedOption.dataset.slug;
+        }
+
+        if (categoryId) {
+            const categorySelect = form.querySelector('[name="category_id"]');
+            const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+            categorySlug = selectedOption.dataset.slug;
+        }
+
+        // Reset page
+        currentPage = 1;
+        hasMorePages = true;
+
+        // Build SEO-friendly URL and use AJAX
+        let targetUrl = '/courses';
+
+        if (categoryId && levelId && categorySlug && levelSlug) {
+            // Category + Level
+            targetUrl = `/courses/category/${categorySlug}/level/${levelSlug}`;
+        } else if (levelId && levelSlug) {
+            // Only Level
+            targetUrl = `/courses/level/${levelSlug}`;
+        } else if (categoryId && categorySlug) {
+            // Only Category
+            targetUrl = `/courses/category/${categorySlug}`;
+        } else if (keyword) {
+            // Only keyword
+            targetUrl = `/courses?keyword=${encodeURIComponent(keyword)}`;
+        }
+
+        // Store current base URL for Load More
+        currentBaseUrl = targetUrl;
+
+        // Update URL without reload
+        window.history.pushState({}, '', targetUrl);
+
+        // Load courses with AJAX
+        loadCoursesFromUrl(targetUrl, true);
+    }
+
+    // Load courses from a specific URL using AJAX
+    function loadCoursesFromUrl(url, replace = true) {
+        if (isLoading) return;
+
+        isLoading = true;
+        setFiltersDisabled(true);
+
+        // Show loading
+        if (replace) {
+            showSkeletonLoader();
+        } else {
+            showLoadMoreSpinner();
+        }
+
+        // Add page parameter if needed
+        const separator = url.includes('?') ? '&' : '?';
+        const requestUrl = currentPage > 1 ? `${url}${separator}page=${currentPage}` : url;
+
+        console.log('🌐 AJAX Request URL:', requestUrl);
+
+        // Fetch courses via AJAX
+        fetch(requestUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('📦 Response:', {
+                success: data.success,
+                currentPage: data.currentPage,
+                lastPage: data.lastPage,
+                total: data.total,
+                hasMore: data.hasMore
+            });
+
+            if (!data.success) {
+                console.error('Failed to load courses');
+                isLoading = false;
+                setFiltersDisabled(false);
+                return;
+            }
+
+            // Update pagination state from server response
+            currentPage = data.currentPage;
+            hasMorePages = data.currentPage < data.lastPage;
+
+            if (replace) {
+                renderCourses(data.html, true, data);
+            } else {
+                renderCourses(data.html, false, data);
+            }
+
+            updateLoadMoreButton(data);
+            isLoading = false;
+            setFiltersDisabled(false);
+        })
+        .catch(error => {
+            console.error('❌ Error:', error);
+            isLoading = false;
+            setFiltersDisabled(false);
+            hideSkeletonLoader();
         });
     }
 
@@ -118,12 +241,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Button click handler
         const loadMoreBtn = document.getElementById('loadMoreBtn');
         loadMoreBtn.addEventListener('click', function() {
-            console.log('🔘 Load More clicked:', { isLoading, hasMorePages, currentPage });
+            console.log('🔘 Load More clicked:', { isLoading, hasMorePages, currentPage, currentBaseUrl });
 
             if (!isLoading && hasMorePages) {
                 currentPage++;
                 console.log('➡️ Loading page:', currentPage);
-                loadCourses(null, false); // Append mode
+                // Use loadCoursesFromUrl with current base URL to preserve filters
+                loadCoursesFromUrl(currentBaseUrl, false); // Append mode
             } else {
                 console.log('⛔ Cannot load more:', { isLoading, hasMorePages });
             }
@@ -236,6 +360,13 @@ document.addEventListener('DOMContentLoaded', function() {
         params.set('page', currentPage);
         const baseUrl = (filterForm || mobileFilterForm).getAttribute('data-url');
         const url = `${baseUrl}?${params.toString()}`;
+
+        // Update browser URL without reloading
+        if (replace && currentPage === 1) {
+            const cleanParams = new URLSearchParams(currentFilters);
+            const displayUrl = cleanParams.toString() ? `${baseUrl}?${cleanParams.toString()}` : baseUrl;
+            window.history.pushState({}, '', displayUrl);
+        }
 
         console.log('🌐 Request URL:', url);
         console.log('📋 Filters:', currentFilters);

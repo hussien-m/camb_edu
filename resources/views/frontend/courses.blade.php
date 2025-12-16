@@ -59,24 +59,24 @@
                     <div class="mobile-filter-grid">
                         <div class="filter-item">
                             <label><i class="fas fa-folder"></i> Category</label>
-                            <select name="category_id" class="form-select filter-input">
+                            <select name="category_id" id="mobileCategorySelect" class="form-select filter-input">
                                 <option value="">All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                        {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}" data-slug="{{ $cat->slug }}"
+                                        {{ request('category_id') == $cat->id || (isset($category) && $category->id == $cat->id) ? 'selected' : '' }}>
+                                        {{ $cat->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="filter-item">
                             <label><i class="fas fa-signal"></i> Level</label>
-                            <select name="level_id" class="form-select filter-input">
+                            <select name="level_id" id="mobileLevelSelect" class="form-select filter-input">
                                 <option value="">All Levels</option>
-                                @foreach($levels as $level)
-                                    <option value="{{ $level->id }}"
-                                        {{ request('level_id') == $level->id ? 'selected' : '' }}>
-                                        {{ $level->name }}
+                                @foreach($levels as $lvl)
+                                    <option value="{{ $lvl->id }}" data-slug="{{ $lvl->slug }}"
+                                        {{ request('level_id') == $lvl->id || (isset($level) && $level->id == $lvl->id) ? 'selected' : '' }}>
+                                        {{ $lvl->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -113,12 +113,12 @@
                     <form id="filterForm" action="{{ route('courses.index') }}" method="GET" data-url="{{ route('courses.index') }}">
                         <div class="mb-3">
                             <label class="form-label">Category</label>
-                            <select name="category_id" class="form-select filter-input">
+                            <select name="category_id" id="categorySelect" class="form-select filter-input">
                                 <option value="">All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                        {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}" data-slug="{{ $cat->slug }}"
+                                        {{ request('category_id') == $cat->id || (isset($category) && $category->id == $cat->id) ? 'selected' : '' }}>
+                                        {{ $cat->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -126,12 +126,12 @@
 
                         <div class="mb-3">
                             <label class="form-label">Level</label>
-                            <select name="level_id" class="form-select filter-input">
+                            <select name="level_id" id="levelSelect" class="form-select filter-input">
                                 <option value="">All Levels</option>
-                                @foreach($levels as $level)
-                                    <option value="{{ $level->id }}"
-                                        {{ request('level_id') == $level->id ? 'selected' : '' }}>
-                                        {{ $level->name }}
+                                @foreach($levels as $lvl)
+                                    <option value="{{ $lvl->id }}" data-slug="{{ $lvl->slug }}"
+                                        {{ request('level_id') == $lvl->id || (isset($level) && $level->id == $lvl->id) ? 'selected' : '' }}>
+                                        {{ $lvl->name }}
                                     </option>
                                 @endforeach
                             </select>
