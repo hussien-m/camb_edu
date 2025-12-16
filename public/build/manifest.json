@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-Bne7b81-.css",
+    "file": "assets/app-DF0JzHlk.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -36,7 +36,7 @@
     ]
   },
   "resources/css/frontend-home.css": {
-    "file": "assets/frontend-home-nILr40S6.css",
+    "file": "assets/frontend-home-Bwf1R4y9.css",
     "src": "resources/css/frontend-home.css",
     "isEntry": true,
     "name": "frontend-home",
@@ -45,7 +45,7 @@
     ]
   },
   "resources/css/frontend-layout.css": {
-    "file": "assets/frontend-layout-C-wdZn8V.css",
+    "file": "assets/frontend-layout-DYTmTNIh.css",
     "src": "resources/css/frontend-layout.css",
     "isEntry": true,
     "name": "frontend-layout",
@@ -63,7 +63,7 @@
     ]
   },
   "resources/css/student-layout.css": {
-    "file": "assets/student-layout-C_n-mYPr.css",
+    "file": "assets/student-layout-C_qJVdIy.css",
     "src": "resources/css/student-layout.css",
     "isEntry": true,
     "name": "student-layout",

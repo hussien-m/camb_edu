@@ -65,28 +65,37 @@
 </head>
 <body>
 
-<!-- Main Navbar - Professional Design -->
+<!-- Main Navbar - University Style Center Logo Design -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <!-- Register Button - Mobile Only (Left Side) -->
-        @guest('student')
-            <a class="mobile-register-btn d-lg-none" href="{{ route('student.register') }}">
-                <i class="fas fa-user-plus"></i>
-                <span>Register</span>
+        <!-- Mobile: Logo + Toggle + Register -->
+        <div class="d-lg-none w-100 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand-mobile" href="{{ route('home') }}">
+                @if(setting('site_logo'))
+                    <img src="{{ asset('storage/' . setting('site_logo')) }}"
+                         alt="{{ setting('site_name') }}" style="height: 50px;">
+                @else
+                    <i class="fas fa-graduation-cap" style="font-size: 2rem; color: #ffd700;"></i>
+                @endif
             </a>
-        @else
-            <a class="mobile-register-btn d-lg-none" href="{{ route('student.dashboard') }}">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-        @endguest
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            @guest('student')
+                <a class="mobile-register-btn" href="{{ route('student.register') }}">
+                    <i class="fas fa-user-plus"></i>
+                </a>
+            @else
+                <a class="mobile-register-btn" href="{{ route('student.dashboard') }}">
+                    <i class="fas fa-tachometer-alt"></i>
+                </a>
+            @endguest
+        </div>
 
         <div class="collapse navbar-collapse" id="mainNav">
-            <!-- Left Side - Navigation Links -->
+            <!-- Navigation Links -->
             <ul class="navbar-nav me-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">

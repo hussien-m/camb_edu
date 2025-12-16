@@ -42,45 +42,65 @@ body {
 ============================================ */
 .navbar {
     background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%);
-    padding: 10px 0;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    padding: 12px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
     z-index: 10000;
     transition: all 0.3s;
 }
 
-.navbar.scrolled {
-    padding: 6px 0;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
+/* Navbar Brand */
 .navbar-brand {
-    font-weight: 700;
-    color: white !important;
-    font-size: 1.1rem;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: transform 0.3s;
-    padding: 0;
+    gap: 12px;
+    padding: 5px 0;
+    transition: opacity 0.3s;
 }
 
 .navbar-brand:hover {
-    transform: scale(1.05);
+    opacity: 0.9;
 }
 
-.navbar-brand .navbar-logo {
-    height: 70px;
+.site-logo {
+    height: 50px;
     width: auto;
     max-width: 180px;
     object-fit: contain;
     filter: drop-shadow(0 2px 8px rgba(255,204,0,0.3));
-    transition: all 0.3s;
 }
 
-.navbar-brand:hover .navbar-logo {
-    filter: drop-shadow(0 4px 12px rgba(255,204,0,0.5));
+.logo-placeholder {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(255,215,0,0.4);
+}
+
+.logo-placeholder i {
+    font-size: 1.6rem;
+    color: #1e3a8a;
+}
+
+.site-name-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.site-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
 }
 
 /* Mobile Register Button - Beautiful Design */
@@ -118,10 +138,12 @@ body {
 /* Navbar Links - Compact */
 .navbar .nav-link {
     color: rgba(255,255,255,0.95) !important;
-    margin: 0 4px;
-    padding: 6px 12px !important;
+    margin: 0 2px;
+    padding: 6px 10px !important;
     border-radius: 6px;
     transition: all 0.3s;
+    font-size: 0.9rem;
+    white-space: nowrap;
     font-weight: 500;
     font-size: 0.9rem;
     position: relative;

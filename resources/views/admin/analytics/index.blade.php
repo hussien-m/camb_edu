@@ -328,18 +328,31 @@
                             <div class="list-group">
                                 @forelse($recentInquiries as $inquiry)
                                 <div class="list-group-item">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
                                             <i class="fas fa-envelope text-warning me-2"></i>
-                                            <strong>{{ $inquiry->name }}</strong>
-                                            <span class="text-muted">inquired about</span>
-                                            <strong>{{ $inquiry->course->title }}</strong>
+                                            <strong>{{ $inquiry->student_name ?? 'Guest' }}</strong>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-at me-1"></i>{{ $inquiry->email }}
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-book me-1"></i>
+                                                {{ $inquiry->course ? $inquiry->course->title : 'N/A' }}
+                                            </small>
+                                            @if($inquiry->message)
+                                            <br>
+                                            <small class="text-muted" style="display: block; margin-top: 5px;">
+                                                {{ Str::limit($inquiry->message, 50) }}
+                                            </small>
+                                            @endif
                                         </div>
-                                        <small class="text-muted">{{ $inquiry->created_at->diffForHumans() }}</small>
+                                        <small class="text-muted text-nowrap ms-2">{{ $inquiry->created_at->diffForHumans() }}</small>
                                     </div>
                                 </div>
                                 @empty
-                                <p class="text-muted">No recent inquiries</p>
+                                <p class="text-muted text-center py-3">No recent inquiries</p>
                                 @endforelse
                             </div>
                         </div>

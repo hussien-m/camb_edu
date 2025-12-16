@@ -36,6 +36,7 @@ class TrackPageViews
                 'user_agent' => $request->userAgent(),
                 'referer' => $request->header('referer'),
                 'device_type' => $this->getDeviceType($request),
+                'country' => $this->getCountryFromIp($request->ip()),
                 'user_id' => auth('student')->id() ?? auth()->id(),
             ];
 
@@ -90,5 +91,31 @@ class TrackPageViews
         }
 
         return 'desktop';
+    }
+
+    /**
+     * Get country from IP address
+     */
+    protected function getCountryFromIp(string $ip): string
+    {
+        // Local IPs
+        if ($ip === '127.0.0.1' || $ip === '::1' || str_starts_with($ip, '192.168.') || str_starts_with($ip, '10.')) {
+            return 'Local';
+        }
+
+        try {
+            // Simple country detection using ipapi.co (free, no API key needed)
+            // For production, consider using a local GeoIP database
+            $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=country");
+
+            if ($response) {
+                $data = json_decode($response, true);
+                return $data['country'] ?? 'Unknown';
+            }
+        } catch (\Exception $e) {
+            \Log::debug('Failed to get country for IP: ' . $ip);
+        }
+
+        return 'Unknown';
     }
 }
