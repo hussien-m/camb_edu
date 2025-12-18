@@ -74,7 +74,7 @@ class DashboardController extends Controller
 
         // Top 5 Cities
         $topCities = PageView::query()
-            ->select('city', 'country', DB::raw('count(*) as views'))
+            ->select('city', 'country', \DB::raw('count(*) as views'))
             ->where('created_at', '>=', $startDate)
             ->whereNotNull('city')
             ->where('city', '!=', 'Unknown')
