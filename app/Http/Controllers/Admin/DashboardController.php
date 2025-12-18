@@ -10,6 +10,7 @@ use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\CourseLevel;
 use App\Models\Page;
+use App\Models\PageView;
 use App\Models\Student;
 use App\Models\SuccessStory;
 use App\Services\Admin\ActivityLogService;
