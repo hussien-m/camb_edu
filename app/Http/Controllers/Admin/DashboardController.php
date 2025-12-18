@@ -86,7 +86,7 @@ class DashboardController extends Controller
 
         // Browser distribution
         $browserStats = PageView::query()
-            ->select('browser', DB::raw('count(*) as count'))
+            ->select('browser', \DB::raw('count(*) as count'))
             ->where('created_at', '>=', $startDate)
             ->whereNotNull('browser')
             ->where('browser', '!=', 'Unknown')
@@ -96,7 +96,7 @@ class DashboardController extends Controller
 
         // OS distribution
         $osStats = PageView::query()
-            ->select('os', DB::raw('count(*) as count'))
+            ->select('os', \DB::raw('count(*) as count'))
             ->where('created_at', '>=', $startDate)
             ->whereNotNull('os')
             ->where('os', '!=', 'Unknown')
@@ -113,7 +113,7 @@ class DashboardController extends Controller
 
         // Top Countries
         $topCountries = PageView::query()
-            ->select('country', DB::raw('count(*) as views'))
+            ->select('country', \DB::raw('count(*) as views'))
             ->where('created_at', '>=', $startDate)
             ->whereNotNull('country')
             ->where('country', '!=', 'Unknown')
