@@ -138,6 +138,7 @@
                             <th>Type</th>
                             <th>Scheduled For</th>
                             <th>Overdue By</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -150,6 +151,15 @@
                             <td><span class="badge badge-warning">{{ $reminder->getReminderLabel() }}</span></td>
                             <td>{{ $reminder->scheduled_for->format('Y-m-d H:i:s') }}</td>
                             <td class="text-danger">{{ $reminder->scheduled_for->diffForHumans() }}</td>
+                            <td>
+                                <form action="{{ route('admin.exam-reminders.send-one', $reminder->id) }}" method="POST" 
+                                      onsubmit="return confirm('Send this reminder now?');" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-success" title="Send Now">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -176,6 +186,7 @@
                             <th>Type</th>
                             <th>Scheduled For</th>
                             <th>Time Until</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -187,6 +198,15 @@
                             <td><span class="badge badge-info">{{ $reminder->getReminderLabel() }}</span></td>
                             <td>{{ $reminder->scheduled_for->format('Y-m-d H:i:s') }}</td>
                             <td class="text-primary">{{ $reminder->scheduled_for->diffForHumans() }}</td>
+                            <td>
+                                <form action="{{ route('admin.exam-reminders.send-one', $reminder->id) }}" method="POST" 
+                                      onsubmit="return confirm('Send this reminder now (even though it is not due yet)?');" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-info" title="Send Now">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

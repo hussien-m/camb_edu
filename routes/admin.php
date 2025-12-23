@@ -130,6 +130,7 @@ Route::middleware('admin')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\ExamReminderController::class, 'index'])->name('index');
         Route::post('/create', [App\Http\Controllers\Admin\ExamReminderController::class, 'create'])->name('create');
         Route::post('/send', [App\Http\Controllers\Admin\ExamReminderController::class, 'send'])->name('send');
+        Route::post('/{reminder}/send', [App\Http\Controllers\Admin\ExamReminderController::class, 'sendReminder'])->name('send-one');
         Route::delete('/delete-unsent', [App\Http\Controllers\Admin\ExamReminderController::class, 'deleteUnsent'])->name('delete-unsent');
         Route::post('/test-email', [App\Http\Controllers\Admin\ExamReminderController::class, 'testEmail'])->name('test-email');
     });
