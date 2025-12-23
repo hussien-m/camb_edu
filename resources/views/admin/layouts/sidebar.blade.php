@@ -151,8 +151,8 @@
                 </li>
 
                 <!-- Exams Management -->
-                <li class="nav-item {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') || request()->routeIs('admin.exam-reminders.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') || request()->routeIs('admin.exam-reminders.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <p>
                             Exams
@@ -176,6 +176,12 @@
                             <a href="{{ route('admin.exam-results.index') }}" class="nav-link {{ request()->routeIs('admin.exam-results.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Exam Results</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.exam-reminders.index') }}" class="nav-link {{ request()->routeIs('admin.exam-reminders.*') ? 'active' : '' }}">
+                                <i class="far fa-bell nav-icon"></i>
+                                <p>Exam Reminders</p>
                             </a>
                         </li>
                     </ul>

@@ -124,4 +124,13 @@ Route::middleware('admin')->group(function () {
 
     // Activity Log
     Route::get('activity-log', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-log.index');
+
+    // Exam Reminders Management
+    Route::prefix('exam-reminders')->name('exam-reminders.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ExamReminderController::class, 'index'])->name('index');
+        Route::post('/create', [App\Http\Controllers\Admin\ExamReminderController::class, 'create'])->name('create');
+        Route::post('/send', [App\Http\Controllers\Admin\ExamReminderController::class, 'send'])->name('send');
+        Route::delete('/delete-unsent', [App\Http\Controllers\Admin\ExamReminderController::class, 'deleteUnsent'])->name('delete-unsent');
+        Route::post('/test-email', [App\Http\Controllers\Admin\ExamReminderController::class, 'testEmail'])->name('test-email');
+    });
 });
