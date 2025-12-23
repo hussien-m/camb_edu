@@ -16,6 +16,18 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:work --stop-when-empty --tries=3')
                  ->everyMinute()
                  ->withoutOverlapping();
+
+        // Create exam reminders for upcoming scheduled exams
+        // Runs every hour to create reminders for newly scheduled exams
+        $schedule->command('exams:create-reminders')
+                 ->hourly()
+                 ->withoutOverlapping();
+
+        // Send due exam reminders
+        // Runs every minute to check for due reminders
+        $schedule->command('exams:send-reminders')
+                 ->everyMinute()
+                 ->withoutOverlapping();
     }
 
     /**

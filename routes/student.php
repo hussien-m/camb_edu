@@ -50,6 +50,7 @@ Route::middleware(['student', 'student.verified'])->group(function () {
     Route::post('courses/{course}/enroll', [App\Http\Controllers\Student\CourseController::class, 'enroll'])->name('courses.enroll');
 
     // Exams
+    Route::get('exams/calendar', [App\Http\Controllers\Student\ExamController::class, 'calendar'])->name('exams.calendar');
     Route::get('exams/{exam}', [App\Http\Controllers\Student\ExamController::class, 'show'])->name('exams.show');
     Route::post('exams/{exam}/start', [App\Http\Controllers\Student\ExamController::class, 'start'])->name('exams.start');
     Route::get('attempts/{attempt}', [App\Http\Controllers\Student\ExamController::class, 'take'])->name('exams.take');

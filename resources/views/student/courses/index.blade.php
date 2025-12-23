@@ -180,6 +180,31 @@
                                         </div>
                                     @endif
 
+                                    @if($exam->is_scheduled && $exam->scheduled_start_date && $exam->scheduled_start_date->isFuture())
+                                        <!-- Countdown Timer -->
+                                        <div class="alert alert-warning mb-3" style="border-radius: 12px; border-left: 4px solid #f59e0b;">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <i class="fas fa-clock me-2"></i>
+                                                    <strong>Scheduled Exam</strong>
+                                                </div>
+                                                <div class="countdown-display-course-{{ $exam->id }}" 
+                                                     data-exam-start="{{ $exam->scheduled_start_date->toIso8601String() }}" 
+                                                     data-exam-id="{{ $exam->id }}"
+                                                     style="font-weight: 900; font-size: 1.1rem; color: #dc2626;">
+                                                    <span class="days">00</span>d 
+                                                    <span class="hours">00</span>h 
+                                                    <span class="minutes">00</span>m 
+                                                    <span class="seconds">00</span>s
+                                                </div>
+                                            </div>
+                                            <small class="d-block mt-2 text-muted">
+                                                <i class="fas fa-calendar-check me-1"></i>
+                                                Starts: {{ $exam->scheduled_start_date->format('M d, Y g:i A') }}
+                                            </small>
+                                        </div>
+                                    @endif
+
                                     <div class="d-grid gap-2 mt-3">
                                         @if($inProgress)
                                             <a href="{{ route('student.exams.take', $inProgress) }}"
@@ -188,11 +213,24 @@
                                                 <i class="fas fa-play me-2"></i>Continue Exam
                                             </a>
                                         @elseif($attemptCount < $exam->max_attempts)
-                                            <a href="{{ route('student.exams.show', $exam) }}"
-                                               class="btn btn-lg fw-bold"
-                                               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                                                <i class="fas fa-clipboard-check me-2"></i>{{ $attemptCount > 0 ? 'Retake' : 'Start' }} Exam
-                                            </a>
+                                            @php
+                                                $isScheduledFuture = $exam->is_scheduled && $exam->scheduled_start_date && $exam->scheduled_start_date->isFuture();
+                                            @endphp
+                                            
+                                            @if($isScheduledFuture)
+                                                <button class="btn btn-lg fw-bold exam-start-btn-{{ $exam->id }}" disabled
+                                                        data-exam-id="{{ $exam->id }}"
+                                                        data-exam-url="{{ route('student.exams.show', $exam) }}"
+                                                        style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6; cursor: not-allowed;">
+                                                    <i class="fas fa-clock me-2"></i>Exam Not Started
+                                                </button>
+                                            @else
+                                                <a href="{{ route('student.exams.show', $exam) }}"
+                                                   class="btn btn-lg fw-bold"
+                                                   style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                                                    <i class="fas fa-clipboard-check me-2"></i>{{ $attemptCount > 0 ? 'Retake' : 'Start' }} Exam
+                                                </a>
+                                            @endif
                                         @else
                                             <button class="btn btn-lg fw-bold" disabled
                                                     style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6;">
@@ -233,3 +271,61 @@
     @endforelse
 </div>
 @endsection
+
+@push('scripts')
+<script>
+// Countdown Timer for scheduled exams in course cards
+function initCourseCountdowns() {
+    const countdownDisplays = document.querySelectorAll('[class*="countdown-display-course-"]');
+    
+    countdownDisplays.forEach(display => {
+        const examStart = new Date(display.dataset.examStart).getTime();
+        const examId = display.dataset.examId;
+        const startButton = document.querySelector(`.exam-start-btn-${examId}`);
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = examStart - now;
+            
+            if (distance < 0) {
+                // Exam has started - enable button and convert to link
+                if (startButton) {
+                    const examUrl = startButton.dataset.examUrl;
+                    const newLink = document.createElement('a');
+                    newLink.href = examUrl;
+                    newLink.className = 'btn btn-lg fw-bold';
+                    newLink.style = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);';
+                    newLink.innerHTML = '<i class="fas fa-clipboard-check me-2"></i>Start Exam';
+                    startButton.parentNode.replaceChild(newLink, startButton);
+                }
+                
+                // Reload page to update status
+                setTimeout(() => location.reload(), 1000);
+                return;
+            }
+            
+            // Calculate time units
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Update display
+            display.querySelector('.days').textContent = String(days).padStart(2, '0');
+            display.querySelector('.hours').textContent = String(hours).padStart(2, '0');
+            display.querySelector('.minutes').textContent = String(minutes).padStart(2, '0');
+            display.querySelector('.seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        
+        // Update immediately
+        updateCountdown();
+        
+        // Update every second
+        setInterval(updateCountdown, 1000);
+    });
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', initCourseCountdowns);
+</script>
+@endpush

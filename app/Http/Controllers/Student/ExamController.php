@@ -123,4 +123,29 @@ class ExamController extends Controller
 
         return view('student.exams.result', compact('attempt', 'correctAnswers', 'totalQuestions', 'remainingAttempts'));
     }
+
+    public function calendar()
+    {
+        $student = Auth::guard('student')->user();
+
+        // Get all scheduled exams for enrolled courses
+        $enrolledCourseIds = $student->enrollments()->pluck('course_id');
+
+        $scheduledExams = Exam::with(['course', 'attempts' => function($query) use ($student) {
+                $query->where('student_id', $student->id);
+            }])
+            ->whereIn('course_id', $enrolledCourseIds)
+            ->where('is_scheduled', true)
+            ->where('status', 'active')
+            ->whereNotNull('scheduled_start_date')
+            ->orderBy('scheduled_start_date', 'asc')
+            ->get();
+
+        // Filter only ready exams
+        $scheduledExams = $scheduledExams->filter(function($exam) {
+            return $exam->isReady();
+        });
+
+        return view('student.exams.calendar', compact('scheduledExams'));
+    }
 }

@@ -108,7 +108,91 @@
                     @enderror
                 </div>
 
-                <div class="d-flex justify-content-end">
+                <hr class="my-4">
+
+                <!-- Scheduling Section -->
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-alt mr-2"></i>Exam Scheduling (Optional)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="is_scheduled" name="is_scheduled" value="1" {{ old('is_scheduled') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_scheduled">
+                                <strong>Schedule this exam</strong>
+                                <small class="d-block text-muted">Enable to set specific start and end times for this exam</small>
+                            </label>
+                        </div>
+
+                        <div id="schedulingFields" style="display: {{ old('is_scheduled') ? 'block' : 'none' }};">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="scheduled_start_date" class="form-label">Start Date & Time <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" class="form-control @error('scheduled_start_date') is-invalid @enderror" 
+                                           id="scheduled_start_date" name="scheduled_start_date" value="{{ old('scheduled_start_date') }}">
+                                    @error('scheduled_start_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">When students can start taking the exam</small>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="scheduled_end_date" class="form-label">End Date & Time</label>
+                                    <input type="datetime-local" class="form-control @error('scheduled_end_date') is-invalid @enderror" 
+                                           id="scheduled_end_date" name="scheduled_end_date" value="{{ old('scheduled_end_date') }}">
+                                    @error('scheduled_end_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">Optional: When the exam window closes</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="timezone" class="form-label">Timezone</label>
+                                <select class="form-control @error('timezone') is-invalid @enderror" id="timezone" name="timezone">
+                                    <option value="UTC" {{ old('timezone', 'UTC') == 'UTC' ? 'selected' : '' }}>UTC (Coordinated Universal Time)</option>
+                                    <option value="Asia/Gaza" {{ old('timezone') == 'Asia/Gaza' ? 'selected' : '' }}>Asia/Gaza (Palestine)</option>
+                                    <option value="Asia/Jerusalem" {{ old('timezone') == 'Asia/Jerusalem' ? 'selected' : '' }}>Asia/Jerusalem</option>
+                                    <option value="Asia/Amman" {{ old('timezone') == 'Asia/Amman' ? 'selected' : '' }}>Asia/Amman (Jordan)</option>
+                                    <option value="Asia/Beirut" {{ old('timezone') == 'Asia/Beirut' ? 'selected' : '' }}>Asia/Beirut (Lebanon)</option>
+                                    <option value="Asia/Damascus" {{ old('timezone') == 'Asia/Damascus' ? 'selected' : '' }}>Asia/Damascus (Syria)</option>
+                                    <option value="Africa/Cairo" {{ old('timezone') == 'Africa/Cairo' ? 'selected' : '' }}>Africa/Cairo (Egypt)</option>
+                                    <option value="Asia/Riyadh" {{ old('timezone') == 'Asia/Riyadh' ? 'selected' : '' }}>Asia/Riyadh (Saudi Arabia)</option>
+                                    <option value="Asia/Dubai" {{ old('timezone') == 'Asia/Dubai' ? 'selected' : '' }}>Asia/Dubai (UAE)</option>
+                                </select>
+                                @error('timezone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="scheduling_notes" class="form-label">Scheduling Notes</label>
+                                <textarea class="form-control @error('scheduling_notes') is-invalid @enderror" 
+                                          id="scheduling_notes" name="scheduling_notes" rows="2" 
+                                          placeholder="Any special instructions or notes about the exam schedule...">{{ old('scheduling_notes') }}</textarea>
+                                @error('scheduling_notes')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <strong>Automatic Reminders:</strong> Students will receive email reminders at:
+                                <ul class="mb-0 mt-2">
+                                    <li>24 hours before exam</li>
+                                    <li>12 hours before exam</li>
+                                    <li>6 hours before exam</li>
+                                    <li>1.5 hours before exam</li>
+                                    <li>10 minutes before exam</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
                     <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary mr-2">Cancel</a>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save mr-2"></i>Create Exam
@@ -151,6 +235,36 @@ $(document).ready(function() {
         const selectedCourse = $(this).find('option:selected').text().split(' - ')[0];
         if (selectedCourse && selectedCourse !== '-- Select Course --' && !$('#title').val()) {
             $('#title').val(selectedCourse + ' - Final Exam');
+        }
+    });
+
+    // Toggle scheduling fields
+    $('#is_scheduled').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#schedulingFields').slideDown();
+            $('#scheduled_start_date').attr('required', true);
+        } else {
+            $('#schedulingFields').slideUp();
+            $('#scheduled_start_date').attr('required', false);
+            $('#scheduled_start_date').val('');
+            $('#scheduled_end_date').val('');
+        }
+    });
+
+    // Set minimum date to now
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    const minDateTime = now.toISOString().slice(0, 16);
+    $('#scheduled_start_date, #scheduled_end_date').attr('min', minDateTime);
+
+    // Validate end date is after start date
+    $('#scheduled_start_date, #scheduled_end_date').on('change', function() {
+        const startDate = $('#scheduled_start_date').val();
+        const endDate = $('#scheduled_end_date').val();
+        
+        if (startDate && endDate && endDate <= startDate) {
+            toastr.error('End date must be after start date', 'Validation Error');
+            $('#scheduled_end_date').val('');
         }
     });
 });

@@ -48,6 +48,37 @@ class StudentExamService
             ];
         }
 
+        // Check if exam is scheduled and available
+        if ($exam->is_scheduled) {
+            if (!$exam->scheduled_start_date) {
+                return [
+                    'allowed' => false,
+                    'message' => 'This exam has not been scheduled yet.'
+                ];
+            }
+
+            $now = now();
+
+            // Check if exam hasn't started yet
+            if ($now->lt($exam->scheduled_start_date)) {
+                $timeUntil = $exam->scheduled_start_date->diffForHumans();
+                return [
+                    'allowed' => false,
+                    'message' => "This exam will be available {$timeUntil}. Start time: " .
+                                 $exam->scheduled_start_date->format('l, F j, Y \a\t g:i A')
+                ];
+            }
+
+            // Check if exam has ended
+            if ($exam->scheduled_end_date && $now->gt($exam->scheduled_end_date)) {
+                return [
+                    'allowed' => false,
+                    'message' => 'This exam has ended. The exam was available until ' .
+                                 $exam->scheduled_end_date->format('l, F j, Y \a\t g:i A')
+                ];
+            }
+        }
+
         // Check max attempts
         $attemptCount = $this->getAttemptCount($student, $exam);
         if ($exam->max_attempts > 0 && $attemptCount >= $exam->max_attempts) {

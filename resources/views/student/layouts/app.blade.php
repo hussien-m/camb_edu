@@ -55,9 +55,13 @@
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="{{ route('student.courses.index') }}" class="menu-item {{ request()->routeIs('student.courses.*') || request()->routeIs('student.exams.*') ? 'active' : '' }}">
+            <a href="{{ route('student.courses.index') }}" class="menu-item {{ request()->routeIs('student.courses.*') ? 'active' : '' }}">
                 <i class="fas fa-book-open"></i>
                 <span>My Courses</span>
+            </a>
+            <a href="{{ route('student.exams.calendar') }}" class="menu-item {{ request()->routeIs('student.exams.calendar') ? 'active' : '' }}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Exam Calendar</span>
             </a>
             <a href="{{ route('student.certificates.index') }}" class="menu-item {{ request()->routeIs('student.certificates.*') ? 'active' : '' }}">
                 <i class="fas fa-award"></i>
