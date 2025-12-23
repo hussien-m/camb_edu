@@ -4,11 +4,10 @@ namespace App\Notifications;
 
 use App\Models\Exam;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ExamReminderNotification extends Notification implements ShouldQueue
+class ExamReminderNotification extends Notification
 {
     use Queueable;
 
