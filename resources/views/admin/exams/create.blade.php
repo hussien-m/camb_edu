@@ -119,48 +119,54 @@
                     </div>
                     <div class="card-body">
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="is_scheduled" name="is_scheduled" value="1" {{ old('is_scheduled') ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox" id="is_scheduled" name="is_scheduled" value="1" {{ old('is_scheduled', '1') ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_scheduled">
                                 <strong>Schedule this exam</strong>
                                 <small class="d-block text-muted">Enable to set specific start and end times for this exam</small>
                             </label>
                         </div>
 
-                        <div id="schedulingFields" style="display: {{ old('is_scheduled') ? 'block' : 'none' }};">
+                        @php
+                            // Default times: Start = now + 1h 2min, End = now + 3 days
+                            $defaultStart = now()->addHours(1)->addMinutes(2)->format('Y-m-d\TH:i');
+                            $defaultEnd = now()->addDays(3)->format('Y-m-d\TH:i');
+                        @endphp
+
+                        <div id="schedulingFields" style="display: {{ old('is_scheduled', '1') ? 'block' : 'none' }};">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="scheduled_start_date" class="form-label">Start Date & Time <span class="text-danger">*</span></label>
                                     <input type="datetime-local" class="form-control @error('scheduled_start_date') is-invalid @enderror" 
-                                           id="scheduled_start_date" name="scheduled_start_date" value="{{ old('scheduled_start_date') }}">
+                                           id="scheduled_start_date" name="scheduled_start_date" value="{{ old('scheduled_start_date', $defaultStart) }}">
                                     @error('scheduled_start_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                    <small class="text-muted">When students can start taking the exam</small>
+                                    <small class="text-muted">Default: 1 hour and 2 minutes from now</small>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label for="scheduled_end_date" class="form-label">End Date & Time</label>
                                     <input type="datetime-local" class="form-control @error('scheduled_end_date') is-invalid @enderror" 
-                                           id="scheduled_end_date" name="scheduled_end_date" value="{{ old('scheduled_end_date') }}">
+                                           id="scheduled_end_date" name="scheduled_end_date" value="{{ old('scheduled_end_date', $defaultEnd) }}">
                                     @error('scheduled_end_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                    <small class="text-muted">Optional: When the exam window closes</small>
+                                    <small class="text-muted">Default: 3 days from now</small>
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="timezone" class="form-label">Timezone</label>
                                 <select class="form-control @error('timezone') is-invalid @enderror" id="timezone" name="timezone">
-                                    <option value="UTC" {{ old('timezone', 'UTC') == 'UTC' ? 'selected' : '' }}>UTC (Coordinated Universal Time)</option>
-                                    <option value="Asia/Gaza" {{ old('timezone') == 'Asia/Gaza' ? 'selected' : '' }}>Asia/Gaza (Palestine)</option>
-                                    <option value="Asia/Jerusalem" {{ old('timezone') == 'Asia/Jerusalem' ? 'selected' : '' }}>Asia/Jerusalem</option>
-                                    <option value="Asia/Amman" {{ old('timezone') == 'Asia/Amman' ? 'selected' : '' }}>Asia/Amman (Jordan)</option>
-                                    <option value="Asia/Beirut" {{ old('timezone') == 'Asia/Beirut' ? 'selected' : '' }}>Asia/Beirut (Lebanon)</option>
-                                    <option value="Asia/Damascus" {{ old('timezone') == 'Asia/Damascus' ? 'selected' : '' }}>Asia/Damascus (Syria)</option>
-                                    <option value="Africa/Cairo" {{ old('timezone') == 'Africa/Cairo' ? 'selected' : '' }}>Africa/Cairo (Egypt)</option>
-                                    <option value="Asia/Riyadh" {{ old('timezone') == 'Asia/Riyadh' ? 'selected' : '' }}>Asia/Riyadh (Saudi Arabia)</option>
-                                    <option value="Asia/Dubai" {{ old('timezone') == 'Asia/Dubai' ? 'selected' : '' }}>Asia/Dubai (UAE)</option>
+                                    <option value="UTC" {{ old('timezone', 'Asia/Dubai') == 'UTC' ? 'selected' : '' }}>UTC (Coordinated Universal Time)</option>
+                                    <option value="Asia/Gaza" {{ old('timezone', 'Asia/Dubai') == 'Asia/Gaza' ? 'selected' : '' }}>Asia/Gaza (Palestine)</option>
+                                    <option value="Asia/Jerusalem" {{ old('timezone', 'Asia/Dubai') == 'Asia/Jerusalem' ? 'selected' : '' }}>Asia/Jerusalem</option>
+                                    <option value="Asia/Amman" {{ old('timezone', 'Asia/Dubai') == 'Asia/Amman' ? 'selected' : '' }}>Asia/Amman (Jordan)</option>
+                                    <option value="Asia/Beirut" {{ old('timezone', 'Asia/Dubai') == 'Asia/Beirut' ? 'selected' : '' }}>Asia/Beirit (Lebanon)</option>
+                                    <option value="Asia/Damascus" {{ old('timezone', 'Asia/Dubai') == 'Asia/Damascus' ? 'selected' : '' }}>Asia/Damascus (Syria)</option>
+                                    <option value="Africa/Cairo" {{ old('timezone', 'Asia/Dubai') == 'Africa/Cairo' ? 'selected' : '' }}>Africa/Cairo (Egypt)</option>
+                                    <option value="Asia/Riyadh" {{ old('timezone', 'Asia/Dubai') == 'Asia/Riyadh' ? 'selected' : '' }}>Asia/Riyadh (Saudi Arabia)</option>
+                                    <option value="Asia/Dubai" {{ old('timezone', 'Asia/Dubai') == 'Asia/Dubai' ? 'selected' : '' }}>Asia/Dubai (UAE)</option>
                                 </select>
                                 @error('timezone')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -246,10 +252,13 @@ $(document).ready(function() {
         } else {
             $('#schedulingFields').slideUp();
             $('#scheduled_start_date').attr('required', false);
-            $('#scheduled_start_date').val('');
-            $('#scheduled_end_date').val('');
         }
     });
+    
+    // Since scheduling is enabled by default, make sure field is required
+    if ($('#is_scheduled').is(':checked')) {
+        $('#scheduled_start_date').attr('required', true);
+    }
 
     // Set minimum date to now
     const now = new Date();
