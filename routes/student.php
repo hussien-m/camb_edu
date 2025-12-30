@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('student.guest')->group(function () {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login'])
-        ->middleware(['rate.limit:5,5', 'recaptcha:0.6']); // 5 attempts per 5 minutes, stricter reCAPTCHA
+        ->middleware(['rate.limit:5,5']); // 5 attempts per 5 minutes
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register'])
         ->middleware(['rate.limit:3,10', 'honeypot', 'recaptcha:0.5']); // 3 attempts per 10 minutes

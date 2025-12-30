@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('admin.guest')->group(function () {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login'])
-        ->middleware(['rate.limit:5,5', 'recaptcha:0.7']); // Stricter protection for admin
+        ->middleware(['rate.limit:5,5']); // Rate limiting only
 });
 
 // Admin Protected Routes

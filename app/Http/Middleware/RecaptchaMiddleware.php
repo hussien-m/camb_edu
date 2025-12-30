@@ -40,13 +40,23 @@ class RecaptchaMiddleware
 
         // Check if verification was successful
         if (!$result['success']) {
+            $errorCodes = $result['error-codes'] ?? [];
+            
             \Log::warning('reCAPTCHA verification failed', [
                 'ip' => $request->ip(),
-                'error_codes' => $result['error-codes'] ?? [],
+                'error_codes' => $errorCodes,
+                'full_response' => $result,
             ]);
 
+            // More helpful error message
+            $errorMessage = 'reCAPTCHA verification failed. Please try again.';
+            if (in_array('hostname-not-allowed', $errorCodes)) {
+                $errorMessage = 'Security verification failed. Domain not authorized.';
+                \Log::error('reCAPTCHA: Domain not authorized! Add cambridgecollage.com to Google reCAPTCHA Console.');
+            }
+
             return response()->json([
-                'error' => 'reCAPTCHA verification failed. Please try again.',
+                'error' => $errorMessage,
             ], 422);
         }
 
