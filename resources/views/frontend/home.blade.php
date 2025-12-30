@@ -393,6 +393,11 @@
 
                         <form id="contactForm" action="{{ route('contact.store') }}" method="POST">
                             @csrf
+
+                            <!-- Honeypot Fields (hidden from real users, visible to bots) -->
+                            <input type="text" name="website_url" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+                            <input type="text" name="phone_number_confirm" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>

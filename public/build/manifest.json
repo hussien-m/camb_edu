@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CDrcW7f7.css",
+    "file": "assets/app-Biiv_lIx.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -90,7 +90,7 @@
     "isEntry": true
   },
   "resources/js/frontend-course-detail.js": {
-    "file": "assets/frontend-course-detail-D09-7Y80.js",
+    "file": "assets/frontend-course-detail-CuQfn4lV.js",
     "name": "frontend-course-detail",
     "src": "resources/js/frontend-course-detail.js",
     "isEntry": true
@@ -102,13 +102,13 @@
     "isEntry": true
   },
   "resources/js/frontend-home.js": {
-    "file": "assets/frontend-home-BrQppdAE.js",
+    "file": "assets/frontend-home-BZbgKsWY.js",
     "name": "frontend-home",
     "src": "resources/js/frontend-home.js",
     "isEntry": true
   },
   "resources/js/frontend-newsletter.js": {
-    "file": "assets/frontend-newsletter-gKH4BlXR.js",
+    "file": "assets/frontend-newsletter-CwZWT6IB.js",
     "name": "frontend-newsletter",
     "src": "resources/js/frontend-newsletter.js",
     "isEntry": true

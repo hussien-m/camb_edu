@@ -17,15 +17,21 @@ use Illuminate\Support\Facades\Route;
 // Guest Routes (Login & Register)
 Route::middleware('student.guest')->group(function () {
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
+    Route::post('login', [LoginController::class, 'login'])
+        ->middleware(['rate.limit:5,5', 'recaptcha:0.6']); // 5 attempts per 5 minutes, stricter reCAPTCHA
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('register', [RegisterController::class, 'register']);
+    Route::post('register', [RegisterController::class, 'register'])
+        ->middleware(['rate.limit:3,10', 'honeypot', 'recaptcha:0.5']); // 3 attempts per 10 minutes
 
     // Password Reset Routes
     Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+        ->middleware(['rate.limit:3,10', 'recaptcha:0.5'])
+        ->name('password.email');
     Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
-    Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
+    Route::post('reset-password', [ForgotPasswordController::class, 'reset'])
+        ->middleware(['rate.limit:5,10'])
+        ->name('password.update');
 });
 
 // Email Verification Routes (accessible by logged in but unverified students)

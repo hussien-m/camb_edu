@@ -7,20 +7,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!form) return;
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
         // Disable submit button
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Sending...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verifying...';
 
         // Clear previous errors
         form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
         form.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
         alertBox.style.display = 'none';
 
+        // Get reCAPTCHA token if available
+        let recaptchaToken = null;
+        if (typeof executeRecaptcha === 'function') {
+            try {
+                recaptchaToken = await executeRecaptcha('contact_form');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Sending...';
+            } catch (error) {
+                console.warn('reCAPTCHA not available, continuing without it');
+            }
+        }
+
         // Get form data
         const formData = new FormData(form);
+        
+        // Add reCAPTCHA token if available
+        if (recaptchaToken) {
+            formData.append('recaptcha_token', recaptchaToken);
+        }
 
         // Send Ajax request
         fetch(form.action, {

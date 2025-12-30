@@ -175,6 +175,10 @@
                         <form id="inquiryForm" action="{{ route('course.inquiry.store', $course->id) }}" method="POST">
                             @csrf
 
+                            <!-- Honeypot Fields (hidden from real users, visible to bots) -->
+                            <input type="text" name="website_url" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+                            <input type="text" name="phone_number_confirm" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">

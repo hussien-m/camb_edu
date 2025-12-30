@@ -26,11 +26,15 @@ Route::get('/course/{category}/{level}/{course}', [HomeController::class, 'show'
 Route::get('/success-stories', [HomeController::class, 'successStories'])->name('success.stories');
 Route::get('/page/{slug}', [HomeController::class, 'showPage'])->name('page.show');
 
-// Contact Form
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+// Contact Form (with anti-spam protection)
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware(['rate.limit:3,5', 'honeypot', 'recaptcha:0.5'])
+    ->name('contact.store');
 
-// Course Inquiry
-Route::post('/course/{course}/inquiry', [CourseInquiryController::class, 'store'])->name('course.inquiry.store');
+// Course Inquiry (with anti-spam protection)
+Route::post('/course/{course}/inquiry', [CourseInquiryController::class, 'store'])
+    ->middleware(['rate.limit:3,5', 'honeypot', 'recaptcha:0.5'])
+    ->name('course.inquiry.store');
 
 // Newsletter Subscription (with anti-spam protection)
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])

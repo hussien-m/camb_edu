@@ -25,8 +25,12 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('student.register') }}">
+                        <form method="POST" action="{{ route('student.register') }}" id="student-register-form">
                             @csrf
+
+                            <!-- Honeypot Fields (hidden from real users, visible to bots) -->
+                            <input type="text" name="website_url" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+                            <input type="text" name="phone_number_confirm" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
 
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -106,7 +110,7 @@
                                 </div>
 
                                 <div class="col-12 mt-4">
-                                    <button type="submit" class="btn btn-primary btn-register w-100">
+                                    <button type="submit" class="btn btn-primary btn-register w-100" id="register-submit-btn">
                                         <i class="fas fa-user-plus me-2"></i> Create Account
                                     </button>
                                 </div>
@@ -125,3 +129,42 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('student-register-form').addEventListener('submit', async function(e) {
+    const submitBtn = document.getElementById('register-submit-btn');
+    const originalHtml = submitBtn.innerHTML;
+    
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating Account...';
+    
+    // Get reCAPTCHA token if available
+    if (typeof executeRecaptcha === 'function') {
+        try {
+            const token = await executeRecaptcha('student_register');
+            
+            // Add token to form
+            let tokenInput = document.querySelector('input[name="recaptcha_token"]');
+            if (!tokenInput) {
+                tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = 'recaptcha_token';
+                this.appendChild(tokenInput);
+            }
+            tokenInput.value = token;
+        } catch (error) {
+            console.warn('reCAPTCHA failed:', error);
+        }
+    }
+    
+    // Form will submit normally after this
+    // Re-enable button after 3 seconds in case of error
+    setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+    }, 3000);
+});
+</script>
+@endpush

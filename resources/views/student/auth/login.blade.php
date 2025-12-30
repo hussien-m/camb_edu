@@ -31,7 +31,7 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('student.login') }}">
+                        <form method="POST" action="{{ route('student.login') }}" id="student-login-form">
                             @csrf
 
                             <div class="mb-4">
@@ -60,7 +60,7 @@
                                 <a href="{{ route('student.password.request') }}">Forgot Password?</a>
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
+                            <button type="submit" class="btn btn-primary btn-login w-100 mb-3" id="login-submit-btn">
                                 <i class="fas fa-sign-in-alt me-2"></i> Login to Dashboard
                             </button>
 
@@ -77,3 +77,42 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('student-login-form').addEventListener('submit', async function(e) {
+    const submitBtn = document.getElementById('login-submit-btn');
+    const originalHtml = submitBtn.innerHTML;
+    
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verifying...';
+    
+    // Get reCAPTCHA token if available
+    if (typeof executeRecaptcha === 'function') {
+        try {
+            const token = await executeRecaptcha('student_login');
+            
+            // Add token to form
+            let tokenInput = document.querySelector('input[name="recaptcha_token"]');
+            if (!tokenInput) {
+                tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = 'recaptcha_token';
+                this.appendChild(tokenInput);
+            }
+            tokenInput.value = token;
+        } catch (error) {
+            console.warn('reCAPTCHA failed:', error);
+        }
+    }
+    
+    // Form will submit normally after this
+    // Re-enable button after 3 seconds in case of error
+    setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+    }, 3000);
+});
+</script>
+@endpush

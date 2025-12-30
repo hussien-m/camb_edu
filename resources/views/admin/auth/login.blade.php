@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Login | {{ setting('site_name', 'Cambridge College') }}</title>
 
     @if(setting('site_favicon'))
@@ -47,7 +48,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.login') }}" method="post">
+            <form action="{{ route('admin.login') }}" method="post" id="admin-login-form">
                 @csrf
                 <div class="input-group mb-3">
                     <input type="email" class="form-control @error('email') is-invalid @enderror"
@@ -78,7 +79,7 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                        <button type="submit" class="btn btn-primary btn-block" id="admin-login-btn">Sign In</button>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -96,5 +97,61 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+<!-- Google reCAPTCHA v3 -->
+@if(config('services.recaptcha.site_key'))
+<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+<script>
+// Global reCAPTCHA function
+function executeRecaptcha(action) {
+    return new Promise((resolve, reject) => {
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: action})
+                .then(function(token) {
+                    resolve(token);
+                })
+                .catch(function(error) {
+                    console.error('reCAPTCHA error:', error);
+                    reject(error);
+                });
+        });
+    });
+}
+
+// Admin login form submission
+document.getElementById('admin-login-form').addEventListener('submit', async function(e) {
+    const submitBtn = document.getElementById('admin-login-btn');
+    const originalHtml = submitBtn.innerHTML;
+    
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    // Get reCAPTCHA token
+    try {
+        const token = await executeRecaptcha('admin_login');
+        
+        // Add token to form
+        let tokenInput = document.querySelector('input[name="recaptcha_token"]');
+        if (!tokenInput) {
+            tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'recaptcha_token';
+            this.appendChild(tokenInput);
+        }
+        tokenInput.value = token;
+    } catch (error) {
+        console.warn('reCAPTCHA failed:', error);
+    }
+    
+    // Form will submit normally after this
+    // Re-enable button after 3 seconds in case of error
+    setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+    }, 3000);
+});
+</script>
+@endif
 </body>
 </html>

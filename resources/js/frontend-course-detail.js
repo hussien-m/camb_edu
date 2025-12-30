@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#inquiryForm').on('submit', function(e) {
+    $('#inquiryForm').on('submit', async function(e) {
         e.preventDefault();
 
         // Clear previous errors
@@ -10,12 +10,31 @@ $(document).ready(function() {
         // Disable submit button
         const submitBtn = $('#submitBtn');
         const originalText = submitBtn.html();
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> <span>Sending...</span>');
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> <span>Verifying...</span>');
+
+        // Get reCAPTCHA token if available
+        let recaptchaToken = null;
+        if (typeof executeRecaptcha === 'function') {
+            try {
+                recaptchaToken = await executeRecaptcha('course_inquiry');
+                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> <span>Sending...</span>');
+            } catch (error) {
+                console.warn('reCAPTCHA not available, continuing without it');
+            }
+        }
+
+        // Prepare form data
+        const formData = $(this).serializeArray();
+        
+        // Add reCAPTCHA token if available
+        if (recaptchaToken) {
+            formData.push({name: 'recaptcha_token', value: recaptchaToken});
+        }
 
         $.ajax({
             url: $(this).attr('action'),
             method: 'POST',
-            data: $(this).serialize(),
+            data: $.param(formData),
             success: function(response) {
                 // Show success message
                 $('#inquiry-alert')
