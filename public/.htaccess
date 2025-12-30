@@ -5,21 +5,9 @@
 
     RewriteEngine On
 
-    # Force HTTPS (uncomment if you have SSL)
-    # RewriteCond %{HTTPS} off
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [L,R=301]
-
-    # Remove index.php from URLs (SEO)
-    RewriteCond %{THE_REQUEST} ^GET.*index\.php [NC]
-    RewriteRule ^(.*)index\.php(.*)$ /$1$2 [R=301,L]
-
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-    # Handle X-XSRF-Token Header
-    RewriteCond %{HTTP:x-xsrf-token} .
-    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
