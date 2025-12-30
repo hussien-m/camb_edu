@@ -31,11 +31,16 @@ return Application::configure(basePath: dirname(__DIR__))
             'student.verified' => \App\Http\Middleware\EnsureStudentIsVerified::class,
         ]);
 
+        // SEO Middleware - Must be first for proper URL handling
+        $middleware->prependToGroup('web', \App\Http\Middleware\RemoveIndexPhp::class);
+        $middleware->prependToGroup('web', \App\Http\Middleware\CanonicalUrlMiddleware::class);
+        $middleware->prependToGroup('web', \App\Http\Middleware\PreventDuplicateContent::class);
+
+        // Redirect old course URLs to new SEO-friendly URLs
+        $middleware->prependToGroup('web', \App\Http\Middleware\RedirectOldCourseUrls::class);
+
         // Track page views on web routes
         $middleware->appendToGroup('web', \App\Http\Middleware\TrackPageViews::class);
-
-        // Redirect old course URLs to new SEO-friendly URLs (must be before TrackPageViews)
-        $middleware->prependToGroup('web', \App\Http\Middleware\RedirectOldCourseUrls::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
