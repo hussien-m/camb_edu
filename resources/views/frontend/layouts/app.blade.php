@@ -401,6 +401,12 @@
 @vite('resources/js/csrf-setup.js')
 @vite('resources/js/frontend-newsletter.js')
 
+<!-- Cookie Consent Banner -->
+@include('frontend.partials.cookie-consent')
+
+<!-- Scroll to Top Button -->
+@include('frontend.partials.scroll-to-top')
+
 <!-- Google Analytics -->
 @if(setting('google_analytics'))
     {!! setting('google_analytics') !!}
