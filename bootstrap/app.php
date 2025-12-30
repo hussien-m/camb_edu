@@ -31,6 +31,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'student.verified' => \App\Http\Middleware\EnsureStudentIsVerified::class,
         ]);
 
+        // Security Middleware - MUST BE FIRST
+        $middleware->prependToGroup('web', \App\Http\Middleware\BlockPublicDirectAccess::class);
+
         // SEO Middleware - Must be first for proper URL handling
         $middleware->prependToGroup('web', \App\Http\Middleware\RemoveIndexPhp::class);
         $middleware->prependToGroup('web', \App\Http\Middleware\CanonicalUrlMiddleware::class);
