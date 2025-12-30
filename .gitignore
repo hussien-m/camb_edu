@@ -26,3 +26,11 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Documentation folder (local only - never commit)
+/docs/
+
+# SQL files (never commit database files)
+*.sql
+/sql/
+/database/*.sql
