@@ -87,7 +87,8 @@ function initFullCKEditor(selector, height = 500) {
         BlockQuote,
         Indent,
         IndentBlock,
-        Undo
+        Undo,
+        SourceEditing
     } = CKEDITOR;
 
     return ClassicEditor
@@ -118,6 +119,7 @@ function initFullCKEditor(selector, height = 500) {
                 Indent,
                 IndentBlock,
                 Undo,
+                SourceEditing,
                 CustomUploadAdapterPlugin
             ],
             toolbar: {
@@ -135,6 +137,9 @@ function initFullCKEditor(selector, height = 500) {
                     'outdent', 'indent',
                     '|',
                     'link', 'uploadImage', 'insertTable', 'mediaEmbed', 'blockQuote',
+                    '|',
+                    'sourceEditing',
+                    'htmlSource',
                     '|',
                     'undo', 'redo'
                 ],
@@ -240,17 +245,94 @@ function initFullCKEditor(selector, height = 500) {
             },
             mediaEmbed: {
                 previewsInData: true
+            },
+            sourceEditing: {
+                allowCollaborationFeatures: true
             }
         })
         .then(editor => {
             // Set custom height
             editor.ui.view.editable.element.style.minHeight = height + 'px';
-            
+
             // Add custom styling
             editor.ui.view.editable.element.style.backgroundColor = '#fff';
-            
+
+            // Add custom HTML Source button (always available as fallback)
+            editor.ui.componentFactory.add('htmlSource', locale => {
+                const view = new CKEDITOR.ui.ButtonView(locale);
+                view.set({
+                    label: 'HTML Source',
+                    icon: '<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h16v16H2V2zm2 2v12h12V4H4zm2 2h8v2H6V6zm0 4h8v2H6v-2z" fill="currentColor"/></svg>',
+                    tooltip: true,
+                    withText: false
+                });
+
+                view.on('execute', () => {
+                    const currentContent = editor.getData();
+
+                    // Create modal
+                    const modal = document.createElement('div');
+                    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+
+                    const modalContent = document.createElement('div');
+                    modalContent.style.cssText = 'background: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 900px; max-height: 90vh; overflow: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);';
+
+                    const title = document.createElement('h3');
+                    title.textContent = 'Edit HTML Source';
+                    title.style.cssText = 'margin-top: 0; margin-bottom: 15px; color: #1e3a8a;';
+
+                    const textarea = document.createElement('textarea');
+                    textarea.value = currentContent;
+                    textarea.style.cssText = 'width: 100%; min-height: 450px; font-family: "Courier New", monospace; padding: 15px; border: 2px solid #ddd; border-radius: 4px; font-size: 13px; line-height: 1.5; resize: vertical;';
+                    textarea.setAttribute('spellcheck', 'false');
+
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.style.cssText = 'margin-top: 20px; text-align: right; padding-top: 15px; border-top: 1px solid #eee;';
+
+                    const saveBtn = document.createElement('button');
+                    saveBtn.textContent = 'Save Changes';
+                    saveBtn.style.cssText = 'padding: 10px 25px; background: #1e3a8a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; font-weight: 500;';
+
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.textContent = 'Cancel';
+                    cancelBtn.style.cssText = 'padding: 10px 25px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;';
+
+                    saveBtn.addEventListener('click', () => {
+                        editor.setData(textarea.value);
+                        document.body.removeChild(modal);
+                    });
+
+                    cancelBtn.addEventListener('click', () => {
+                        document.body.removeChild(modal);
+                    });
+
+                    // Close on Escape key
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            document.body.removeChild(modal);
+                        }
+                    });
+
+                    modalContent.appendChild(title);
+                    modalContent.appendChild(textarea);
+                    buttonContainer.appendChild(cancelBtn);
+                    buttonContainer.appendChild(saveBtn);
+                    modalContent.appendChild(buttonContainer);
+                    modal.appendChild(modalContent);
+                    document.body.appendChild(modal);
+
+                    // Focus textarea and select all
+                    setTimeout(() => {
+                        textarea.focus();
+                        textarea.select();
+                    }, 100);
+                });
+
+                return view;
+            });
+
             window.lastEditor = editor; // للوصول للـ editor من خارج الدالة
-            
+
             return editor;
         })
         .catch(error => {
