@@ -81,16 +81,19 @@
 @push('scripts')
 <script>
 document.getElementById('student-login-form').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Prevent default form submission
+    
     const submitBtn = document.getElementById('login-submit-btn');
     const originalHtml = submitBtn.innerHTML;
+    const form = this;
     
     // Disable button and show loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verifying...';
     
-    // Get reCAPTCHA token if available
-    if (typeof executeRecaptcha === 'function') {
-        try {
+    try {
+        // Get reCAPTCHA token if available
+        if (typeof executeRecaptcha === 'function') {
             const token = await executeRecaptcha('student_login');
             
             // Add token to form
@@ -99,20 +102,20 @@ document.getElementById('student-login-form').addEventListener('submit', async f
                 tokenInput = document.createElement('input');
                 tokenInput.type = 'hidden';
                 tokenInput.name = 'recaptcha_token';
-                this.appendChild(tokenInput);
+                form.appendChild(tokenInput);
             }
             tokenInput.value = token;
-        } catch (error) {
-            console.warn('reCAPTCHA failed:', error);
         }
-    }
-    
-    // Form will submit normally after this
-    // Re-enable button after 3 seconds in case of error
-    setTimeout(() => {
+        
+        // Submit the form after token is added
+        form.submit();
+    } catch (error) {
+        console.error('reCAPTCHA error:', error);
+        // Re-enable button on error
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalHtml;
-    }, 3000);
+        alert('Security verification failed. Please refresh the page and try again.');
+    }
 });
 </script>
 @endpush

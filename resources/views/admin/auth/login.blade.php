@@ -120,36 +120,41 @@ function executeRecaptcha(action) {
 
 // Admin login form submission
 document.getElementById('admin-login-form').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Prevent default form submission
+    
     const submitBtn = document.getElementById('admin-login-btn');
     const originalHtml = submitBtn.innerHTML;
+    const form = this;
     
     // Disable button and show loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
-    // Get reCAPTCHA token
     try {
-        const token = await executeRecaptcha('admin_login');
-        
-        // Add token to form
-        let tokenInput = document.querySelector('input[name="recaptcha_token"]');
-        if (!tokenInput) {
-            tokenInput = document.createElement('input');
-            tokenInput.type = 'hidden';
-            tokenInput.name = 'recaptcha_token';
-            this.appendChild(tokenInput);
+        // Get reCAPTCHA token
+        if (typeof executeRecaptcha === 'function') {
+            const token = await executeRecaptcha('admin_login');
+            
+            // Add token to form
+            let tokenInput = document.querySelector('input[name="recaptcha_token"]');
+            if (!tokenInput) {
+                tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = 'recaptcha_token';
+                form.appendChild(tokenInput);
+            }
+            tokenInput.value = token;
         }
-        tokenInput.value = token;
+        
+        // Submit the form after token is added
+        form.submit();
     } catch (error) {
-        console.warn('reCAPTCHA failed:', error);
-    }
-    
-    // Form will submit normally after this
-    // Re-enable button after 3 seconds in case of error
-    setTimeout(() => {
+        console.error('reCAPTCHA error:', error);
+        // Re-enable button on error
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalHtml;
-    }, 3000);
+        alert('Security verification failed. Please refresh the page and try again.');
+    }
 });
 </script>
 @endif
