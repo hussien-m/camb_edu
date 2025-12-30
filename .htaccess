@@ -15,6 +15,13 @@ RewriteCond %{THE_REQUEST} ^[A-Z]+\s/+public/ [NC]
 RewriteRule ^public/(.*)$ /$1 [R=301,L,NC]
 
 # ========================================
+# Prevent executing root index.php for internal rewrites
+# CRITICAL: Only public/index.php should handle requests
+# ========================================
+RewriteCond %{REQUEST_URI} ^/index\.php$ [NC]
+RewriteRule ^ /public/index.php [L]
+
+# ========================================
 # SEO: Force HTTPS (تفعيل SSL)
 # ========================================
 # Uncomment these lines when SSL is active and working
@@ -42,10 +49,12 @@ RewriteRule ^(.*)index\.php(.*)$ /$1$2 [R=301,L]
 
 # ========================================
 # Redirect all requests to public folder (internal)
+# CRITICAL: Skip if already being rewritten to avoid loops
 # ========================================
 RewriteCond %{REQUEST_URI} !^/public/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^(.*)$ public/$1 [L,QSA]
 
 # ========================================
