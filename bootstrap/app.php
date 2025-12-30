@@ -29,6 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'student' => \App\Http\Middleware\StudentMiddleware::class,
             'student.guest' => \App\Http\Middleware\RedirectIfStudent::class,
             'student.verified' => \App\Http\Middleware\EnsureStudentIsVerified::class,
+            
+            // Anti-Spam Middleware
+            'rate.limit' => \App\Http\Middleware\RateLimitMiddleware::class,
+            'honeypot' => \App\Http\Middleware\HoneypotMiddleware::class,
+            'recaptcha' => \App\Http\Middleware\RecaptchaMiddleware::class,
         ]);
 
         // Security Middleware - MUST BE FIRST

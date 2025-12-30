@@ -39,4 +39,10 @@ return [
         'api_key' => env('SENDGRID_API_KEY'),
     ],
 
+    'recaptcha' => [
+        'site_key' => env('RECAPTCHA_SITE_KEY'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+        'enabled_locally' => env('RECAPTCHA_ENABLED_LOCALLY', false),
+    ],
+
 ];
