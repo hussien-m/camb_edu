@@ -5,6 +5,14 @@
 
     RewriteEngine On
 
+    # ========================================
+    # CRITICAL: Block /public/ in URL
+    # If URL contains /public/, it means user typed it directly
+    # ========================================
+    RewriteCond %{REQUEST_URI} ^/public/ [NC,OR]
+    RewriteCond %{THE_REQUEST} /public/ [NC]
+    RewriteRule ^(.*)$ /$1 [R=301,L]
+
     # Force HTTPS (uncomment if you have SSL)
     # RewriteCond %{HTTPS} off
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [L,R=301]
