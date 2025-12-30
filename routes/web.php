@@ -32,8 +32,10 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 // Course Inquiry
 Route::post('/course/{course}/inquiry', [CourseInquiryController::class, 'store'])->name('course.inquiry.store');
 
-// Newsletter Subscription
-Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+// Newsletter Subscription (with anti-spam protection)
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->middleware(['rate.limit:5,1', 'honeypot', 'recaptcha:0.5'])
+    ->name('newsletter.subscribe');
 
 // Storage Link Route (for shared hosting)
 Route::get('/storage-link', function () {

@@ -48,6 +48,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://www.google.com">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="//{{ parse_url(config('app.url'), PHP_URL_HOST) }}">
 
     <!-- Google Fonts -->
@@ -406,6 +408,28 @@
 
 <!-- Scroll to Top Button -->
 @include('frontend.partials.scroll-to-top')
+
+<!-- Google reCAPTCHA v3 -->
+@if(config('services.recaptcha.site_key'))
+<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+<script>
+// Global reCAPTCHA function
+function executeRecaptcha(action) {
+    return new Promise((resolve, reject) => {
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: action})
+                .then(function(token) {
+                    resolve(token);
+                })
+                .catch(function(error) {
+                    console.error('reCAPTCHA error:', error);
+                    reject(error);
+                });
+        });
+    });
+}
+</script>
+@endif
 
 <!-- Google Analytics -->
 @if(setting('google_analytics'))

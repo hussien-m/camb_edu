@@ -1,7 +1,7 @@
 const newsletterForm = document.getElementById('newsletter-form');
 
 if (newsletterForm) {
-    newsletterForm.addEventListener('submit', function(e) {
+    newsletterForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const form = this;
@@ -18,30 +18,54 @@ if (newsletterForm) {
 
         // Disable button
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
-        fetch(form.getAttribute('data-action'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ email: email })
-        })
-        .then(response => response.json().then(data => ({ status: response.status, data: data })))
-        .then(({ status, data }) => {
-            messageEl.className = status === 200 || status === 201 ? 'text-success' : 'text-danger';
+        try {
+            // Get reCAPTCHA token
+            let recaptchaToken = null;
+            if (typeof executeRecaptcha === 'function') {
+                try {
+                    recaptchaToken = await executeRecaptcha('newsletter_subscribe');
+                } catch (error) {
+                    console.warn('reCAPTCHA not available, continuing without it');
+                }
+            }
+
+            // Prepare request data
+            const requestData = { 
+                email: email,
+                // Honeypot fields (should be empty for real users)
+                website_url: '',
+                phone_number_confirm: ''
+            };
+            
+            // Add reCAPTCHA token if available
+            if (recaptchaToken) {
+                requestData.recaptcha_token = recaptchaToken;
+            }
+
+            const response = await fetch(form.getAttribute('data-action'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const data = await response.json();
+            
+            messageEl.className = response.ok ? 'text-success' : 'text-danger';
             messageEl.textContent = data.message || 'An error occurred. Please try again.';
 
-            if (status === 200 || status === 201) {
+            if (response.ok) {
                 form.reset();
             }
-        })
-        .catch(error => {
+        } catch (error) {
+            console.error('Newsletter error:', error);
             messageEl.className = 'text-danger';
             messageEl.textContent = 'An error occurred. Please try again.';
-        })
-        .finally(() => {
+        } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
 
@@ -49,6 +73,6 @@ if (newsletterForm) {
             setTimeout(() => {
                 messageEl.textContent = '';
             }, 5000);
-        });
+        }
     });
 }
