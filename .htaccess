@@ -12,14 +12,7 @@ RewriteBase /
 # CRITICAL: Use THE_REQUEST to catch original browser requests only
 # ========================================
 RewriteCond %{THE_REQUEST} ^[A-Z]+\s/+public/ [NC]
-RewriteRule ^public/(.*)$ /$1 [R=301,L,NC]
-
-# ========================================
-# Prevent executing root index.php for internal rewrites
-# CRITICAL: Only public/index.php should handle requests
-# ========================================
-RewriteCond %{REQUEST_URI} ^/index\.php$ [NC]
-RewriteRule ^ /public/index.php [L]
+RewriteRule ^public/(.*)$ /$1 [R=301,L,NC,E=SKIP_REWRITE:1]
 
 # ========================================
 # SEO: Force HTTPS (تفعيل SSL)
@@ -54,8 +47,8 @@ RewriteRule ^(.*)index\.php(.*)$ /$1$2 [R=301,L]
 RewriteCond %{REQUEST_URI} !^/public/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^(.*)$ public/$1 [L,QSA]
+RewriteCond %{ENV:REDIRECT_SKIP_REWRITE} !^1$
+RewriteRule ^(.*)$ public/$1 [L,QSA,E=REWRITTEN:1]
 
 # ========================================
 # Security: Deny access to sensitive files
