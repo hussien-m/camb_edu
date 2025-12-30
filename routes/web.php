@@ -8,10 +8,6 @@ use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('test-push',function(){
-    return "Test 4";
-});
-
 // SEO Routes
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
