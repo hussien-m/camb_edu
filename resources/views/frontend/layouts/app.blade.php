@@ -301,7 +301,7 @@
                     Pages
                 </h5>
                 <div class="footer-links">
-                    @foreach($pages->take(5) as $page)
+                    @foreach($pages->take(10) as $page)
                         <a href="{{ route('page.show', $page->slug) }}">
                             <i class="fas fa-angle-right"></i>
                             {{ $page->title }}

@@ -242,30 +242,276 @@ body::after {
     color: #991b1b;
 }
 
+/* Enhanced form styling */
+.form-group-enhanced {
+    position: relative;
+}
+
+.form-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.form-control-with-icon {
+    padding-left: 45px !important;
+}
+
+.form-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e3a8a;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    margin-right: 8px;
+}
+
+/* Country selector enhancements */
+.country-select-wrapper {
+    position: relative;
+}
+
+.country-search-input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s;
+    background: white;
+}
+
+.country-search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.country-search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+}
+
+.country-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.country-dropdown.show {
+    display: block;
+}
+
+.country-option {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.country-option:hover {
+    background: #f3f4f6;
+}
+
+.country-option.selected {
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-weight: 600;
+}
+
+.country-flag {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+}
+
+.country-code {
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: normal;
+    margin-left: auto;
+}
+
+.auto-detected-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: #dbeafe;
+    color: #1e40af;
+    border-radius: 15px;
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.password-strength-bar {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.password-strength-fill {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.password-strength-weak {
+    background: #ef4444;
+}
+
+.password-strength-medium {
+    background: #f59e0b;
+}
+
+.password-strength-strong {
+    background: #10b981;
+}
+
+/* Phone input with country code */
+.phone-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.phone-input-wrapper:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.phone-code-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 15px;
+    background: #f3f4f6;
+    border-right: 2px solid #e5e7eb;
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 15px;
+    min-width: 60px;
+    border-radius: 10px 0 0 10px;
+    user-select: none;
+}
+
+.phone-input {
+    flex: 1;
+    border: none !important;
+    padding: 12px 15px !important;
+    border-radius: 0 10px 10px 0 !important;
+    font-size: 15px;
+    background: transparent;
+}
+
+.phone-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.phone-input-wrapper.is-invalid {
+    border-color: #ef4444;
+}
+
+#phone_hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .login-section,
     .register-section {
-        padding: 80px 0 40px 0;
+        padding: 60px 0 30px 0;
     }
 
     .login-body,
     .register-body {
-        padding: 30px 25px;
+        padding: 25px 20px;
     }
 
     .login-header,
     .register-header {
-        padding: 30px 20px;
+        padding: 25px 20px;
     }
 
     .login-header .icon,
     .register-header .icon {
-        font-size: 50px;
+        font-size: 45px;
     }
 
     .login-header h2,
     .register-header h2 {
-        font-size: 24px;
+        font-size: 22px;
+    }
+    
+    .form-section {
+        margin-bottom: 20px;
+    }
+    
+    .section-title {
+        font-size: 14px;
+    }
+    
+    .phone-code-display {
+        min-width: 50px;
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .phone-input {
+        padding: 10px 12px !important;
+        font-size: 14px;
     }
 }

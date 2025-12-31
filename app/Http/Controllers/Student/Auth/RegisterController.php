@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\CountryHelper;
 use App\Models\Student;
 use App\Services\Student\StudentEmailService;
 use Illuminate\Http\Request;
@@ -22,7 +23,9 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
-        return view('student.auth.register');
+        $countries = CountryHelper::getCountriesForSelect();
+        $phoneCodes = CountryHelper::getPhoneCountryCodes();
+        return view('student.auth.register', compact('countries', 'phoneCodes'));
     }
 
     public function register(Request $request)
@@ -34,11 +37,21 @@ class RegisterController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date|before:today',
-            'country' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:2',
+            'country_code' => 'nullable|string|max:2',
         ]);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
+        }
+
+        // Get country name from code if provided
+        $countryName = null;
+        if ($request->country_code) {
+            $countryName = CountryHelper::getCountryName($request->country_code);
+        } elseif ($request->country) {
+            // Fallback: if old country name is provided
+            $countryName = $request->country;
         }
 
         $student = Student::create([
@@ -48,7 +61,7 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'date_of_birth' => $request->date_of_birth,
-            'country' => $request->country,
+            'country' => $countryName,
             'status' => 'pending', // Pending until email verified
         ]);
 
