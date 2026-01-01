@@ -84,6 +84,57 @@ class ProfessionalMailService
     }
 
     /**
+     * Send email with both HTML and plain text versions (better deliverability)
+     */
+    public static function sendWithPlainText($to, $subject, $html, $plainText, $from = null, $fromName = null)
+    {
+        $from = $from ?? config('mail.from.address');
+        $fromName = $fromName ?? config('mail.from.name');
+
+        // Try SendGrid API first if configured
+        $apiKey = config('services.sendgrid.api_key');
+
+        if (!empty($apiKey)) {
+            try {
+                $sendgrid = new SendGridApiService();
+                $result = $sendgrid->sendWithPlainText($to, $subject, $html, $plainText, $from, $fromName);
+                return true;
+            } catch (\Exception $e) {
+                Log::error("❌ SendGrid API failed, falling back to SMTP", [
+                    'error' => $e->getMessage()
+                ]);
+                // Fall through to SMTP
+            }
+        }
+
+        // Fallback to SMTP
+        try {
+            Mail::send([], [], function ($message) use ($to, $subject, $html, $plainText, $from, $fromName) {
+                $message->to($to)
+                        ->subject($subject)
+                        ->html($html)
+                        ->text($plainText)
+                        ->from($from, $fromName)
+                        ->getHeaders()
+                        ->addTextHeader('List-Unsubscribe', '<' . url('/student/unsubscribe') . '>, <mailto:' . $from . '?subject=Unsubscribe>')
+                        ->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click')
+                        ->addTextHeader('X-Mailer', 'Cambridge College Email System')
+                        ->addTextHeader('Precedence', 'bulk');
+            });
+
+            Log::info("Email sent successfully via SMTP to: {$to}");
+            return true;
+
+        } catch (\Exception $e) {
+            Log::error("SMTP email failed: " . $e->getMessage(), [
+                'to' => $to,
+                'subject' => $subject
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
      * Queue email for background sending
      */
     public static function queue($to, $subject, $html, $from = null, $fromName = null, $delay = 0)

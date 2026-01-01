@@ -25,11 +25,13 @@ class StudentEmailService
         try {
             // Send email directly (same as password reset)
             $emailHtml = $this->getVerificationEmailHtml($student, $verificationUrl);
+            $plainText = $this->getVerificationEmailPlainText($student, $verificationUrl);
 
-            ProfessionalMailService::send(
+            ProfessionalMailService::sendWithPlainText(
                 $student->email,
-                '✉️ Verify Your Email - ' . config('app.name'),
+                'Verify Your Email Address - ' . config('app.name'),
                 $emailHtml,
+                $plainText,
                 config('mail.from.address'),
                 config('mail.from.name')
             );
@@ -157,10 +159,14 @@ class StudentEmailService
             // Send email directly (same as password reset)
             $emailHtml = $this->getVerificationReminderEmailHtml($student, $verificationUrl);
 
-            ProfessionalMailService::send(
+            // Generate plain text version for better deliverability
+            $plainText = $this->getVerificationReminderPlainText($student, $verificationUrl);
+
+            ProfessionalMailService::sendWithPlainText(
                 $student->email,
-                '🔔 Reminder: Verify Your Email - ' . config('app.name'),
+                'Verify Your Email Address - ' . config('app.name'),
                 $emailHtml,
+                $plainText,
                 config('mail.from.address'),
                 config('mail.from.name')
             );
@@ -200,7 +206,7 @@ class StudentEmailService
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-                            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">🔔 Email Verification Reminder</h1>
+                            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">Email Verification Reminder</h1>
                         </td>
                     </tr>
 
@@ -231,7 +237,7 @@ class StudentEmailService
 
                             <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 25px 0; border-radius: 5px;">
                                 <p style="margin: 0; color: #856404; font-size: 14px;">
-                                    <strong>⚠️ Important:</strong> Your account will remain limited until you verify your email address. Don't miss out on accessing all our courses and features!
+                                    <strong>Important:</strong> Your account will remain limited until you verify your email address. Don't miss out on accessing all our courses and features!
                                 </p>
                             </div>
 
@@ -263,6 +269,34 @@ HTML;
     }
 
     /**
+     * Generate plain text version of verification reminder email
+     */
+    private function getVerificationReminderPlainText($student, $verificationUrl)
+    {
+        $appName = config('app.name', 'Cambridge College');
+        $daysSinceRegistration = $student->created_at->diffInDays(now());
+
+        return <<<TEXT
+Hello {$student->first_name}!
+
+We noticed that you haven't verified your email address yet. It's been {$daysSinceRegistration} day(s) since you registered with {$appName}.
+
+To complete your registration and start accessing all our features, please verify your email address by clicking the link below:
+
+{$verificationUrl}
+
+Important: Your account will remain limited until you verify your email address. Don't miss out on accessing all our courses and features!
+
+If you did not create an account with {$appName}, you can safely ignore this email.
+
+Best Regards,
+{$appName} Team
+
+This is an automated reminder. If you have any questions, please contact our support team.
+TEXT;
+    }
+
+    /**
      * Generate HTML for verification email (for alternative mail service)
      */
     private function getVerificationEmailHtml($student, $verificationUrl)
@@ -278,7 +312,7 @@ HTML;
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 24px;">✉️ Verify Your Email</h1>
+        <h1 style="color: white; margin: 0; font-size: 24px;">Verify Your Email</h1>
     </div>
 
     <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
@@ -305,6 +339,29 @@ HTML;
 </body>
 </html>
 HTML;
+    }
+
+    /**
+     * Generate plain text version of verification email
+     */
+    private function getVerificationEmailPlainText($student, $verificationUrl)
+    {
+        $appName = config('app.name', 'Cambridge College');
+
+        return <<<TEXT
+Hello {$student->first_name}!
+
+Thank you for registering with {$appName}! Please verify your email address to activate your account.
+
+Click the link below to verify your email:
+
+{$verificationUrl}
+
+If you did not create an account, no further action is required.
+
+Best Regards,
+{$appName} Team
+TEXT;
     }
 
     /**
