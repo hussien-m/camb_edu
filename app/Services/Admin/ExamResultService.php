@@ -133,7 +133,7 @@ class ExamResultService
             $totalMarks = $attempt->exam->total_marks;
             $earnedMarks = $attempt->answers->sum('points_earned');
             $percentage = $totalMarks > 0 ? ($earnedMarks / $totalMarks) * 100 : 0;
-            $passed = $percentage >= $attempt->exam->passing_percentage;
+            $passed = $percentage >= $attempt->exam->passing_score;
 
             // Update attempt
             $attempt->update([

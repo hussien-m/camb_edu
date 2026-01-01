@@ -17,6 +17,14 @@ class StudentExamService
      */
     public function checkExamAccess(Student $student, Exam $exam): array
     {
+        // Check if exam is active
+        if ($exam->status !== 'active') {
+            return [
+                'allowed' => false,
+                'message' => 'This exam is not available at the moment.'
+            ];
+        }
+
         // Check enrollment
         $enrollment = Enrollment::where('student_id', $student->id)
             ->where('course_id', $exam->course_id)
@@ -103,13 +111,41 @@ class StudentExamService
     }
 
     /**
-     * Get attempt count
+     * Get attempt count (all attempts including in_progress)
      */
     public function getAttemptCount(Student $student, Exam $exam): int
     {
         return ExamAttempt::where('student_id', $student->id)
             ->where('exam_id', $exam->id)
             ->count();
+    }
+
+    /**
+     * Get completed attempt count (excluding in_progress and expired)
+     */
+    public function getCompletedAttemptCount(Student $student, Exam $exam): int
+    {
+        return ExamAttempt::where('student_id', $student->id)
+            ->where('exam_id', $exam->id)
+            ->where('status', 'completed')
+            ->count();
+    }
+
+    /**
+     * Get all attempts count by status
+     */
+    public function getAttemptCountByStatus(Student $student, Exam $exam): array
+    {
+        $attempts = ExamAttempt::where('student_id', $student->id)
+            ->where('exam_id', $exam->id)
+            ->get();
+
+        return [
+            'total' => $attempts->count(),
+            'in_progress' => $attempts->where('status', 'in_progress')->count(),
+            'completed' => $attempts->where('status', 'completed')->count(),
+            'expired' => $attempts->where('status', 'expired')->count(),
+        ];
     }
 
     /**
@@ -198,10 +234,10 @@ class StudentExamService
             ->where('status', 'in_progress')
             ->first();
 
-        // Previous completed attempts
+        // Previous completed attempts (including expired)
         $previousAttempts = ExamAttempt::where('student_id', $student->id)
             ->where('exam_id', $exam->id)
-            ->where('status', '!=', 'in_progress')
+            ->whereIn('status', ['completed', 'expired'])
             ->orderBy('created_at', 'desc')
             ->get();
 

@@ -96,10 +96,17 @@ class ExamController extends Controller
 
     public function update(UpdateExamRequest $request, Exam $exam)
     {
-        $this->examService->updateExam($exam, $request->validated());
+        try {
+            $this->examService->updateExam($exam, $request->validated());
 
-        return redirect()->route('admin.exams.show', $exam)
-            ->with('success', 'Exam updated successfully.');
+            return redirect()->route('admin.exams.show', $exam)
+                ->with('success', 'Exam updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Exam update failed: ' . $e->getMessage());
+            return redirect()->route('admin.exams.edit', $exam)
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function destroy(Exam $exam)

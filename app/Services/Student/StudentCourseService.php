@@ -61,7 +61,8 @@ class StudentCourseService
             $examsData = [];
             foreach ($course->exams as $exam) {
                 $attempts = $exam->attempts;
-                $completedAttempts = $attempts->where('status', 'completed');
+                // Include both completed and expired attempts in statistics
+                $completedAttempts = $attempts->whereIn('status', ['completed', 'expired']);
                 $lastAttempt = $completedAttempts->sortByDesc('created_at')->first();
                 $bestAttempt = $completedAttempts->sortByDesc('percentage')->first();
                 $attemptCount = $attempts->count();

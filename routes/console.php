@@ -14,3 +14,8 @@ Schedule::command('students:send-verification-reminders')
     ->timezone('UTC')
     ->withoutOverlapping()
     ->runInBackground();
+
+// Schedule closing expired exam attempts every 5 minutes
+Schedule::job(new \App\Jobs\CloseExpiredExamAttempts)
+    ->everyFiveMinutes()
+    ->withoutOverlapping();

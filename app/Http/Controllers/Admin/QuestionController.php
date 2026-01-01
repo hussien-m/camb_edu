@@ -40,28 +40,48 @@ class QuestionController extends Controller
 
     public function update(UpdateQuestionRequest $request, Exam $exam, Question $question)
     {
-        $this->questionService->updateQuestion($question, $request->validated());
+        try {
+            $this->questionService->updateQuestion($question, $request->validated());
 
-        return redirect()->route('admin.exams.show', $exam)
-            ->with('success', 'Question updated successfully.');
+            return redirect()->route('admin.exams.show', $exam)
+                ->with('success', 'Question updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Question update failed: ' . $e->getMessage());
+            return redirect()->route('admin.exams.show', $exam)
+                ->with('error', $e->getMessage());
+        }
     }
 
     public function destroy(Exam $exam, Question $question)
     {
-        $question->delete();
-        
-        // Check if request is AJAX
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Question deleted successfully.',
-                'total_questions' => $exam->questions()->count(),
-                'total_points' => $exam->questions()->sum('points')
-            ]);
+        try {
+            $this->questionService->deleteQuestion($question);
+            
+            // Check if request is AJAX
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Question deleted successfully.',
+                    'total_questions' => $exam->questions()->count(),
+                    'total_points' => $exam->questions()->sum('points')
+                ]);
+            }
+            
+            return redirect()->route('admin.exams.show', $exam)
+                ->with('success', 'Question deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Question deletion failed: ' . $e->getMessage());
+            
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 400);
+            }
+            
+            return redirect()->route('admin.exams.show', $exam)
+                ->with('error', $e->getMessage());
         }
-        
-        return redirect()->route('admin.exams.show', $exam)
-            ->with('success', 'Question deleted successfully.');
     }
     
     /**
@@ -76,7 +96,16 @@ class QuestionController extends Controller
                 'question_id' => $question->id
             ]);
             
-            $this->questionService->updateQuestion($question, $request->validated());
+            try {
+                $this->questionService->updateQuestion($question, $request->validated());
+            } catch (\Exception $e) {
+                Log::error('QuestionService update failed: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                    'error' => config('app.debug') ? $e->getMessage() : 'Failed to update question'
+                ], 400);
+            }
             
             // Reload question with options
             $question->load('options');

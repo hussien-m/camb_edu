@@ -45,12 +45,42 @@ class ExamService
     }
 
     /**
+     * Check if exam has any attempts (in_progress or completed)
+     */
+    public function hasAttempts(Exam $exam): bool
+    {
+        return $exam->attempts()->exists();
+    }
+
+    /**
+     * Check if exam has in-progress attempts
+     */
+    public function hasInProgressAttempts(Exam $exam): bool
+    {
+        return $exam->attempts()->where('status', 'in_progress')->exists();
+    }
+
+    /**
      * Update an existing exam.
      */
     public function updateExam(Exam $exam, array $data): bool
     {
         DB::beginTransaction();
         try {
+            // Check if exam has attempts and protect critical fields
+            $hasAttempts = $this->hasAttempts($exam);
+            
+            if ($hasAttempts) {
+                // Protected fields that cannot be changed after attempts exist
+                $protectedFields = ['total_marks', 'passing_score', 'duration'];
+                
+                foreach ($protectedFields as $field) {
+                    if (isset($data[$field]) && $exam->$field != $data[$field]) {
+                        throw new \Exception("Cannot modify '{$field}' after students have attempted this exam. Current value: {$exam->$field}, Attempted value: {$data[$field]}");
+                    }
+                }
+            }
+
             $wasScheduled = $exam->is_scheduled;
             $oldStartDate = $exam->scheduled_start_date;
 
