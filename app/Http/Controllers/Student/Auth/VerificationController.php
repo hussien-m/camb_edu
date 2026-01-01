@@ -113,7 +113,7 @@ class VerificationController extends Controller
         Auth::guard('student')->login($student);
 
         return redirect()->route('student.dashboard')
-            ->with('success', '🎉 Your email has been verified successfully! Welcome!');
+            ->with('success', 'Your account has been verified successfully! Welcome to Cambridge College.');
     }
 
     /**

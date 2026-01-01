@@ -1,5 +1,81 @@
 /* Student Auth Pages - Modern Premium Design */
 
+/* Account Status Alert */
+.account-status-alert {
+    border-radius: 12px;
+    border-left: 4px solid;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    animation: slideInDown 0.5s ease;
+}
+
+.account-status-alert.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left-color: #f59e0b;
+    color: #92400e;
+}
+
+.account-status-alert.alert-danger {
+    background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+    border-left-color: #e53e3e;
+    color: #742a2a;
+}
+
+.account-status-alert strong {
+    font-size: 18px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.account-status-alert p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+.account-status-alert .btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.account-status-alert .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.account-status-alert .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.account-status-alert .btn-outline-primary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.account-status-alert .btn-outline-primary:hover {
+    background: #667eea;
+    color: white;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* ============================================
    BACKGROUND - Modern Gradient with Patterns
    ============================================ */

@@ -3,6 +3,100 @@
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard')
 
+@push('scripts')
+<script>
+    @if(session('success') && str_contains(session('success'), 'verified'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Account Verified Successfully!',
+            html: '<p style="color: #4a5568; font-size: 16px; margin: 15px 0;">{{ session("success") }}</p><p style="color: #718096; font-size: 14px; margin-top: 10px;">You can now access all features and courses.</p>',
+            confirmButtonText: 'Get Started',
+            confirmButtonColor: '#667eea',
+            background: '#ffffff',
+            color: '#2d3748',
+            iconColor: '#10b981',
+            width: '500px',
+            padding: '2.5rem',
+            borderRadius: '20px',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            },
+            customClass: {
+                confirmButton: 'swal2-confirm-custom',
+                title: 'swal2-title-custom',
+                htmlContainer: 'swal2-html-custom',
+                popup: 'swal2-popup-custom'
+            }
+        });
+    @endif
+</script>
+<style>
+    .swal2-confirm-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 12px 30px !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+        transition: all 0.3s ease !important;
+    }
+    .swal2-confirm-custom:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5) !important;
+    }
+    .swal2-title-custom {
+        color: #2d3748 !important;
+        font-weight: 700 !important;
+        font-size: 28px !important;
+    }
+    .swal2-html-custom {
+        color: #4a5568 !important;
+        font-size: 16px !important;
+        line-height: 1.6 !important;
+    }
+    .swal2-popup-custom {
+        border-radius: 20px !important;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    }
+    @keyframes animate__fadeInDown {
+        from {
+            opacity: 0;
+            transform: translate3d(0, -100%, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+    @keyframes animate__fadeOutUp {
+        from {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+        to {
+            opacity: 0;
+            transform: translate3d(0, -100%, 0);
+        }
+    }
+    .animate__animated {
+        animation-duration: 0.5s;
+        animation-fill-mode: both;
+    }
+    .animate__fadeInDown {
+        animation-name: animate__fadeInDown;
+    }
+    .animate__fadeOutUp {
+        animation-name: animate__fadeOutUp;
+    }
+</style>
+@endpush
+
 @push('styles')
 <style>
     /* Updated: December 12, 2025 - Enhanced spacing */

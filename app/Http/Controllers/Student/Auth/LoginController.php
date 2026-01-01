@@ -27,7 +27,15 @@ class LoginController extends Controller
 
             if ($student->status !== 'active') {
                 Auth::guard('student')->logout();
-                return back()->with('error', 'Your account is pending approval or has been deactivated. Please contact administration.');
+                
+                $statusMessage = $student->status === 'pending' 
+                    ? 'Your account is pending approval. Please verify your email address or contact our support team for assistance.'
+                    : 'Your account has been deactivated. Please contact our support team for assistance.';
+                
+                return back()
+                    ->with('error', $statusMessage)
+                    ->with('account_status', $student->status)
+                    ->withInput();
             }
 
             // Update last login info

@@ -26,8 +26,28 @@
                         @endif
 
                         @if(session('error'))
-                            <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                            <div class="alert alert-{{ session('account_status') === 'pending' ? 'warning' : 'danger' }} account-status-alert">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas {{ session('account_status') === 'pending' ? 'fa-clock' : 'fa-ban' }} me-3 mt-1"></i>
+                                    <div class="flex-grow-1">
+                                        <strong class="d-block mb-2">{{ session('account_status') === 'pending' ? 'Account Pending Approval' : 'Account Deactivated' }}</strong>
+                                        <p class="mb-3">{{ session('error') }}</p>
+                                        @if(session('account_status') === 'pending')
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                <a href="{{ route('student.verify.resend.request', ['email' => old('email')]) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-envelope me-1"></i> Resend Verification Email
+                                                </a>
+                                                <a href="{{ route('home') }}#contact" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-headset me-1"></i> Contact Support
+                                                </a>
+                                            </div>
+                                        @else
+                                            <a href="{{ route('home') }}#contact" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-headset me-1"></i> Contact Support
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
