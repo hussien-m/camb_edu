@@ -44,8 +44,8 @@ class VerificationController extends Controller
         $student = Student::find($id);
 
         if (!$student) {
-            return redirect()->route('student.login')
-                ->with('error', 'Invalid verification link.');
+            return redirect()->route('student.verify.resend.request')
+                ->with('error', 'Invalid verification link. Please enter your email to request a new verification link.');
         }
 
         // Check if already verified
@@ -57,8 +57,8 @@ class VerificationController extends Controller
 
         // Verify token from database
         if (!$token) {
-            return redirect()->route('student.login')
-                ->with('error', 'Invalid verification link. Missing token.');
+            return redirect()->route('student.verify.resend.request', ['email' => $student->email])
+                ->with('error', 'Invalid verification link. Missing token. Please request a new verification link.');
         }
 
         // Find token in database
@@ -80,7 +80,8 @@ class VerificationController extends Controller
         }
 
         if (!$validToken) {
-            return redirect()->route('student.login')
+            // Redirect to resend page with student email
+            return redirect()->route('student.verify.resend.request', ['email' => $student->email])
                 ->with('error', 'Invalid or expired verification token. Please request a new verification link.');
         }
 
@@ -116,7 +117,7 @@ class VerificationController extends Controller
     }
 
     /**
-     * Resend verification email
+     * Show resend verification request page (for logged in users)
      */
     public function resend(Request $request)
     {
@@ -134,5 +135,43 @@ class VerificationController extends Controller
         $this->emailService->sendVerificationEmail($student);
 
         return back()->with('success', 'A new verification link has been sent to your email.');
+    }
+
+    /**
+     * Show resend verification request page (for non-logged in users)
+     */
+    public function showResendRequest(Request $request)
+    {
+        $email = $request->get('email');
+        return view('student.auth.resend-verification', compact('email'));
+    }
+
+    /**
+     * Resend verification email by email address (for non-logged in users)
+     */
+    public function resendByEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:students,email'
+        ]);
+
+        $student = Student::where('email', $request->email)->first();
+
+        if (!$student) {
+            return back()->with('error', 'Email address not found.');
+        }
+
+        if ($student->email_verified_at) {
+            return redirect()->route('student.login')
+                ->with('info', 'Your email is already verified. Please login.');
+        }
+
+        try {
+            $this->emailService->sendVerificationEmail($student);
+            return redirect()->route('student.login')
+                ->with('success', 'A new verification link has been sent to your email address.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to send verification email. Please try again later.');
+        }
     }
 }

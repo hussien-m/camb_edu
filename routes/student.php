@@ -41,6 +41,12 @@ Route::middleware('student')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
 
+// Resend verification email (for non-logged in users)
+Route::middleware('student.guest')->group(function () {
+    Route::get('email/resend', [VerificationController::class, 'showResendRequest'])->name('verify.resend.request');
+    Route::post('email/resend', [VerificationController::class, 'resendByEmail'])->name('verify.resend.email');
+});
+
 // Email verification link (no auth required, but signed URL required)
 Route::get('email/verify/{id}/{token?}', [VerificationController::class, 'verify'])
     ->name('verify.email')
