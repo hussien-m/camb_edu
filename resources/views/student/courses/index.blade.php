@@ -44,6 +44,92 @@
         padding: 1.75rem;
         border: 2px solid #e5e7eb;
         transition: all 0.3s ease;
+    }
+    
+    .exam-status-section {
+        margin: 1rem 0;
+    }
+    
+    .score-badge {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 12px 16px;
+        border-left: 4px solid;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .score-badge.score-best {
+        border-left-color: #f59e0b;
+        background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    }
+    
+    .score-badge.score-passed {
+        border-left-color: #10b981;
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    }
+    
+    .score-badge.score-failed {
+        border-left-color: #ef4444;
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    }
+    
+    .score-badge .score-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e3a8a;
+    }
+    
+    .score-badge.score-best .score-value {
+        color: #d97706;
+    }
+    
+    .score-badge.score-passed .score-value {
+        color: #059669;
+    }
+    
+    .score-badge.score-failed .score-value {
+        color: #dc2626;
+    }
+    
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .score-badge.score-passed .status-badge {
+        background: #10b981;
+        color: white;
+    }
+    
+    .score-badge.score-failed .status-badge {
+        background: #ef4444;
+        color: white;
+    }
+    
+    .alert-sm {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+    
+    @media (max-width: 768px) {
+        .score-badge {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        
+        .score-badge .score-value {
+            font-size: 16px;
+        }
+    }
         margin-bottom: 1.5rem;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
@@ -146,41 +232,77 @@
                                     $exam = $examItem['exam'];
                                     $attempts = $examItem['attempts'];
                                     $lastAttempt = $examItem['lastAttempt'];
+                                    $bestAttempt = $examItem['bestAttempt'];
                                     $attemptCount = $examItem['attemptCount'];
                                     $inProgress = $examItem['inProgress'];
+                                    $canStart = $examItem['canStart'];
+                                    $hasCompletedAttempts = $examItem['hasCompletedAttempts'];
+                                    $highestScore = $examItem['highestScore'];
+                                    $lastScore = $examItem['lastScore'];
+                                    $hasPassed = $examItem['hasPassed'];
+                                    $examEnded = $examItem['examEnded'];
+                                    $examNotStarted = $examItem['examNotStarted'];
+                                    $maxAttemptsReached = $examItem['maxAttemptsReached'];
                                 @endphp
 
                                 <div class="exam-card">
                                     <div class="d-flex align-items-start justify-content-between mb-3">
-                                        <div>
+                                        <div class="flex-grow-1">
                                             <h6 class="mb-2 fw-bold" style="color: #1e3a8a;">
                                                 <i class="fas fa-clipboard-check me-2" style="color: #667eea;"></i>{{ $exam->title }}
                                             </h6>
-                                            <div class="d-flex gap-3">
+                                            <div class="d-flex gap-3 flex-wrap">
                                                 <small class="text-muted">
                                                     <i class="fas fa-clock me-1"></i>{{ $exam->duration }} min
                                                 </small>
                                                 <small class="text-muted">
-                                                    <i class="fas fa-redo me-1"></i>{{ $attemptCount }}/{{ $exam->max_attempts }} Attempts
+                                                    <i class="fas fa-redo me-1"></i>{{ $attemptCount }}/{{ $exam->max_attempts > 0 ? $exam->max_attempts : '∞' }} Attempts
                                                 </small>
+                                                @if($exam->passing_percentage)
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-trophy me-1"></i>Pass: {{ $exam->passing_percentage }}%
+                                                    </small>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
 
-                                    @if($lastAttempt)
-                                        <div class="alert alert-{{ $lastAttempt->passed ? 'success' : 'warning' }} alert-sm mb-2 py-2">
-                                            <small>
-                                                Last Score: <strong>{{ number_format($lastAttempt->percentage, 1) }}%</strong>
-                                                @if($lastAttempt->passed)
-                                                    <i class="fas fa-check-circle ms-1"></i>Passed
-                                                @else
-                                                    <i class="fas fa-times-circle ms-1"></i>Failed
+                                    <!-- Exam Status & Scores -->
+                                    <div class="exam-status-section mb-3">
+                                        @if($hasCompletedAttempts)
+                                            <div class="row g-2 mb-2">
+                                                @if($bestAttempt && $bestAttempt->id !== ($lastAttempt->id ?? null))
+                                                    <div class="col-6">
+                                                        <div class="score-badge score-best">
+                                                            <i class="fas fa-star me-1"></i>
+                                                            <strong>Best Score:</strong>
+                                                            <span class="score-value">{{ number_format($highestScore, 1) }}%</span>
+                                                            @if($hasPassed)
+                                                                <i class="fas fa-check-circle ms-1 text-success"></i>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                 @endif
-                                            </small>
-                                        </div>
-                                    @endif
+                                                @if($lastAttempt)
+                                                    <div class="col-{{ $bestAttempt && $bestAttempt->id !== $lastAttempt->id ? '6' : '12' }}">
+                                                        <div class="score-badge score-{{ $lastAttempt->passed ? 'passed' : 'failed' }}">
+                                                            <i class="fas fa-{{ $lastAttempt->passed ? 'check' : 'times' }}-circle me-1"></i>
+                                                            <strong>Last Score:</strong>
+                                                            <span class="score-value">{{ number_format($lastScore, 1) }}%</span>
+                                                            <span class="status-badge">{{ $lastAttempt->passed ? 'Passed' : 'Failed' }}</span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <div class="alert alert-info alert-sm mb-0 py-2">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                <strong>Status:</strong> Not attempted yet
+                                            </div>
+                                        @endif
+                                    </div>
 
-                                    @if($exam->is_scheduled && $exam->scheduled_start_date && $exam->scheduled_start_date->isFuture())
+                                    @if($examNotStarted)
                                         <!-- Countdown Timer -->
                                         <div class="alert alert-warning mb-3" style="border-radius: 12px; border-left: 4px solid #f59e0b;">
                                             <div class="d-flex align-items-center justify-content-between">
@@ -203,6 +325,14 @@
                                                 Starts: {{ $exam->scheduled_start_date->format('M d, Y g:i A') }}
                                             </small>
                                         </div>
+                                    @elseif($examEnded)
+                                        <div class="alert alert-danger mb-3" style="border-radius: 12px; border-left: 4px solid #e53e3e;">
+                                            <i class="fas fa-calendar-times me-2"></i>
+                                            <strong>Exam Ended</strong>
+                                            <small class="d-block mt-1 text-muted">
+                                                Ended: {{ $exam->scheduled_end_date->format('M d, Y g:i A') }}
+                                            </small>
+                                        </div>
                                     @endif
 
                                     <div class="d-grid gap-2 mt-3">
@@ -212,12 +342,8 @@
                                                style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 0.875rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
                                                 <i class="fas fa-play me-2"></i>Continue Exam
                                             </a>
-                                        @elseif($attemptCount < $exam->max_attempts)
-                                            @php
-                                                $isScheduledFuture = $exam->is_scheduled && $exam->scheduled_start_date && $exam->scheduled_start_date->isFuture();
-                                            @endphp
-                                            
-                                            @if($isScheduledFuture)
+                                        @elseif($canStart && !$maxAttemptsReached && !$examEnded)
+                                            @if($examNotStarted)
                                                 <button class="btn btn-lg fw-bold exam-start-btn-{{ $exam->id }}" disabled
                                                         data-exam-id="{{ $exam->id }}"
                                                         data-exam-url="{{ route('student.exams.show', $exam) }}"
@@ -228,14 +354,26 @@
                                                 <a href="{{ route('student.exams.show', $exam) }}"
                                                    class="btn btn-lg fw-bold"
                                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                                                    <i class="fas fa-clipboard-check me-2"></i>{{ $attemptCount > 0 ? 'Retake' : 'Start' }} Exam
+                                                    <i class="fas fa-clipboard-check me-2"></i>{{ $hasCompletedAttempts ? 'Retake' : 'Start' }} Exam
                                                 </a>
                                             @endif
                                         @else
-                                            <button class="btn btn-lg fw-bold" disabled
-                                                    style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6;">
-                                                <i class="fas fa-ban me-2"></i>Max Attempts Reached
-                                            </button>
+                                            @if($maxAttemptsReached)
+                                                <button class="btn btn-lg fw-bold" disabled
+                                                        style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6;">
+                                                    <i class="fas fa-ban me-2"></i>Max Attempts Reached
+                                                </button>
+                                            @elseif($examEnded)
+                                                <button class="btn btn-lg fw-bold" disabled
+                                                        style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6;">
+                                                    <i class="fas fa-calendar-times me-2"></i>Exam Ended
+                                                </button>
+                                            @else
+                                                <button class="btn btn-lg fw-bold" disabled
+                                                        style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6;">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i>Not Available
+                                                </button>
+                                            @endif
                                         @endif
 
                                         @if($lastAttempt)
@@ -243,6 +381,14 @@
                                                class="btn btn-lg fw-bold"
                                                style="background: white; color: #0ea5e9; border: 2px solid #0ea5e9; border-radius: 12px; padding: 0.875rem;">
                                                 <i class="fas fa-chart-bar me-2"></i>View Last Result
+                                            </a>
+                                        @endif
+                                        
+                                        @if($bestAttempt && $bestAttempt->id !== ($lastAttempt->id ?? null))
+                                            <a href="{{ route('student.exams.result', $bestAttempt) }}"
+                                               class="btn btn-lg fw-bold"
+                                               style="background: white; color: #10b981; border: 2px solid #10b981; border-radius: 12px; padding: 0.875rem;">
+                                                <i class="fas fa-trophy me-2"></i>View Best Result
                                             </a>
                                         @endif
                                     </div>

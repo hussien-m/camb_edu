@@ -5,9 +5,17 @@ namespace App\Services\Student;
 use App\Models\Student;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Services\Student\StudentExamService;
 
 class StudentCourseService
 {
+    protected $examService;
+
+    public function __construct(StudentExamService $examService)
+    {
+        $this->examService = $examService;
+    }
+
     /**
      * Get enrolled courses for student
      */
@@ -53,15 +61,53 @@ class StudentCourseService
             $examsData = [];
             foreach ($course->exams as $exam) {
                 $attempts = $exam->attempts;
-                $lastAttempt = $attempts->where('status', 'completed')->sortByDesc('created_at')->first();
+                $completedAttempts = $attempts->where('status', 'completed');
+                $lastAttempt = $completedAttempts->sortByDesc('created_at')->first();
+                $bestAttempt = $completedAttempts->sortByDesc('percentage')->first();
                 $attemptCount = $attempts->count();
                 $inProgress = $attempts->where('status', 'in_progress')->first();
+                
+                // Check if student can start this exam
+                $accessCheck = $this->examService->checkExamAccess($student, $exam);
+                $canStart = $accessCheck['allowed'];
+                
+                // Calculate exam statistics
+                $hasCompletedAttempts = $completedAttempts->count() > 0;
+                $highestScore = $bestAttempt ? $bestAttempt->percentage : null;
+                $lastScore = $lastAttempt ? $lastAttempt->percentage : null;
+                $hasPassed = $bestAttempt ? $bestAttempt->passed : false;
+                
+                // Check if exam has ended (for scheduled exams)
+                $examEnded = false;
+                $examNotStarted = false;
+                if ($exam->is_scheduled) {
+                    if ($exam->scheduled_start_date && now()->lt($exam->scheduled_start_date)) {
+                        $examNotStarted = true;
+                    }
+                    if ($exam->scheduled_end_date && now()->gt($exam->scheduled_end_date)) {
+                        $examEnded = true;
+                    }
+                }
+                
+                // Check if max attempts reached
+                $maxAttemptsReached = $exam->max_attempts > 0 && $attemptCount >= $exam->max_attempts;
+                
                 $examsData[] = [
                     'exam' => $exam,
                     'attempts' => $attempts,
                     'lastAttempt' => $lastAttempt,
+                    'bestAttempt' => $bestAttempt,
                     'attemptCount' => $attemptCount,
                     'inProgress' => $inProgress,
+                    'canStart' => $canStart,
+                    'accessMessage' => $accessCheck['message'] ?? null,
+                    'hasCompletedAttempts' => $hasCompletedAttempts,
+                    'highestScore' => $highestScore,
+                    'lastScore' => $lastScore,
+                    'hasPassed' => $hasPassed,
+                    'examEnded' => $examEnded,
+                    'examNotStarted' => $examNotStarted,
+                    'maxAttemptsReached' => $maxAttemptsReached,
                 ];
             }
             $result[] = [
