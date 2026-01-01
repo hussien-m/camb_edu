@@ -13,21 +13,18 @@ class StudentProfileService
      */
     public function updateProfile($student, array $data)
     {
-        // Verify current password if trying to change password
+        // Verify current password if provided (optional)
         if (isset($data['new_password']) && !empty($data['new_password'])) {
-            if (!isset($data['current_password']) || empty($data['current_password'])) {
-                return [
-                    'success' => false,
-                    'message' => 'Current password is required to change password.'
-                ];
+            // If current_password is provided, verify it
+            if (isset($data['current_password']) && !empty($data['current_password'])) {
+                if (!$this->verifyPassword($student, $data['current_password'])) {
+                    return [
+                        'success' => false,
+                        'message' => 'Current password is incorrect.'
+                    ];
+                }
             }
-
-            if (!$this->verifyPassword($student, $data['current_password'])) {
-                return [
-                    'success' => false,
-                    'message' => 'Current password is incorrect.'
-                ];
-            }
+            // If current_password is not provided, allow password change without verification
         }
 
         $student->first_name = $data['first_name'];

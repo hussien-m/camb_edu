@@ -29,9 +29,9 @@ class UpdateProfileRequest extends FormRequest
             'profile_photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
         ];
 
-        // If password fields are filled, add password validation
-        if ($this->filled('current_password') || $this->filled('new_password')) {
-            $rules['current_password'] = ['required', 'string'];
+        // If new password is filled, add password validation (current_password is optional)
+        if ($this->filled('new_password')) {
+            $rules['current_password'] = ['nullable', 'string'];
             $rules['new_password'] = ['required', 'string', 'min:8', 'confirmed'];
             $rules['new_password_confirmation'] = ['required', 'string'];
         }
@@ -56,7 +56,7 @@ class UpdateProfileRequest extends FormRequest
             'profile_photo.image' => 'Profile photo must be an image',
             'profile_photo.mimes' => 'Profile photo must be a JPEG, JPG, or PNG file',
             'profile_photo.max' => 'Profile photo must not exceed 2MB',
-            'current_password.required' => 'Current password is required when changing password',
+            'current_password.string' => 'Current password must be a valid string',
             'new_password.required' => 'New password is required',
             'new_password.min' => 'New password must be at least 8 characters',
             'new_password.confirmed' => 'Password confirmation does not match',

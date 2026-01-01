@@ -237,10 +237,10 @@
                     <p class="text-muted small mb-4">Leave the fields empty if you don't want to change your password</p>
 
                     <div class="row g-4">
-                    <!-- Current Password -->
+                    <!-- Current Password (Optional) -->
                     <div class="col-md-4">
-                        <label class="form-label fw-bold">Current Password</label>
-                        <input type="password" name="current_password" class="form-control @error('current_password') is-invalid @enderror">
+                        <label class="form-label fw-bold">Current Password <span class="text-muted small">(Optional)</span></label>
+                        <input type="password" name="current_password" class="form-control @error('current_password') is-invalid @enderror" placeholder="Leave empty to skip verification">
                         @error('current_password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
