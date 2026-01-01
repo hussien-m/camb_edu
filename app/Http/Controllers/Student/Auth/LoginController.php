@@ -16,7 +16,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required',
         ]);
 
@@ -27,11 +27,11 @@ class LoginController extends Controller
 
             if ($student->status !== 'active') {
                 Auth::guard('student')->logout();
-                
-                $statusMessage = $student->status === 'pending' 
+
+                $statusMessage = $student->status === 'pending'
                     ? 'Your account is pending approval. Please verify your email address or contact our support team for assistance.'
                     : 'Your account has been deactivated. Please contact our support team for assistance.';
-                
+
                 return back()
                     ->with('error', $statusMessage)
                     ->with('account_status', $student->status)
