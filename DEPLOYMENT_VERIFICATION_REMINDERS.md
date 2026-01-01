@@ -37,10 +37,10 @@ php artisan optimize
 3. أضف السطر التالي:
 
 ```bash
-* * * * * cd /home/username/public_html && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /home/k4c69o7wqcc3/public_html/cambridgecollage.com && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-**ملاحظة:** استبدل `/home/username/public_html` بمسار المشروع الفعلي على الاستضافة.
+**ملاحظة:** المسار: `/home/k4c69o7wqcc3/public_html/cambridgecollage.com`
 
 #### الطريقة الثانية: عبر SSH
 ```bash
