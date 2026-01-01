@@ -41,9 +41,10 @@ Route::middleware('student')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-// Email verification link (no auth required)
-Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
-    ->name('verify.email');
+// Email verification link (no auth required, but signed URL required)
+Route::get('email/verify/{id}/{token?}', [VerificationController::class, 'verify'])
+    ->name('verify.email')
+    ->middleware('signed');
 
 // Protected Student Routes (must be verified)
 Route::middleware(['student', 'student.verified'])->group(function () {

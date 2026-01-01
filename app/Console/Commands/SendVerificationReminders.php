@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Student;
 use App\Services\Student\StudentEmailService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SendVerificationReminders extends Command
@@ -86,6 +87,19 @@ class SendVerificationReminders extends Command
             'sent' => $sentCount,
             'failed' => $failedCount
         ]);
+
+        // Clean up expired tokens
+        $deleted = DB::table('student_email_verification_tokens')
+            ->where('expires_at', '<', now())
+            ->orWhere(function($query) {
+                $query->where('used', true)
+                      ->where('used_at', '<', now()->subDays(7));
+            })
+            ->delete();
+
+        if ($deleted > 0) {
+            $this->info("Cleaned up {$deleted} expired/old verification token(s).");
+        }
 
         return 0;
     }

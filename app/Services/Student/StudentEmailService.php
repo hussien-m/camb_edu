@@ -7,6 +7,7 @@ use App\Mail\StudentWelcomeMail;
 use App\Models\Student;
 use App\Services\Mail\ProfessionalMailService;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
@@ -22,10 +23,10 @@ class StudentEmailService
         $verificationUrl = $this->generateVerificationUrl($student);
 
         try {
-            // Queue email for background sending (instant response)
+            // Send email directly (same as password reset)
             $emailHtml = $this->getVerificationEmailHtml($student, $verificationUrl);
 
-            ProfessionalMailService::queue(
+            ProfessionalMailService::send(
                 $student->email,
                 '✉️ Verify Your Email - ' . config('app.name'),
                 $emailHtml,
@@ -33,9 +34,14 @@ class StudentEmailService
                 config('mail.from.name')
             );
 
-            Log::info('Verification email queued for: ' . $student->email);
+            Log::info('Verification email sent to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::error('Failed to queue verification email: ' . $e->getMessage());
+            Log::error('Failed to send verification email: ' . $e->getMessage(), [
+                'student_id' => $student->id,
+                'email' => $student->email,
+                'error' => $e->getMessage()
+            ]);
+            throw $e; // Re-throw to handle in controller
         }
     }
 
@@ -63,14 +69,38 @@ class StudentEmailService
     }
 
     /**
-     * Generate signed verification URL
+     * Generate secure signed verification URL with token
      */
     private function generateVerificationUrl(Student $student): string
     {
-        return route('student.verify.email', [
-            'id' => $student->id,
-            'hash' => sha1($student->email),
+        // Delete any existing unused tokens for this student
+        DB::table('student_email_verification_tokens')
+            ->where('student_id', $student->id)
+            ->where('used', false)
+            ->where('expires_at', '>', now())
+            ->delete();
+
+        // Generate unique token
+        $token = \Illuminate\Support\Str::random(64);
+
+        // Store token in database with expiration (24 hours)
+        DB::table('student_email_verification_tokens')->insert([
+            'student_id' => $student->id,
+            'token' => \Illuminate\Support\Facades\Hash::make($token),
+            'expires_at' => now()->addHours(24),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
+
+        // Create signed URL with token (expires in 24 hours)
+        return URL::temporarySignedRoute(
+            'student.verify.email',
+            now()->addHours(24),
+            [
+                'id' => $student->id,
+                'token' => $token,
+            ]
+        );
     }
 
     /**
