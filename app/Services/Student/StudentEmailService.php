@@ -124,10 +124,10 @@ class StudentEmailService
         $verificationUrl = $this->generateVerificationUrl($student);
 
         try {
-            // Queue email for background sending
+            // Send email directly (same as password reset)
             $emailHtml = $this->getVerificationReminderEmailHtml($student, $verificationUrl);
 
-            ProfessionalMailService::queue(
+            ProfessionalMailService::send(
                 $student->email,
                 '🔔 Reminder: Verify Your Email - ' . config('app.name'),
                 $emailHtml,
@@ -135,9 +135,14 @@ class StudentEmailService
                 config('mail.from.name')
             );
 
-            Log::info('Verification reminder email queued for: ' . $student->email);
+            Log::info('Verification reminder email sent to: ' . $student->email);
         } catch (\Exception $e) {
-            Log::error('Failed to queue verification reminder email: ' . $e->getMessage());
+            Log::error('Failed to send verification reminder email: ' . $e->getMessage(), [
+                'email' => $student->email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e; // Re-throw to handle in controller
         }
     }
 

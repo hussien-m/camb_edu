@@ -57,6 +57,7 @@ class VerificationReminderController extends Controller
 
         $sentCount = 0;
         $failedCount = 0;
+        $errors = [];
 
         foreach ($unverifiedStudents as $student) {
             try {
@@ -64,16 +65,26 @@ class VerificationReminderController extends Controller
                 $sentCount++;
             } catch (\Exception $e) {
                 $failedCount++;
-                Log::error("Failed to send verification reminder to {$student->email}: " . $e->getMessage());
+                $errorMsg = "Failed to send to {$student->email}: " . $e->getMessage();
+                $errors[] = $errorMsg;
+                Log::error($errorMsg, [
+                    'student_id' => $student->id,
+                    'email' => $student->email,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
             }
         }
 
         $message = "Reminders sent successfully! Sent: {$sentCount}";
         if ($failedCount > 0) {
             $message .= ", Failed: {$failedCount}";
+            if (count($errors) <= 5) {
+                $message .= "<br><small>" . implode("<br>", $errors) . "</small>";
+            }
         }
 
-        return back()->with('success', $message);
+        return back()->with($failedCount > 0 ? 'warning' : 'success', $message);
     }
 
     /**
@@ -89,8 +100,14 @@ class VerificationReminderController extends Controller
             $this->emailService->sendVerificationReminder($student);
             return back()->with('success', "Verification reminder sent successfully to {$student->email}.");
         } catch (\Exception $e) {
-            Log::error("Failed to send verification reminder to {$student->email}: " . $e->getMessage());
-            return back()->with('error', 'Failed to send reminder. Please try again.');
+            $errorMsg = "Failed to send verification reminder to {$student->email}: " . $e->getMessage();
+            Log::error($errorMsg, [
+                'student_id' => $student->id,
+                'email' => $student->email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->with('error', 'Failed to send reminder: ' . $e->getMessage());
         }
     }
 
@@ -114,6 +131,7 @@ class VerificationReminderController extends Controller
 
         $sentCount = 0;
         $failedCount = 0;
+        $errors = [];
 
         foreach ($unverifiedStudents as $student) {
             try {
@@ -121,15 +139,25 @@ class VerificationReminderController extends Controller
                 $sentCount++;
             } catch (\Exception $e) {
                 $failedCount++;
-                Log::error("Failed to send verification reminder to {$student->email}: " . $e->getMessage());
+                $errorMsg = "Failed to send to {$student->email}: " . $e->getMessage();
+                $errors[] = $errorMsg;
+                Log::error($errorMsg, [
+                    'student_id' => $student->id,
+                    'email' => $student->email,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
             }
         }
 
         $message = "Reminders sent to {$sentCount} student(s) registered in the last {$days} day(s).";
         if ($failedCount > 0) {
             $message .= " Failed: {$failedCount}";
+            if (count($errors) <= 5) {
+                $message .= "<br><small>" . implode("<br>", $errors) . "</small>";
+            }
         }
 
-        return back()->with('success', $message);
+        return back()->with($failedCount > 0 ? 'warning' : 'success', $message);
     }
 }
