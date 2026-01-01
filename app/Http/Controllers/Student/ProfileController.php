@@ -18,7 +18,8 @@ class ProfileController extends Controller
     public function edit()
     {
         $student = auth()->guard('student')->user();
-        return view('student.profile', compact('student'));
+        $countries = \App\Helpers\CountryHelper::getAllCountries();
+        return view('student.profile', compact('student', 'countries'));
     }
 
     public function update(UpdateProfileRequest $request)

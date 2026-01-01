@@ -217,12 +217,9 @@
                         </label>
                         <select name="country" class="form-control @error('country') is-invalid @enderror">
                             <option value="">Select Country</option>
-                            <option value="Libya" {{ old('country', $student->country) == 'Libya' ? 'selected' : '' }}>Libya</option>
-                            <option value="Egypt" {{ old('country', $student->country) == 'Egypt' ? 'selected' : '' }}>Egypt</option>
-                            <option value="Tunisia" {{ old('country', $student->country) == 'Tunisia' ? 'selected' : '' }}>Tunisia</option>
-                            <option value="Algeria" {{ old('country', $student->country) == 'Algeria' ? 'selected' : '' }}>Algeria</option>
-                            <option value="Morocco" {{ old('country', $student->country) == 'Morocco' ? 'selected' : '' }}>Morocco</option>
-                            <option value="Other" {{ old('country', $student->country) == 'Other' ? 'selected' : '' }}>Other</option>
+                            @foreach($countries as $code => $name)
+                                <option value="{{ $name }}" {{ old('country', $student->country) == $name ? 'selected' : '' }}>{{ $name }}</option>
+                            @endforeach
                         </select>
                         @error('country')
                             <div class="invalid-feedback">{{ $message }}</div>

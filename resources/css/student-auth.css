@@ -154,7 +154,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
@@ -195,7 +195,7 @@ body::after {
 @keyframes movePattern {
     0% { transform: translate(0, 0); }
     100% { transform: translate(40px, 40px); }
-}
+    }
 
 /* ============================================
    SECTIONS
@@ -975,7 +975,7 @@ body::after {
 .country-dropdown::-webkit-scrollbar-track {
     background: #f3f4f6;
     border-radius: 10px;
-}
+    }
 
 .country-dropdown::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, #667eea, #764ba2);
