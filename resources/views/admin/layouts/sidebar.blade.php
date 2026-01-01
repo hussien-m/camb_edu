@@ -138,16 +138,36 @@
                 </li>
 
                 <!-- Students Management -->
-                <li class="nav-item">
-                    <a href="{{ route('admin.students.index') }}" class="nav-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('admin.students.*') || request()->routeIs('admin.verification-reminders.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('admin.students.*') || request()->routeIs('admin.verification-reminders.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-user-graduate"></i>
                         <p>
                             Students
                             @if(isset($pendingCount) && $pendingCount > 0)
                                 <span class="badge badge-warning right">{{ $pendingCount }}</span>
                             @endif
+                            <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.students.index') }}" class="nav-link {{ request()->routeIs('admin.students.*') && !request()->routeIs('admin.verification-reminders.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>All Students</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.verification-reminders.index') }}" class="nav-link {{ request()->routeIs('admin.verification-reminders.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>
+                                    Verification Reminders
+                                    @if(isset($totalUnverified) && $totalUnverified > 0)
+                                        <span class="badge badge-warning right">{{ $totalUnverified }}</span>
+                                    @endif
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <!-- Exams Management -->

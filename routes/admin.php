@@ -103,6 +103,12 @@ Route::middleware('admin')->group(function () {
     Route::post('bulk-actions/students', [App\Http\Controllers\Admin\BulkActionController::class, 'students'])->name('bulk.students');
     Route::get('export/students', [App\Http\Controllers\Admin\ExportController::class, 'students'])->name('export.students');
 
+    // Verification Reminders
+    Route::get('verification-reminders', [App\Http\Controllers\Admin\VerificationReminderController::class, 'index'])->name('verification-reminders.index');
+    Route::post('verification-reminders/send-all', [App\Http\Controllers\Admin\VerificationReminderController::class, 'sendToAll'])->name('verification-reminders.send-all');
+    Route::post('verification-reminders/send-recent', [App\Http\Controllers\Admin\VerificationReminderController::class, 'sendToRecent'])->name('verification-reminders.send-recent');
+    Route::post('verification-reminders/send/{student}', [App\Http\Controllers\Admin\VerificationReminderController::class, 'sendToStudent'])->name('verification-reminders.send-student');
+
     // Exams Management
     Route::resource('exams', App\Http\Controllers\Admin\ExamController::class);
 

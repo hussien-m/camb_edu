@@ -36,6 +36,9 @@ class AdminViewComposerServiceProvider extends ServiceProvider
                 'pendingCount' => Cache::remember('admin.pending_students', 60, function () {
                     return Student::where('status', 'pending')->count();
                 }),
+                'totalUnverified' => Cache::remember('admin.unverified_students', 60, function () {
+                    return Student::whereNull('email_verified_at')->count();
+                }),
             ]);
         });
 
