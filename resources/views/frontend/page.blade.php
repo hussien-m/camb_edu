@@ -446,6 +446,834 @@
                         {!! $page->content !!}
                     </div>
 
+                    <!-- Accreditations Content -->
+                    @if($page->slug === 'accreditations')
+                    
+                    <!-- Legal Registration Section -->
+                    <div class="accreditations-info-section mt-5">
+                        <div class="legal-registration-card">
+                            <div class="card-header-section">
+                                <i class="fas fa-building"></i>
+                                <h3>Legal Registration</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-hashtag"></i> Company Number:</span>
+                                    <span class="info-value">15794456</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-landmark"></i> Registrar:</span>
+                                    <span class="info-value">The Registrar of Companies for England and Wales</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-university"></i> Legal Name:</span>
+                                    <span class="info-value">CAMBRIDGE INTERNATIONAL COLLEGE IN UK LTD</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label"><i class="fas fa-map-marker-alt"></i> Registered Address:</span>
+                                    <span class="info-value">86-90 Paul Street, London, England, EC2A 4NE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accreditations List -->
+                        <div class="accreditations-list-card">
+                            <div class="card-header-section">
+                                <i class="fas fa-certificate"></i>
+                                <h3>Our Accreditations</h3>
+                            </div>
+                            <div class="accreditations-list">
+                                <div class="accreditation-item-list">
+                                    <div class="accreditation-number">1</div>
+                                    <div class="accreditation-details">
+                                        <h4>UK Education Quality Management (UKEQM)</h4>
+                                        <p>Validity can be checked at <a href="https://www.ukeqm.uk" target="_blank" rel="noopener">www.ukeqm.uk</a></p>
+                                        <p class="legal-name">Legal search name: <strong>CAMBRIDGE INTERNATIONAL COLLEGE IN UK</strong></p>
+                                    </div>
+                                </div>
+                                <div class="accreditation-item-list">
+                                    <div class="accreditation-number">2</div>
+                                    <div class="accreditation-details">
+                                        <h4>International Accreditation Council (IAC)</h4>
+                                        <p>Validity can be checked at <a href="https://www.iacouncil.org" target="_blank" rel="noopener">www.iacouncil.org</a></p>
+                                        <p class="legal-name">Certificate number: <strong>EOM.2025.004496</strong></p>
+                                        <p class="legal-name">Legal search name: <strong>CAMBRIDGE INTERNATIONAL COLLEGE IN UK</strong></p>
+                                    </div>
+                                </div>
+                                <div class="accreditation-item-list">
+                                    <div class="accreditation-number">3</div>
+                                    <div class="accreditation-details">
+                                        <h4>UK Register of Learning Providers (UKRLP)</h4>
+                                        <p>Validity can be checked at <a href="https://www.ukrlp.co.uk" target="_blank" rel="noopener">www.ukrlp.co.uk</a></p>
+                                        <p class="legal-name">UKPRN: <strong>10100136</strong></p>
+                                        <p class="legal-name">Legal search name: <strong>CAMBRIDGE INTERNATIONAL COLLEGE IN UK</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Section -->
+                        <div class="summary-card">
+                            <div class="card-header-section">
+                                <i class="fas fa-file-alt"></i>
+                                <h3>Summary</h3>
+                            </div>
+                            <div class="summary-content">
+                                <h4>Accreditation & Legal Status</h4>
+                                <p>Cambridge International College in UK Ltd is a legally registered and internationally accredited higher education institution, committed to delivering high-quality academic and professional qualifications that meet recognized UK and international standards.</p>
+                                <p>The College is officially registered with The Registrar of Companies for England and Wales under Company Number: <strong>15794456</strong>, operating under the legal name: <strong>CAMBRIDGE INTERNATIONAL COLLEGE IN UK LTD</strong></p>
+                                <p><strong>Registered Address:</strong> 86–90 Paul Street, London, England, EC2A 4NE</p>
+                                <p>This registration confirms the College's lawful establishment and operational compliance within the United Kingdom.</p>
+                            </div>
+                        </div>
+
+                        <!-- Quality Assurance Section -->
+                        <div class="quality-assurance-card">
+                            <div class="card-header-section">
+                                <i class="fas fa-shield-alt"></i>
+                                <h3>Our Accreditation & International Recognition</h3>
+                                <p class="subtitle">Quality Assurance</p>
+                            </div>
+                            <div class="quality-content">
+                                <p>Cambridge International College holds multiple recognized accreditations and registrations that demonstrate its commitment to academic excellence, governance, and quality assurance across all levels of higher education, including Diplomas, Bachelor's Degrees, Master's Degrees, and Doctoral (PhD) programs.</p>
+                                
+                                <div class="accreditation-detail-box">
+                                    <h5><i class="fas fa-check-circle"></i> 1. UK Education Quality Management (UKEQM)</h5>
+                                    <p>The College is accredited by UK Education Quality Management, an organization dedicated to monitoring institutional quality, academic governance, teaching standards, and learner outcomes. This accreditation reflects the College's adherence to structured quality assurance frameworks and continuous academic improvement.</p>
+                                    <p class="verification-link"><i class="fas fa-link"></i> Validity of this certificate can be checked at <a href="https://www.ukeqm.uk" target="_blank" rel="noopener">WWW.UKEQM.UK</a></p>
+                                    <p class="legal-name">Legal search name: <strong>CAMBRIDGE INTERNATIONAL COLLEGE IN UK</strong></p>
+                                </div>
+
+                                <div class="accreditation-detail-box">
+                                    <h5><i class="fas fa-check-circle"></i> 2. International Accreditation Council (IAC)</h5>
+                                    <p>Cambridge International College is accredited by the International Accreditation Council, reinforcing its international standing and recognition. This accreditation supports the global credibility of the College's qualifications and affirms alignment with internationally accepted educational benchmarks.</p>
+                                    <p class="verification-link"><i class="fas fa-link"></i> Validity of this certificate can be checked at <a href="https://www.iacouncil.org" target="_blank" rel="noopener">WWW.IACOUNCIL.ORG</a></p>
+                                    <p class="legal-name">Certificate number: <strong>EOM.2025.004496</strong></p>
+                                    <p class="legal-name">Legal search name: <strong>CAMBRIDGE INTERNATIONAL COLLEGE IN UK</strong></p>
+                                </div>
+
+                                <div class="accreditation-detail-box">
+                                    <h5><i class="fas fa-check-circle"></i> 3. UK Register of Learning Providers (UKRLP)</h5>
+                                    <p>The College is officially listed on the UK Register of Learning Providers (UKRLP), confirming its recognized status as a UK learning provider. UKRLP registration enhances transparency, institutional legitimacy, and recognition by employers, training bodies, and international partners.</p>
+                                    <p class="verification-link"><i class="fas fa-link"></i> Validity of this certificate can be checked at <a href="https://www.ukrlp.co.uk" target="_blank" rel="noopener">www.ukrlp.co.uk</a></p>
+                                    <p class="legal-name">UKPRN: <strong>10100136</strong></p>
+                                    <p class="legal-name">Legal search name: <strong>CAMBRIDGE INTERNATIONAL COLLEGE IN UK</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Academic Credibility Section -->
+                        <div class="credibility-card">
+                            <div class="card-header-section">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h3>Academic Credibility & Recognition</h3>
+                            </div>
+                            <div class="credibility-content">
+                                <p>Through its legal registration and multi-layered accreditation structure, Cambridge International College demonstrates a strong commitment to:</p>
+                                <ul class="commitment-list">
+                                    <li><i class="fas fa-check"></i> Delivering accredited Diploma, Bachelor's, Master's, and PhD programs</li>
+                                    <li><i class="fas fa-check"></i> Maintaining robust academic and quality assurance systems</li>
+                                    <li><i class="fas fa-check"></i> Meeting UK regulatory and international educational standards</li>
+                                    <li><i class="fas fa-check"></i> Providing qualifications that are suitable for career progression, professional development, and international recognition</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Commitment Section -->
+                        <div class="commitment-card">
+                            <div class="card-header-section">
+                                <i class="fas fa-star"></i>
+                                <h3>Commitment to Excellence</h3>
+                            </div>
+                            <div class="commitment-content">
+                                <p>Cambridge International College in UK Ltd is dedicated to academic integrity, innovation, and global accessibility in higher education. Its accredited status reflects a clear mission: to offer credible, structured, and internationally respected qualifications that empower learners and professionals worldwide.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @php
+                        $accreditationsImages = [];
+                        for ($i = 1; $i <= 12; $i++) {
+                            $imagePath = public_path('images/accreditations/' . $i . '.png');
+                            if (file_exists($imagePath)) {
+                                $accreditationsImages[] = $i;
+                            }
+                        }
+                    @endphp
+                    @if(count($accreditationsImages) > 0)
+                    <div class="accreditations-gallery-section mt-5 pt-5" style="border-top: 3px solid #ffcc00;">
+                        <div class="text-center mb-5">
+                            <h2 style="color: #1e3a8a; font-weight: 800; font-size: 2.8rem; margin-bottom: 15px;">
+                                <i class="fas fa-images me-3" style="color: #ffcc00;"></i>Accreditation Certificates
+                            </h2>
+                            <p style="color: #6b7280; font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+                                View our official accreditation certificates
+                            </p>
+                        </div>
+                        
+                        <div class="row g-4 justify-content-center">
+                            @foreach($accreditationsImages as $imgNumber)
+                            <div class="col-lg-4 col-md-4 col-sm-6">
+                                <div class="accreditation-item">
+                                    <div class="accreditation-image-wrapper" onclick="openImageModal('{{ asset('images/accreditations/' . $imgNumber . '.png') }}', 'Accreditation {{ $imgNumber }}')">
+                                        <img src="{{ asset('images/accreditations/' . $imgNumber . '.png') }}"
+                                             alt="Accreditation Certificate {{ $imgNumber }}"
+                                             class="accreditation-image"
+                                             loading="lazy">
+                                        <div class="accreditation-overlay">
+                                            <i class="fas fa-search-plus"></i>
+                                            <span>Click to View</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Image Modal -->
+                    <div id="imageModal" class="image-modal">
+                        <span class="modal-close" onclick="closeImageModal()">&times;</span>
+                        <img class="modal-content" id="modalImage" onclick="event.stopPropagation();">
+                        <div class="modal-caption" id="modalCaption"></div>
+                    </div>
+
+                    <style>
+                        /* Accreditations Info Section Styles */
+                        .accreditations-info-section {
+                            margin-top: 40px;
+                        }
+
+                        .legal-registration-card,
+                        .accreditations-list-card,
+                        .summary-card,
+                        .quality-assurance-card,
+                        .credibility-card,
+                        .commitment-card {
+                            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                            border-radius: 20px;
+                            padding: 35px;
+                            margin-bottom: 30px;
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                            border: 2px solid #e5e7eb;
+                            transition: all 0.3s ease;
+                        }
+
+                        .legal-registration-card:hover,
+                        .accreditations-list-card:hover,
+                        .summary-card:hover,
+                        .quality-assurance-card:hover,
+                        .credibility-card:hover,
+                        .commitment-card:hover {
+                            transform: translateY(-5px);
+                            box-shadow: 0 15px 40px rgba(30, 58, 138, 0.15);
+                            border-color: #ffcc00;
+                        }
+
+                        .card-header-section {
+                            display: flex;
+                            align-items: center;
+                            gap: 15px;
+                            margin-bottom: 25px;
+                            padding-bottom: 20px;
+                            border-bottom: 3px solid #ffcc00;
+                        }
+
+                        .card-header-section i {
+                            font-size: 2rem;
+                            color: #1e3a8a;
+                            background: linear-gradient(135deg, #ffcc00 0%, #ffd700 100%);
+                            width: 60px;
+                            height: 60px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 15px;
+                            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+                        }
+
+                        .card-header-section h3 {
+                            color: #1e3a8a;
+                            font-weight: 800;
+                            font-size: 1.8rem;
+                            margin: 0;
+                        }
+
+                        .card-header-section .subtitle {
+                            color: #6b7280;
+                            font-size: 1rem;
+                            font-weight: 500;
+                            margin: 0;
+                            margin-left: auto;
+                        }
+
+                        .card-content {
+                            color: #4b5563;
+                            line-height: 1.8;
+                        }
+
+                        .info-row {
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 15px;
+                            padding: 15px 0;
+                            border-bottom: 1px solid #e5e7eb;
+                        }
+
+                        .info-row:last-child {
+                            border-bottom: none;
+                        }
+
+                        .info-label {
+                            font-weight: 700;
+                            color: #1e3a8a;
+                            min-width: 200px;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        }
+
+                        .info-label i {
+                            color: #ffcc00;
+                            font-size: 1.1rem;
+                        }
+
+                        .info-value {
+                            color: #374151;
+                            font-size: 1.05rem;
+                            flex: 1;
+                        }
+
+                        /* Accreditations List */
+                        .accreditations-list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 25px;
+                        }
+
+                        .accreditation-item-list {
+                            display: flex;
+                            gap: 20px;
+                            padding: 25px;
+                            background: white;
+                            border-radius: 15px;
+                            border-left: 5px solid #1e3a8a;
+                            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                            transition: all 0.3s ease;
+                        }
+
+                        .accreditation-item-list:hover {
+                            transform: translateX(5px);
+                            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.15);
+                            border-left-color: #ffcc00;
+                        }
+
+                        .accreditation-number {
+                            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 12px;
+                            font-size: 1.5rem;
+                            font-weight: 800;
+                            flex-shrink: 0;
+                            box-shadow: 0 5px 15px rgba(30, 58, 138, 0.3);
+                        }
+
+                        .accreditation-details {
+                            flex: 1;
+                        }
+
+                        .accreditation-details h4 {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                            font-size: 1.4rem;
+                            margin-bottom: 12px;
+                        }
+
+                        .accreditation-details p {
+                            color: #6b7280;
+                            margin-bottom: 8px;
+                            line-height: 1.7;
+                        }
+
+                        .accreditation-details a {
+                            color: #3b82f6;
+                            font-weight: 600;
+                            text-decoration: none;
+                            transition: all 0.3s ease;
+                        }
+
+                        .accreditation-details a:hover {
+                            color: #1e3a8a;
+                            text-decoration: underline;
+                        }
+
+                        .legal-name {
+                            color: #374151;
+                            font-size: 0.95rem;
+                            margin-top: 8px;
+                        }
+
+                        .legal-name strong {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                        }
+
+                        /* Summary Content */
+                        .summary-content h4 {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                            font-size: 1.5rem;
+                            margin-bottom: 20px;
+                            padding-bottom: 15px;
+                            border-bottom: 2px solid #ffcc00;
+                        }
+
+                        .summary-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            margin-bottom: 18px;
+                            font-size: 1.05rem;
+                        }
+
+                        .summary-content strong {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                        }
+
+                        /* Quality Assurance */
+                        .quality-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            margin-bottom: 25px;
+                            font-size: 1.05rem;
+                        }
+
+                        .accreditation-detail-box {
+                            background: white;
+                            padding: 25px;
+                            border-radius: 15px;
+                            margin-bottom: 25px;
+                            border-left: 5px solid #3b82f6;
+                            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                        }
+
+                        .accreditation-detail-box h5 {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                            font-size: 1.3rem;
+                            margin-bottom: 15px;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
+
+                        .accreditation-detail-box h5 i {
+                            color: #10b981;
+                            font-size: 1.2rem;
+                        }
+
+                        .accreditation-detail-box p {
+                            color: #4b5563;
+                            line-height: 1.8;
+                            margin-bottom: 12px;
+                        }
+
+                        .verification-link {
+                            background: #eff6ff;
+                            padding: 12px 18px;
+                            border-radius: 10px;
+                            margin-top: 15px;
+                            border-left: 4px solid #3b82f6;
+                        }
+
+                        .verification-link i {
+                            color: #3b82f6;
+                            margin-right: 8px;
+                        }
+
+                        .verification-link a {
+                            color: #1e3a8a;
+                            font-weight: 600;
+                            text-decoration: none;
+                        }
+
+                        .verification-link a:hover {
+                            text-decoration: underline;
+                        }
+
+                        /* Credibility */
+                        .credibility-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            margin-bottom: 20px;
+                            font-size: 1.05rem;
+                        }
+
+                        .commitment-list {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                        }
+
+                        .commitment-list li {
+                            padding: 15px 20px;
+                            margin-bottom: 12px;
+                            background: white;
+                            border-radius: 12px;
+                            border-left: 4px solid #10b981;
+                            color: #4b5563;
+                            font-size: 1.05rem;
+                            line-height: 1.7;
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 12px;
+                            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+                            transition: all 0.3s ease;
+                        }
+
+                        .commitment-list li:hover {
+                            transform: translateX(5px);
+                            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.15);
+                        }
+
+                        .commitment-list li i {
+                            color: #10b981;
+                            font-size: 1.2rem;
+                            margin-top: 3px;
+                            flex-shrink: 0;
+                        }
+
+                        /* Commitment */
+                        .commitment-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            font-size: 1.1rem;
+                            text-align: center;
+                            font-style: italic;
+                            padding: 20px;
+                            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+                            border-radius: 15px;
+                            border-left: 5px solid #ffcc00;
+                        }
+
+                        /* Responsive */
+                        @media (max-width: 768px) {
+                            .legal-registration-card,
+                            .accreditations-list-card,
+                            .summary-card,
+                            .quality-assurance-card,
+                            .credibility-card,
+                            .commitment-card {
+                                padding: 25px 20px;
+                            }
+
+                            .card-header-section {
+                                flex-direction: column;
+                                align-items: flex-start;
+                                gap: 10px;
+                            }
+
+                            .card-header-section h3 {
+                                font-size: 1.5rem;
+                            }
+
+                            .info-row {
+                                flex-direction: column;
+                                gap: 8px;
+                            }
+
+                            .info-label {
+                                min-width: auto;
+                            }
+
+                            .accreditation-item-list {
+                                flex-direction: column;
+                                gap: 15px;
+                            }
+
+                            .accreditation-number {
+                                width: 40px;
+                                height: 40px;
+                                font-size: 1.2rem;
+                            }
+
+                            .accreditation-details h4 {
+                                font-size: 1.2rem;
+                            }
+                        }
+
+                        .accreditations-gallery-section {
+                            margin-top: 60px;
+                            padding-top: 50px;
+                        }
+
+                        .accreditation-item {
+                            position: relative;
+                            margin-bottom: 20px;
+                        }
+
+                        .accreditation-image-wrapper {
+                            position: relative;
+                            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                            border-radius: 20px;
+                            padding: 30px;
+                            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                            overflow: hidden;
+                            border: 3px solid transparent;
+                            height: 100%;
+                            min-height: 300px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                        }
+
+                        .accreditation-image-wrapper::before {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background: linear-gradient(135deg, rgba(30, 58, 138, 0.05) 0%, rgba(255, 204, 0, 0.05) 100%);
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                        }
+
+                        .accreditation-image-wrapper:hover::before {
+                            opacity: 1;
+                        }
+
+                        .accreditation-image-wrapper:hover {
+                            transform: translateY(-10px) scale(1.02);
+                            box-shadow: 0 20px 40px rgba(30, 58, 138, 0.2);
+                            border-color: #ffcc00;
+                        }
+
+                        .accreditation-image {
+                            max-width: 100%;
+                            max-height: 280px;
+                            width: auto;
+                            height: auto;
+                            object-fit: contain;
+                            border-radius: 12px;
+                            transition: transform 0.4s ease;
+                            cursor: pointer;
+                            position: relative;
+                            z-index: 2;
+                        }
+
+                        .accreditation-image-wrapper:hover .accreditation-image {
+                            transform: scale(1.1);
+                        }
+
+                        .accreditation-overlay {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background: rgba(30, 58, 138, 0.9);
+                            color: white;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                            border-radius: 20px;
+                            z-index: 3;
+                        }
+
+                        .accreditation-image-wrapper:hover .accreditation-overlay {
+                            opacity: 1;
+                        }
+
+                        .accreditation-overlay i {
+                            font-size: 2.5rem;
+                            margin-bottom: 10px;
+                            color: #ffcc00;
+                        }
+
+                        .accreditation-overlay span {
+                            font-size: 1.1rem;
+                            font-weight: 600;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                        }
+
+                        /* Image Modal */
+                        .image-modal {
+                            display: none;
+                            position: fixed;
+                            z-index: 999999;
+                            left: 0;
+                            top: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: rgba(0, 0, 0, 0.95);
+                            backdrop-filter: blur(10px);
+                            animation: fadeIn 0.3s ease;
+                        }
+
+                        .image-modal.show {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        @keyframes fadeIn {
+                            from { opacity: 0; }
+                            to { opacity: 1; }
+                        }
+
+                        .modal-content {
+                            max-width: 90%;
+                            max-height: 90vh;
+                            object-fit: contain;
+                            border-radius: 15px;
+                            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                            animation: zoomIn 0.3s ease;
+                        }
+
+                        @keyframes zoomIn {
+                            from { transform: scale(0.8); opacity: 0; }
+                            to { transform: scale(1); opacity: 1; }
+                        }
+
+                        .modal-close {
+                            position: absolute;
+                            top: 30px;
+                            right: 40px;
+                            color: #fff;
+                            font-size: 3rem;
+                            font-weight: bold;
+                            cursor: pointer;
+                            z-index: 1000000;
+                            transition: all 0.3s ease;
+                            width: 50px;
+                            height: 50px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: rgba(255, 255, 255, 0.1);
+                            border-radius: 50%;
+                            backdrop-filter: blur(10px);
+                        }
+
+                        .modal-close:hover {
+                            background: rgba(255, 255, 255, 0.2);
+                            transform: rotate(90deg);
+                        }
+
+                        .modal-caption {
+                            position: absolute;
+                            bottom: 30px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            color: white;
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            text-align: center;
+                            background: rgba(0, 0, 0, 0.5);
+                            padding: 15px 30px;
+                            border-radius: 50px;
+                            backdrop-filter: blur(10px);
+                        }
+
+                        /* Responsive */
+                        @media (max-width: 991px) {
+                            .accreditations-gallery-section h2 {
+                                font-size: 2.2rem;
+                            }
+                        }
+
+                        @media (max-width: 768px) {
+                            .accreditation-image-wrapper {
+                                min-height: 250px;
+                                padding: 25px;
+                            }
+
+                            .accreditation-image {
+                                max-height: 220px;
+                            }
+
+                            .accreditations-gallery-section h2 {
+                                font-size: 1.8rem;
+                            }
+
+                            .accreditations-gallery-section p {
+                                font-size: 1rem;
+                            }
+
+                            .modal-close {
+                                top: 15px;
+                                right: 20px;
+                                font-size: 2rem;
+                                width: 40px;
+                                height: 40px;
+                            }
+
+                            .modal-caption {
+                                bottom: 15px;
+                                font-size: 1rem;
+                                padding: 10px 20px;
+                            }
+                        }
+                    </style>
+
+                    <script>
+                        function openImageModal(src, caption) {
+                            console.log('Opening modal with:', src, caption);
+                            const modal = document.getElementById('imageModal');
+                            const modalImg = document.getElementById('modalImage');
+                            const captionText = document.getElementById('modalCaption');
+                            
+                            if (modal && modalImg && captionText) {
+                                modal.classList.add('show');
+                                modalImg.src = src;
+                                captionText.textContent = caption;
+                                document.body.style.overflow = 'hidden';
+                            } else {
+                                console.error('Modal elements not found');
+                            }
+                        }
+
+                        function closeImageModal() {
+                            const modal = document.getElementById('imageModal');
+                            if (modal) {
+                                modal.classList.remove('show');
+                                document.body.style.overflow = 'auto';
+                            }
+                        }
+
+                        // Close modal on ESC key
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') {
+                                closeImageModal();
+                            }
+                        });
+
+                        // Close modal when clicking outside the image
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const modal = document.getElementById('imageModal');
+                            if (modal) {
+                                modal.addEventListener('click', function(e) {
+                                    if (e.target === modal || e.target.classList.contains('modal-close')) {
+                                        closeImageModal();
+                                    }
+                                });
+                            }
+                        });
+                    </script>
+                    @endif
+                    @endif
 
                     <!-- Share Section -->
                     <div class="mt-5 pt-4" style="border-top: 2px solid #f3f4f6;">
