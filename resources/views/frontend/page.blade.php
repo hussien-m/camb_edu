@@ -448,7 +448,7 @@
 
                     <!-- Accreditations Content -->
                     @if($page->slug === 'accreditations')
-                    
+
                     <!-- Legal Registration Section -->
                     <div class="accreditations-info-section mt-5">
                         <div class="legal-registration-card">
@@ -536,7 +536,7 @@
                             </div>
                             <div class="quality-content">
                                 <p>Cambridge International College holds multiple recognized accreditations and registrations that demonstrate its commitment to academic excellence, governance, and quality assurance across all levels of higher education, including Diplomas, Bachelor's Degrees, Master's Degrees, and Doctoral (PhD) programs.</p>
-                                
+
                                 <div class="accreditation-detail-box">
                                     <h5><i class="fas fa-check-circle"></i> 1. UK Education Quality Management (UKEQM)</h5>
                                     <p>The College is accredited by UK Education Quality Management, an organization dedicated to monitoring institutional quality, academic governance, teaching standards, and learner outcomes. This accreditation reflects the College's adherence to structured quality assurance frameworks and continuous academic improvement.</p>
@@ -610,13 +610,17 @@
                                 View our official accreditation certificates
                             </p>
                         </div>
-                        
+
                         <div class="row g-4 justify-content-center">
                             @foreach($accreditationsImages as $imgNumber)
                             <div class="col-lg-4 col-md-4 col-sm-6">
                                 <div class="accreditation-item">
-                                    <div class="accreditation-image-wrapper" onclick="openImageModal('{{ asset('images/accreditations/' . $imgNumber . '.png') }}', 'Accreditation {{ $imgNumber }}')">
-                                        <img src="{{ asset('images/accreditations/' . $imgNumber . '.png') }}"
+                                    @php
+                                        $imgUrl = asset('images/accreditations/' . $imgNumber . '.png');
+                                        $imgCaption = 'Accreditation ' . $imgNumber;
+                                    @endphp
+                                    <div class="accreditation-image-wrapper" onclick="openImageModal('{{ $imgUrl }}', '{{ $imgCaption }}')">
+                                        <img src="{{ $imgUrl }}"
                                              alt="Accreditation Certificate {{ $imgNumber }}"
                                              class="accreditation-image"
                                              loading="lazy">
@@ -637,7 +641,11 @@
                         <img class="modal-content" id="modalImage" onclick="event.stopPropagation();">
                         <div class="modal-caption" id="modalCaption"></div>
                     </div>
+                    @endif
+                    @endif
 
+                    <!-- Accreditations Styles - Must be outside conditions -->
+                    @if($page->slug === 'accreditations')
                     <style>
                         /* Accreditations Info Section Styles */
                         .accreditations-info-section {
@@ -1234,7 +1242,7 @@
                             const modal = document.getElementById('imageModal');
                             const modalImg = document.getElementById('modalImage');
                             const captionText = document.getElementById('modalCaption');
-                            
+
                             if (modal && modalImg && captionText) {
                                 modal.classList.add('show');
                                 modalImg.src = src;
@@ -1273,6 +1281,379 @@
                         });
                     </script>
                     @endif
+                 
+
+                    <!-- Accreditations Styles - Must be outside image condition -->
+                    @if($page->slug === 'accreditations')
+                    <style>
+                        /* Accreditations Info Section Styles */
+                        .accreditations-info-section {
+                            margin-top: 40px;
+                        }
+
+                        .legal-registration-card,
+                        .accreditations-list-card,
+                        .summary-card,
+                        .quality-assurance-card,
+                        .credibility-card,
+                        .commitment-card {
+                            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                            border-radius: 20px;
+                            padding: 35px;
+                            margin-bottom: 30px;
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                            border: 2px solid #e5e7eb;
+                            transition: all 0.3s ease;
+                        }
+
+                        .legal-registration-card:hover,
+                        .accreditations-list-card:hover,
+                        .summary-card:hover,
+                        .quality-assurance-card:hover,
+                        .credibility-card:hover,
+                        .commitment-card:hover {
+                            transform: translateY(-5px);
+                            box-shadow: 0 15px 40px rgba(30, 58, 138, 0.15);
+                            border-color: #ffcc00;
+                        }
+
+                        .card-header-section {
+                            display: flex;
+                            align-items: center;
+                            gap: 15px;
+                            margin-bottom: 25px;
+                            padding-bottom: 20px;
+                            border-bottom: 3px solid #ffcc00;
+                        }
+
+                        .card-header-section i {
+                            font-size: 2rem;
+                            color: #1e3a8a;
+                            background: linear-gradient(135deg, #ffcc00 0%, #ffd700 100%);
+                            width: 60px;
+                            height: 60px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 15px;
+                            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+                        }
+
+                        .card-header-section h3 {
+                            color: #1e3a8a;
+                            font-weight: 800;
+                            font-size: 1.8rem;
+                            margin: 0;
+                        }
+
+                        .card-header-section .subtitle {
+                            color: #6b7280;
+                            font-size: 1rem;
+                            font-weight: 500;
+                            margin: 0;
+                            margin-left: auto;
+                        }
+
+                        .card-content {
+                            color: #4b5563;
+                            line-height: 1.8;
+                        }
+
+                        .info-row {
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 15px;
+                            padding: 15px 0;
+                            border-bottom: 1px solid #e5e7eb;
+                        }
+
+                        .info-row:last-child {
+                            border-bottom: none;
+                        }
+
+                        .info-label {
+                            font-weight: 700;
+                            color: #1e3a8a;
+                            min-width: 200px;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        }
+
+                        .info-label i {
+                            color: #ffcc00;
+                            font-size: 1.1rem;
+                        }
+
+                        .info-value {
+                            color: #374151;
+                            font-size: 1.05rem;
+                            flex: 1;
+                        }
+
+                        /* Accreditations List */
+                        .accreditations-list {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 25px;
+                        }
+
+                        .accreditation-item-list {
+                            display: flex;
+                            gap: 20px;
+                            padding: 25px;
+                            background: white;
+                            border-radius: 15px;
+                            border-left: 5px solid #1e3a8a;
+                            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                            transition: all 0.3s ease;
+                        }
+
+                        .accreditation-item-list:hover {
+                            transform: translateX(5px);
+                            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.15);
+                            border-left-color: #ffcc00;
+                        }
+
+                        .accreditation-number {
+                            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                            color: white;
+                            width: 50px;
+                            height: 50px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 12px;
+                            font-size: 1.5rem;
+                            font-weight: 800;
+                            flex-shrink: 0;
+                            box-shadow: 0 5px 15px rgba(30, 58, 138, 0.3);
+                        }
+
+                        .accreditation-details {
+                            flex: 1;
+                        }
+
+                        .accreditation-details h4 {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                            font-size: 1.4rem;
+                            margin-bottom: 12px;
+                        }
+
+                        .accreditation-details p {
+                            color: #6b7280;
+                            margin-bottom: 8px;
+                            line-height: 1.7;
+                        }
+
+                        .accreditation-details a {
+                            color: #3b82f6;
+                            font-weight: 600;
+                            text-decoration: none;
+                            transition: all 0.3s ease;
+                        }
+
+                        .accreditation-details a:hover {
+                            color: #1e3a8a;
+                            text-decoration: underline;
+                        }
+
+                        .legal-name {
+                            color: #374151;
+                            font-size: 0.95rem;
+                            margin-top: 8px;
+                        }
+
+                        .legal-name strong {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                        }
+
+                        /* Summary Content */
+                        .summary-content h4 {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                            font-size: 1.5rem;
+                            margin-bottom: 20px;
+                            padding-bottom: 15px;
+                            border-bottom: 2px solid #ffcc00;
+                        }
+
+                        .summary-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            margin-bottom: 18px;
+                            font-size: 1.05rem;
+                        }
+
+                        .summary-content strong {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                        }
+
+                        /* Quality Assurance */
+                        .quality-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            margin-bottom: 25px;
+                            font-size: 1.05rem;
+                        }
+
+                        .accreditation-detail-box {
+                            background: white;
+                            padding: 25px;
+                            border-radius: 15px;
+                            margin-bottom: 25px;
+                            border-left: 5px solid #3b82f6;
+                            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                        }
+
+                        .accreditation-detail-box h5 {
+                            color: #1e3a8a;
+                            font-weight: 700;
+                            font-size: 1.3rem;
+                            margin-bottom: 15px;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
+
+                        .accreditation-detail-box h5 i {
+                            color: #10b981;
+                            font-size: 1.2rem;
+                        }
+
+                        .accreditation-detail-box p {
+                            color: #4b5563;
+                            line-height: 1.8;
+                            margin-bottom: 12px;
+                        }
+
+                        .verification-link {
+                            background: #eff6ff;
+                            padding: 12px 18px;
+                            border-radius: 10px;
+                            margin-top: 15px;
+                            border-left: 4px solid #3b82f6;
+                        }
+
+                        .verification-link i {
+                            color: #3b82f6;
+                            margin-right: 8px;
+                        }
+
+                        .verification-link a {
+                            color: #1e3a8a;
+                            font-weight: 600;
+                            text-decoration: none;
+                        }
+
+                        .verification-link a:hover {
+                            text-decoration: underline;
+                        }
+
+                        /* Credibility */
+                        .credibility-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            margin-bottom: 20px;
+                            font-size: 1.05rem;
+                        }
+
+                        .commitment-list {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                        }
+
+                        .commitment-list li {
+                            padding: 15px 20px;
+                            margin-bottom: 12px;
+                            background: white;
+                            border-radius: 12px;
+                            border-left: 4px solid #10b981;
+                            color: #4b5563;
+                            font-size: 1.05rem;
+                            line-height: 1.7;
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 12px;
+                            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+                            transition: all 0.3s ease;
+                        }
+
+                        .commitment-list li:hover {
+                            transform: translateX(5px);
+                            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.15);
+                        }
+
+                        .commitment-list li i {
+                            color: #10b981;
+                            font-size: 1.2rem;
+                            margin-top: 3px;
+                            flex-shrink: 0;
+                        }
+
+                        /* Commitment */
+                        .commitment-content p {
+                            color: #4b5563;
+                            line-height: 1.9;
+                            font-size: 1.1rem;
+                            text-align: center;
+                            font-style: italic;
+                            padding: 20px;
+                            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+                            border-radius: 15px;
+                            border-left: 5px solid #ffcc00;
+                        }
+
+                        /* Responsive */
+                        @media (max-width: 768px) {
+                            .legal-registration-card,
+                            .accreditations-list-card,
+                            .summary-card,
+                            .quality-assurance-card,
+                            .credibility-card,
+                            .commitment-card {
+                                padding: 25px 20px;
+                            }
+
+                            .card-header-section {
+                                flex-direction: column;
+                                align-items: flex-start;
+                                gap: 10px;
+                            }
+
+                            .card-header-section h3 {
+                                font-size: 1.5rem;
+                            }
+
+                            .info-row {
+                                flex-direction: column;
+                                gap: 8px;
+                            }
+
+                            .info-label {
+                                min-width: auto;
+                            }
+
+                            .accreditation-item-list {
+                                flex-direction: column;
+                                gap: 15px;
+                            }
+
+                            .accreditation-number {
+                                width: 40px;
+                                height: 40px;
+                                font-size: 1.2rem;
+                            }
+
+                            .accreditation-details h4 {
+                                font-size: 1.2rem;
+                            }
+                        }
+                    </style>
                     @endif
 
                     <!-- Share Section -->
