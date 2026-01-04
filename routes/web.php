@@ -37,6 +37,10 @@ Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware(['rate.limit:5,1', 'honeypot', 'recaptcha:0.5'])
     ->name('newsletter.subscribe');
 
+// Ad Tracking Routes
+Route::get('/ad/{ad}/click', [App\Http\Controllers\Frontend\AdController::class, 'trackClick'])->name('ad.click');
+Route::get('/ad/{ad}/view', [App\Http\Controllers\Frontend\AdController::class, 'trackView'])->name('ad.view');
+
 // Storage Link Route (for shared hosting)
 Route::get('/storage-link', function () {
     $target = storage_path('app/public');

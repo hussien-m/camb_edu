@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,7 @@ class LoginController extends Controller
         if (Auth::guard('student')->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
+            /** @var Student $student */
             $student = Auth::guard('student')->user();
 
             if ($student->status !== 'active') {

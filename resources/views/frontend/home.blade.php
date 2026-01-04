@@ -19,6 +19,11 @@
 @section('content')
 
 <!-- ============================================
+     TOP ADS
+============================================ -->
+{{-- Top Ads removed - only popup ads are shown --}}
+
+<!-- ============================================
      HERO SECTION WITH LOGO AND PROGRAMS
 ============================================ -->
 <section class="hero">
@@ -104,6 +109,26 @@
         </div>
     </div>
 </section>
+
+<!-- ============================================
+     MIDDLE ADS
+============================================ -->
+{{-- Middle Ads removed - only popup ads are shown --}}
+
+<!-- ============================================
+     SIDEBAR ADS
+============================================ -->
+@if(isset($sidebarAds) && $sidebarAds->count() > 0)
+<div class="container my-5">
+    <div class="row">
+        @foreach($sidebarAds as $ad)
+            <div class="col-lg-{{ $sidebarAds->count() == 1 ? '12' : '6' }} mb-4">
+                @include('frontend.partials.ad-display', ['ad' => $ad])
+            </div>
+        @endforeach
+    </div>
+</div>
+@endif
 
 <!-- ============================================
      FEATURED COURSES
@@ -366,6 +391,11 @@
 </section>
 
 <!-- ============================================
+     BOTTOM ADS
+============================================ -->
+{{-- Bottom Ads removed - only popup ads are shown --}}
+
+<!-- ============================================
      CONTACT SECTION
 ============================================ -->
 <section class="section-white">
@@ -466,5 +496,148 @@
 
 @push('scripts')
     @vite('resources/js/frontend-home.js')
+    
+    {{-- Popup Ads --}}
+    @php
+        $hasPopupAds = isset($popupAds) && $popupAds->count() > 0;
+        $popupAdsData = [];
+        if ($hasPopupAds) {
+            foreach($popupAds as $ad) {
+                $popupAdsData[] = [
+                    'id' => $ad->id,
+                    'title' => $ad->title ?? '',
+                    'description' => $ad->description ?? '',
+                    'image' => $ad->image ?? '',
+                    'html_content' => $ad->html_content ?? '',
+                    'link' => $ad->link ?? '',
+                    'open_in_new_tab' => $ad->open_in_new_tab ?? true,
+                    'end_date' => $ad->end_date ? $ad->end_date->format('Y-m-d H:i:s') : null,
+                ];
+            }
+        }
+    @endphp
+    
+    @if($hasPopupAds)
+    <script>
+        console.log('=== POPUP ADS DEBUG START ===');
+        console.log('Popup Ads Count:', {{ count($popupAdsData) }});
+        
+        const popupAds = @json($popupAdsData);
+        console.log('Popup Ads Array:', popupAds);
+        
+        function showPopupAd(ad) {
+            console.log('=== SHOWING POPUP AD ===', ad);
+            
+            // Clear sessionStorage for testing
+            // sessionStorage.removeItem('ad_popup_' + ad.id);
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'popup-overlay-' + ad.id;
+            overlay.style.cssText = 'position:fixed !important;top:0 !important;left:0 !important;right:0 !important;bottom:0 !important;background:rgba(0,0,0,0.75) !important;z-index:999999 !important;display:flex !important;align-items:center !important;justify-content:center !important;';
+            
+            let contentHtml = '';
+            
+            if (ad.image) {
+                const imageUrl = '{{ asset("storage/") }}/' + ad.image;
+                contentHtml += '<img src="' + imageUrl + '" alt="' + (ad.title || 'Ad') + '" style="width:100%;height:auto;display:block;">';
+            }
+            
+            if (ad.html_content) {
+                contentHtml += '<div style="padding:30px;">' + ad.html_content + '</div>';
+            }
+            
+            if (ad.title || ad.description) {
+                contentHtml += '<div style="padding:40px 30px;text-align:center;background:white;">';
+                if (ad.title) {
+                    contentHtml += '<h3 style="margin:0 0 15px 0;font-size:1.8rem;color:#1e3a8a;font-weight:700;">' + ad.title + '</h3>';
+                }
+                if (ad.description) {
+                    contentHtml += '<p style="margin:0 0 25px 0;font-size:1.1rem;color:#6b7280;line-height:1.7;">' + ad.description + '</p>';
+                }
+                if (ad.link) {
+                    const target = ad.open_in_new_tab ? '_blank' : '_self';
+                    const clickUrl = '{{ url("/ad") }}/' + ad.id + '/click';
+                    contentHtml += '<a href="' + clickUrl + '" target="' + target + '" style="display:inline-block;padding:15px 35px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;text-decoration:none;border-radius:50px;font-weight:600;font-size:1.1rem;box-shadow:0 5px 15px rgba(102, 126, 234, 0.4);">Learn More</a>';
+                }
+                contentHtml += '</div>';
+            }
+            
+            if (!contentHtml) {
+                contentHtml = '<div style="padding:40px 30px;text-align:center;background:white;"><h3>Ad #' + ad.id + '</h3><p>No content available</p></div>';
+            }
+            
+            overlay.innerHTML = '<div style="position:relative;max-width:600px;width:90%;max-height:90vh;background:white;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.5);overflow:hidden;"><button onclick="document.getElementById(\'popup-overlay-' + ad.id + '\').remove()" style="position:absolute;top:15px;right:15px;width:40px;height:40px;background:rgba(0,0,0,0.5);border:none;border-radius:50%;color:white;font-size:1.2rem;cursor:pointer;z-index:10;">×</button><div style="width:100%;">' + contentHtml + '</div></div>';
+            
+            document.body.appendChild(overlay);
+            console.log('Popup overlay added to body. Body children:', document.body.children.length);
+            
+            setTimeout(function() {
+                const el = document.getElementById('popup-overlay-' + ad.id);
+                if (el && el.parentNode) {
+                    el.remove();
+                    console.log('Popup auto-closed');
+                }
+            }, 10000);
+        }
+        
+        function initPopups() {
+            console.log('=== INITIALIZING POPUPS ===');
+            console.log('Total popups:', popupAds.length);
+            
+            if (popupAds.length === 0) {
+                console.log('No popup ads to show!');
+                return;
+            }
+            
+            popupAds.forEach(function(ad, index) {
+                // Check if ad has expired
+                if (ad.end_date) {
+                    const endDate = new Date(ad.end_date);
+                    const now = new Date();
+                    if (now > endDate) {
+                        console.log('Ad #' + ad.id + ' has expired, skipping');
+                        return;
+                    }
+                }
+                
+                // Show popup on every page load/refresh until end date
+                // Don't use localStorage to block it - show it every time
+                const delay = (index + 1) * 2000;
+                console.log('Scheduling popup #' + ad.id + ' in ' + delay + 'ms');
+                
+                setTimeout(function() {
+                    console.log('Showing popup #' + ad.id + ' now!');
+                    showPopupAd(ad);
+                }, delay);
+            });
+        }
+        
+        // Force show after page load
+        if (document.readyState === 'loading') {
+            console.log('Document still loading, waiting for DOMContentLoaded');
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOMContentLoaded fired');
+                setTimeout(initPopups, 1000);
+            });
+        } else {
+            console.log('Document already loaded, initializing immediately');
+            setTimeout(initPopups, 1000);
+        }
+        
+        // Also try on window load
+        window.addEventListener('load', function() {
+            console.log('Window load event fired');
+            setTimeout(initPopups, 1500);
+        });
+        
+        console.log('=== POPUP ADS DEBUG END ===');
+    </script>
+    @else
+    <script>
+        console.log('=== NO POPUP ADS FOUND ===');
+        console.log('popupAds isset:', {{ isset($popupAds) ? 'true' : 'false' }});
+        console.log('popupAds count:', {{ isset($popupAds) ? $popupAds->count() : 0 }});
+    </script>
+    @endif
 @endpush
 

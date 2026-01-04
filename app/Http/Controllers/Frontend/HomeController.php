@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ad;
 use App\Models\Banner;
 use App\Models\Course;
 use App\Models\CourseCategory;
@@ -60,6 +61,82 @@ class HomeController extends Controller
             return Feature::active()->ordered()->get();
         });
 
+        // Get active ads by position
+        $topAds = Cache::remember('home_top_ads', 1800, function () {
+            return Ad::where('is_active', true)
+                ->where('position', 'top')
+                ->where(function($q) {
+                    $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                })
+                ->where(function($q) {
+                    $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                })
+                ->orderBy('order')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        });
+
+        $middleAds = Cache::remember('home_middle_ads', 1800, function () {
+            return Ad::where('is_active', true)
+                ->where('position', 'middle')
+                ->where(function($q) {
+                    $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                })
+                ->where(function($q) {
+                    $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                })
+                ->orderBy('order')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        });
+
+        $bottomAds = Cache::remember('home_bottom_ads', 1800, function () {
+            return Ad::where('is_active', true)
+                ->where('position', 'bottom')
+                ->where(function($q) {
+                    $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                })
+                ->where(function($q) {
+                    $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                })
+                ->orderBy('order')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        });
+
+        $sidebarAds = Cache::remember('home_sidebar_ads', 1800, function () {
+            return Ad::where('is_active', true)
+                ->where(function($q) {
+                    // Support both: type='sidebar' OR position in sidebar positions
+                    $q->where('type', 'sidebar')
+                      ->orWhereIn('position', ['sidebar-left', 'sidebar-right']);
+                })
+                ->where(function($q) {
+                    $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                })
+                ->where(function($q) {
+                    $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                })
+                ->orderBy('order')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        });
+
+        // Get popup ads with date validation
+        $popupAds = Ad::where('is_active', true)
+            ->where('type', 'popup')
+            ->where(function($q) {
+                $q->whereNull('start_date')
+                  ->orWhere('start_date', '<=', now());
+            })
+            ->where(function($q) {
+                $q->whereNull('end_date')
+                  ->orWhere('end_date', '>=', now());
+            })
+            ->orderBy('order')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('frontend.home', compact(
             'banners',
             'categories',
@@ -67,7 +144,12 @@ class HomeController extends Controller
             'featuredCourses',
             'latestCourses',
             'successStories',
-            'features'
+            'features',
+            'topAds',
+            'middleAds',
+            'bottomAds',
+            'sidebarAds',
+            'popupAds'
         ));
     }
 

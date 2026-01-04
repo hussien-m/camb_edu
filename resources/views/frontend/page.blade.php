@@ -446,6 +446,7 @@
                         {!! $page->content !!}
                     </div>
 
+
                     <!-- Share Section -->
                     <div class="mt-5 pt-4" style="border-top: 2px solid #f3f4f6;">
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">

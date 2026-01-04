@@ -77,6 +77,10 @@ Route::middleware('admin')->group(function () {
     // Banners
     Route::resource('banners', App\Http\Controllers\Admin\BannerController::class);
 
+    // Ads Management
+    Route::resource('ads', App\Http\Controllers\Admin\AdController::class);
+    Route::post('ads/{ad}/toggle-status', [App\Http\Controllers\Admin\AdController::class, 'toggleStatus'])->name('ads.toggle-status');
+
     // Features
     Route::resource('features', App\Http\Controllers\Admin\FeatureController::class);
 

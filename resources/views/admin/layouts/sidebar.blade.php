@@ -121,6 +121,14 @@
                     </a>
                 </li>
 
+                <!-- Ads -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.ads.index') }}" class="nav-link {{ request()->routeIs('admin.ads.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-ad"></i>
+                        <p>Ads Management</p>
+                    </a>
+                </li>
+
                 <!-- Features -->
                 <li class="nav-item">
                     <a href="{{ route('admin.features.index') }}" class="nav-link {{ request()->routeIs('admin.features.*') ? 'active' : '' }}">
