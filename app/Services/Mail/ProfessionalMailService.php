@@ -130,8 +130,7 @@ class ProfessionalMailService
                         ->addTextHeader('X-Priority', '1')
                         ->addTextHeader('Importance', 'high')
                         ->addTextHeader('List-Unsubscribe', '<' . url('/student/unsubscribe') . '>, <mailto:' . $from . '?subject=Unsubscribe>')
-                        ->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click')
-                        ->addTextHeader('Message-ID', '<' . time() . '.' . md5($to . time()) . '@' . parse_url(config('app.url'), PHP_URL_HOST) . '>');
+                        ->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
             });
 
             Log::info("Email sent successfully via SMTP to: {$to}");
