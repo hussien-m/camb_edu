@@ -70,13 +70,13 @@ class ProfessionalMailService
                         ->html($html)
                         ->from($from, $fromName)
                         ->replyTo($from, $fromName)
+                        ->returnPath($from)
                         ->getHeaders()
                         ->addTextHeader('X-Mailer', 'Cambridge International College Email System')
                         ->addTextHeader('X-Priority', '1')
                         ->addTextHeader('Importance', 'high')
                         ->addTextHeader('List-Unsubscribe', '<' . url('/student/unsubscribe') . '>, <mailto:' . $from . '?subject=Unsubscribe>')
-                        ->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click')
-                        ->addTextHeader('Return-Path', $from);
+                        ->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
             });
 
             Log::info("Email sent successfully via SMTP to: {$to}");
@@ -124,13 +124,13 @@ class ProfessionalMailService
                         ->text($plainText)
                         ->from($from, $fromName)
                         ->replyTo($from, $fromName)
+                        ->returnPath($from)
                         ->getHeaders()
                         ->addTextHeader('X-Mailer', 'Cambridge International College Email System')
                         ->addTextHeader('X-Priority', '1')
                         ->addTextHeader('Importance', 'high')
                         ->addTextHeader('List-Unsubscribe', '<' . url('/student/unsubscribe') . '>, <mailto:' . $from . '?subject=Unsubscribe>')
                         ->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click')
-                        ->addTextHeader('Return-Path', $from)
                         ->addTextHeader('Message-ID', '<' . time() . '.' . md5($to . time()) . '@' . parse_url(config('app.url'), PHP_URL_HOST) . '>');
             });
 
