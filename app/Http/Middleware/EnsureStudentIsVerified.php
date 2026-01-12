@@ -37,7 +37,8 @@ class EnsureStudentIsVerified
             // For other statuses (suspended, etc.), logout
             Auth::guard('student')->logout();
             return redirect()->route('student.login')
-                ->with('error', 'Your account has been deactivated. Please contact support for assistance.');
+                ->with('error', 'Please check your email and click the activation link to activate your account.')
+                ->with('account_status', 'pending');
         }
 
         return $next($request);

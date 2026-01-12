@@ -30,7 +30,7 @@
                                 <div class="d-flex align-items-start">
                                     <i class="fas {{ session('account_status') === 'pending' ? 'fa-clock' : 'fa-ban' }}"></i>
                                     <div class="flex-grow-1">
-                                        <strong class="d-block mb-2">{{ session('account_status') === 'pending' ? 'Account Pending Approval' : 'Account Deactivated' }}</strong>
+                                        <strong class="d-block mb-2">Please Check Your Email</strong>
                                         <p class="mb-3">{{ session('error') }}</p>
                                         @if(session('account_status') === 'pending')
                                             <div class="d-flex gap-2 flex-wrap">

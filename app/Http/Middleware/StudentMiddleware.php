@@ -29,7 +29,9 @@ class StudentMiddleware
                     ->with('info', 'Please verify your email address to activate your account. We\'ve sent a verification link to your email.');
             }
             
-            return redirect()->route('student.login')->with('error', 'Your account has been deactivated. Please contact support for assistance.');
+            return redirect()->route('student.login')
+                ->with('error', 'Please check your email and click the activation link to activate your account.')
+                ->with('account_status', 'pending');
         }
 
         return $next($request);

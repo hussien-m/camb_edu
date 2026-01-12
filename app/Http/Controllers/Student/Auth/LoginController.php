@@ -30,9 +30,7 @@ class LoginController extends Controller
             if ($student->status !== 'active') {
                 Auth::guard('student')->logout();
 
-                $statusMessage = $student->status === 'pending'
-                    ? 'Your account is pending approval. Please verify your email address or contact our support team for assistance.'
-                    : 'Your account has been deactivated. Please contact our support team for assistance.';
+                $statusMessage = 'Please check your email and click the activation link to activate your account.';
 
                 return back()
                     ->with('error', $statusMessage)
