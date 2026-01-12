@@ -416,46 +416,19 @@ function formatPhoneNumber() {
     }
 }
 
-// Form submission with reCAPTCHA
-document.getElementById('student-register-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
+// Form submission
+document.getElementById('student-register-form').addEventListener('submit', function(e) {
     // Format phone number with country code
     formatPhoneNumber();
     
     const submitBtn = document.getElementById('register-submit-btn');
     const originalHtml = submitBtn.innerHTML;
-    const form = this;
     
     // Disable button and show loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating Account...';
     
-    try {
-        // Get reCAPTCHA token if available
-        if (typeof executeRecaptcha === 'function') {
-            const token = await executeRecaptcha('student_register');
-            
-            // Add token to form
-            let tokenInput = document.querySelector('input[name="recaptcha_token"]');
-            if (!tokenInput) {
-                tokenInput = document.createElement('input');
-                tokenInput.type = 'hidden';
-                tokenInput.name = 'recaptcha_token';
-                form.appendChild(tokenInput);
-            }
-            tokenInput.value = token;
-        }
-        
-        // Submit the form after token is added
-        form.submit();
-    } catch (error) {
-        console.error('reCAPTCHA error:', error);
-        // Re-enable button on error
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalHtml;
-        alert('Security verification failed. Please refresh the page and try again.');
-    }
+    // Form will submit normally (reCAPTCHA disabled)
 });
 
 // Initialize on page load

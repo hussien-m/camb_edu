@@ -21,12 +21,12 @@ Route::middleware('student.guest')->group(function () {
         ->middleware(['rate.limit:5,5', 'recaptcha:0.6']); // 5 attempts per 5 minutes, reCAPTCHA protection
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register'])
-        ->middleware(['rate.limit:3,10', 'honeypot', 'recaptcha:0.5']); // 3 attempts per 10 minutes
+        ->middleware(['rate.limit:3,10', 'honeypot']); // 3 attempts per 10 minutes
 
     // Password Reset Routes
     Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
-        ->middleware(['rate.limit:3,10', 'recaptcha:0.5'])
+        ->middleware(['rate.limit:3,10'])
         ->name('password.email');
     Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('reset-password', [ForgotPasswordController::class, 'reset'])
