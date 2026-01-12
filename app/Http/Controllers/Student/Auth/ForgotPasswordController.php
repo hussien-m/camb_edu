@@ -51,7 +51,7 @@ class ForgotPasswordController extends Controller
                 'created_at' => now(),
             ]);
 
-            // Queue password reset email (instant response)
+            // Send password reset email directly (not queued)
             try {
                 $resetUrl = route('student.password.reset', [
                     'token' => $token,
@@ -60,7 +60,7 @@ class ForgotPasswordController extends Controller
 
                 $emailHtml = $this->getPasswordResetEmailHtml($student, $resetUrl);
 
-                ProfessionalMailService::queue(
+                ProfessionalMailService::send(
                     $student->email,
                     '🔐 Reset Your Password - ' . config('app.name'),
                     $emailHtml,
@@ -68,11 +68,15 @@ class ForgotPasswordController extends Controller
                     config('mail.from.name')
                 );
 
-                \Log::info('Password reset email queued for: ' . $student->email);
+                \Log::info('Password reset email sent to: ' . $student->email);
             } catch (\Exception $mailError) {
-                \Log::error('Failed to queue password reset email: ' . $mailError->getMessage());
+                \Log::error('Failed to send password reset email: ' . $mailError->getMessage(), [
+                    'email' => $student->email,
+                    'error' => $mailError->getMessage(),
+                    'trace' => $mailError->getTraceAsString()
+                ]);
 
-                // Delete token if queueing failed
+                // Delete token if sending failed
                 DB::table('student_password_reset_tokens')->where('email', $request->email)->delete();
 
                 return back()->withErrors(['email' => 'Failed to send email. Please try again later.']);
