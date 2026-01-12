@@ -19,51 +19,11 @@ class ProfessionalMailService
         $from = $from ?? config('mail.from.address');
         $fromName = $fromName ?? config('mail.from.name');
 
-        // Try SendGrid API first if configured
-        $apiKey = config('services.sendgrid.api_key');
-
-        Log::info("Checking SendGrid API Key", [
-            'api_key_exists' => !empty($apiKey),
-            'api_key_length' => $apiKey ? strlen($apiKey) : 0,
-            'api_key_prefix' => $apiKey ? substr($apiKey, 0, 10) : 'null'
-        ]);
-
-        if (!empty($apiKey)) {
-            try {
-                Log::info("✅ Attempting to send email via SendGrid API", [
-                    'to' => $to,
-                    'subject' => $subject,
-                    'from' => $from
-                ]);
-
-                $sendgrid = new SendGridApiService();
-                $result = $sendgrid->send($to, $subject, $html, $from, $fromName);
-
-                Log::info("✅ Email sent successfully via SendGrid API to: {$to}", [
-                    'result' => $result
-                ]);
-                return true;
-
-            } catch (\Exception $e) {
-                Log::error("❌ SendGrid API failed, falling back to SMTP", [
-                    'error' => $e->getMessage(),
-                    'code' => $e->getCode(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine()
-                ]);
-                // Fall through to SMTP
-            }
-        } else {
-            Log::warning("⚠️ SendGrid API Key not configured, using SMTP fallback");
-        }
-
-        // Fallback to SMTP
-        Log::info("Sending email via SMTP", [
-            'to' => $to,
-            'subject' => $subject
-        ]);
-
+        // Send directly via SMTP (no SendGrid)
         try {
+            // Set shorter timeout for SMTP
+            config(['mail.mailers.smtp.timeout' => 15]);
+
             Mail::send([], [], function ($message) use ($to, $subject, $html, $from, $fromName) {
                 $message->to($to)
                         ->subject($subject)
@@ -99,24 +59,11 @@ class ProfessionalMailService
         $from = $from ?? config('mail.from.address');
         $fromName = $fromName ?? config('mail.from.name');
 
-        // Try SendGrid API first if configured
-        $apiKey = config('services.sendgrid.api_key');
-
-        if (!empty($apiKey)) {
-            try {
-                $sendgrid = new SendGridApiService();
-                $result = $sendgrid->sendWithPlainText($to, $subject, $html, $plainText, $from, $fromName);
-                return true;
-            } catch (\Exception $e) {
-                Log::error("❌ SendGrid API failed, falling back to SMTP", [
-                    'error' => $e->getMessage()
-                ]);
-                // Fall through to SMTP
-            }
-        }
-
-        // Fallback to SMTP
+        // Send directly via SMTP (no SendGrid)
         try {
+            // Set shorter timeout for SMTP
+            config(['mail.mailers.smtp.timeout' => 15]);
+
             Mail::send([], [], function ($message) use ($to, $subject, $html, $plainText, $from, $fromName) {
                 $message->to($to)
                         ->subject($subject)
