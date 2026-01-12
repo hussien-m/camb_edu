@@ -421,14 +421,26 @@ document.getElementById('student-register-form').addEventListener('submit', func
     // Format phone number with country code
     formatPhoneNumber();
     
+    // Ensure honeypot fields are empty (important for spam protection)
+    const websiteUrlField = document.querySelector('input[name="website_url"]');
+    const phoneConfirmField = document.querySelector('input[name="phone_number_confirm"]');
+    
+    if (websiteUrlField) {
+        websiteUrlField.value = '';
+    }
+    if (phoneConfirmField) {
+        phoneConfirmField.value = '';
+    }
+    
     const submitBtn = document.getElementById('register-submit-btn');
-    const originalHtml = submitBtn.innerHTML;
+    const form = this;
     
     // Disable button and show loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating Account...';
     
-    // Form will submit normally (reCAPTCHA disabled)
+    // Allow form to submit normally (don't prevent default)
+    // Form will submit via POST to the server
 });
 
 // Initialize on page load
