@@ -23,7 +23,13 @@ class StudentMiddleware
 
         if ($student->status !== 'active') {
             auth()->guard('student')->logout();
-            return redirect()->route('student.login')->with('error', 'Your account is not active. Please check your email and click the activation link.');
+            // If status is pending, redirect to verification page
+            if ($student->status === 'pending') {
+                return redirect()->route('student.verify.notice')
+                    ->with('info', 'Please verify your email address to activate your account. We\'ve sent a verification link to your email.');
+            }
+            
+            return redirect()->route('student.login')->with('error', 'Your account has been deactivated. Please contact support for assistance.');
         }
 
         return $next($request);

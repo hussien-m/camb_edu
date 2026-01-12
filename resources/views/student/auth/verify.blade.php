@@ -35,6 +35,18 @@
             </div>
         @endif
 
+        @if(session('info'))
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> {{ session('info') }}
+            </div>
+        @endif
+
+        @if(session('warning'))
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> {{ session('warning') }}
+            </div>
+        @endif
+
         @if(session('error'))
             <div class="alert alert-danger">
                 <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
@@ -167,6 +179,16 @@
 .alert-danger {
     background: #fee2e2;
     color: #991b1b;
+}
+
+.alert-info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.alert-warning {
+    background: #fef3c7;
+    color: #92400e;
 }
 
 .resend-form {

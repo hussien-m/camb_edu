@@ -28,9 +28,16 @@ class EnsureStudentIsVerified
 
         // Check if account is active
         if ($student->status !== 'active') {
+            // If status is pending, redirect to verification page instead of logout
+            if ($student->status === 'pending') {
+                return redirect()->route('student.verify.notice')
+                    ->with('info', 'Please verify your email address to activate your account. We\'ve sent a verification link to your email.');
+            }
+            
+            // For other statuses (suspended, etc.), logout
             Auth::guard('student')->logout();
             return redirect()->route('student.login')
-                ->with('error', 'Your account is not active. Please check your email and click the activation link.');
+                ->with('error', 'Your account has been deactivated. Please contact support for assistance.');
         }
 
         return $next($request);
