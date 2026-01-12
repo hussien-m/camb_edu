@@ -172,7 +172,7 @@ class ForgotPasswordController extends Controller
     <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
         <p style="font-size: 16px; margin-bottom: 20px;">Hello <strong>{$student->first_name}</strong>!</p>
 
-        <p style="margin-bottom: 20px;">You are receiving this email because we received a password reset request for your account.</p>
+        <p style="margin-bottom: 20px;">You are receiving this email because we received a password reset request for your account at {$appName}.</p>
 
         <div style="text-align: center; margin: 30px 0;">
             <a href="{$resetUrl}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold; font-size: 16px;">Reset Password</a>
