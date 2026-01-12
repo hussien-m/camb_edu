@@ -1,0 +1,36 @@
+# ============================================
+# إعادة التوجيه 301 للدومين القديم
+# ============================================
+# 
+# هذا الملف يحتوي على الكود المطلوب إضافته في ملف .htaccess
+# الخاص بالدومين القديم (cambridgecollage.com) على الاستضافة
+#
+# الموقع: ملف .htaccess في Document Root للدومين القديم
+# الهدف: إعادة توجيه جميع الزيارات من الدومين القديم إلى الجديد
+#
+# ============================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Redirect all traffic from old domain to new domain (301 Permanent Redirect)
+    RewriteCond %{HTTP_HOST} ^(www\.)?cambridgecollage\.com$ [NC]
+    RewriteRule ^(.*)$ https://cambridge-college.uk/$1 [R=301,L]
+    
+    # Optional: Redirect www to non-www for new domain (if you prefer non-www)
+    # Uncomment the following lines if you want to redirect www.cambridge-college.uk to cambridge-college.uk
+    # RewriteCond %{HTTP_HOST} ^www\.cambridge-college\.uk$ [NC]
+    # RewriteRule ^(.*)$ https://cambridge-college.uk/$1 [R=301,L]
+</IfModule>
+
+# ============================================
+# ملاحظات مهمة:
+# ============================================
+# 1. يجب إضافة هذا الكود في ملف .htaccess الخاص بالدومين القديم
+# 2. تأكد من أن mod_rewrite مفعل على الخادم
+# 3. لا تحذف الدومين القديم فوراً - اترك إعادة التوجيه تعمل لمدة 6-12 شهر
+# 4. اختبر إعادة التوجيه بعد الإضافة:
+#    curl -I https://cambridgecollage.com/
+#    يجب أن يعيد: HTTP/1.1 301 Moved Permanently
+#    Location: https://cambridge-college.uk/
+# ============================================

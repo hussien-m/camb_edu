@@ -303,8 +303,8 @@ HTML;
                 <p>This is an automated system notification from {$appName}.</p>
                 <p>© 2025 {$appName}. All rights reserved.</p>
                 <p style="margin-top: 15px;">
-                    <a href="https://www.cambridgecollage.com">Visit Website</a> |
-                    <a href="mailto:info@cambridgecollage.com">Contact Support</a>
+                    <a href="https://www.cambridge-college.uk">Visit Website</a> |
+                    <a href="mailto:info@cambridge-college.uk">Contact Support</a>
                 </p>
                 <p style="margin-top: 10px; font-size: 11px; color: #9ca3af;">
                     You received this email because you are an administrator of {$appName}.<br>

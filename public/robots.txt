@@ -25,4 +25,4 @@ Allow: /page/
 Allow: /success-stories
 
 # Sitemap location
-Sitemap: https://cambridgecollage.com/sitemap.xml
+Sitemap: https://cambridge-college.uk/sitemap.xml

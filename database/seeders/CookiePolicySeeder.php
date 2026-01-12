@@ -210,7 +210,7 @@ class CookiePolicySeeder extends Seeder
             </p>
             <div class="card">
                 <div class="card-body">
-                    <p class="mb-2"><i class="fas fa-envelope text-primary"></i> <strong>Email:</strong> info@cambridgecollage.com</p>
+                    <p class="mb-2"><i class="fas fa-envelope text-primary"></i> <strong>Email:</strong> info@cambridge-college.uk</p>
                     <p class="mb-2"><i class="fas fa-phone text-success"></i> <strong>Phone:</strong> +13062167976</p>
                     <p class="mb-0"><i class="fas fa-map-marker-alt text-danger"></i> <strong>Address:</strong> Canada, Saskatchewan</p>
                 </div>

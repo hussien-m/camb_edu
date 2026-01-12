@@ -52,7 +52,7 @@ class RecaptchaMiddleware
             $errorMessage = 'reCAPTCHA verification failed. Please try again.';
             if (in_array('hostname-not-allowed', $errorCodes)) {
                 $errorMessage = 'Security verification failed. Domain not authorized.';
-                \Log::error('reCAPTCHA: Domain not authorized! Add cambridgecollage.com to Google reCAPTCHA Console.');
+                \Log::error('reCAPTCHA: Domain not authorized! Add cambridge-college.uk to Google reCAPTCHA Console.');
             }
 
             return response()->json([

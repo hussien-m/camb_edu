@@ -314,7 +314,7 @@
                 <a href="{{ route('student.register') }}" class="quick-link">
                     <span>📝</span> Register
                 </a>
-                <a href="mailto:{{ \App\Models\Setting::get('contact_email', 'info@cambridgecollage.com') }}" class="quick-link">
+                <a href="mailto:{{ \App\Models\Setting::get('contact_email', 'info@cambridge-college.uk') }}" class="quick-link">
                     <span>📧</span> Contact Us
                 </a>
             </div>
