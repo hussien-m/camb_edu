@@ -9,8 +9,9 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Force HTTPS
+    # Force HTTPS only for production domain (cambridge-college.uk)
     RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP_HOST} ^(www\.)?cambridge-college\.uk$ [NC]
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     # Redirect Trailing Slashes If Not A Folder...
