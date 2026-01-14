@@ -8,7 +8,7 @@
 .scroll-to-top-btn {
     position: fixed;
     bottom: 30px;
-    right: 90px;
+    right: 30px;
     width: 55px;
     height: 55px;
     border-radius: 50%;
@@ -60,7 +60,7 @@
         width: 50px;
         height: 50px;
         bottom: 20px;
-        right: 80px;
+        right: 20px;
         font-size: 1.1rem;
     }
 }
