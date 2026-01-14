@@ -58,8 +58,29 @@ body {
 }
 
 @media (max-width: 991px) {
+    .navbar {
+        padding: 14px 0;
+    }
     .navbar .container-fluid {
-        padding: 12px 15px;
+        padding: 14px 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 16px 0;
+    }
+    .navbar .container-fluid {
+        padding: 16px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar {
+        padding: 18px 0;
+    }
+    .navbar .container-fluid {
+        padding: 18px 20px;
     }
 }
 
@@ -215,9 +236,13 @@ body {
 /* Responsive title for mobile */
 @media (max-width: 991px) {
     .navbar .brand img {
-        width: 56px;
-        height: 56px;
+        width: 64px;
+        height: 64px;
         flex-shrink: 0;
+    }
+    
+    .navbar .brand {
+        gap: 12px;
     }
     
     .navbar .brand .title {
@@ -226,7 +251,35 @@ body {
     }
     
     .navbar .brand .title strong {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+    
+    .navbar .brand .title span {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .brand img {
+        width: 58px;
+        height: 58px;
+        flex-shrink: 0;
+    }
+    
+    .navbar .brand {
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
+    
+    .navbar .brand .title {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .navbar .brand .title strong {
+        font-size: 0.75rem;
         line-height: 1.2;
     }
     
@@ -236,15 +289,15 @@ body {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
     .navbar .brand img {
-        width: 48px;
-        height: 48px;
+        width: 52px;
+        height: 52px;
         flex-shrink: 0;
     }
     
     .navbar .brand {
-        gap: 8px;
+        gap: 9px;
         flex-wrap: nowrap;
     }
     
@@ -255,30 +308,24 @@ body {
     
     .navbar .brand .title strong {
         font-size: 0.7rem;
-        line-height: 1.2;
+        line-height: 1.15;
     }
     
     .navbar .brand .title span {
         font-size: 0.6rem;
-        line-height: 1.2;
+        line-height: 1.15;
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 480px) {
     .navbar .brand img {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
         flex-shrink: 0;
     }
     
     .navbar .brand {
-        gap: 6px;
-        flex-wrap: nowrap;
-    }
-    
-    .navbar .brand .title {
-        flex: 1;
-        min-width: 0;
+        gap: 8px;
     }
     
     .navbar .brand .title strong {
@@ -288,28 +335,6 @@ body {
     
     .navbar .brand .title span {
         font-size: 0.55rem;
-        line-height: 1.15;
-    }
-}
-
-@media (max-width: 480px) {
-    .navbar .brand img {
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-    }
-    
-    .navbar .brand {
-        gap: 5px;
-    }
-    
-    .navbar .brand .title strong {
-        font-size: 0.6rem;
-        line-height: 1.15;
-    }
-    
-    .navbar .brand .title span {
-        font-size: 0.5rem;
         line-height: 1.15;
     }
 }
