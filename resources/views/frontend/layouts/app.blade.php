@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,7 @@
 
     <!-- Favicon -->
     @if(setting('site_favicon'))
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
     @endif
 
     <!-- Google Site Verification -->
@@ -65,303 +66,318 @@
 
     @stack('styles')
 </head>
+
 <body>
 
-<!-- Main Navbar (Template-style) -->
-<nav class="navbar navbar-expand-lg sticky-top">
-    <div class="container">
-        <a class="navbar-brand brand" href="{{ route('home') }}" aria-label="{{ setting('site_name', 'Cambridge International College in UK') }}">
-            @if(setting('header-footer-logo'))
+    <!-- Main Navbar (Template-style) -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand brand" href="{{ route('home') }}" aria-label="{{ setting('site_name', 'Cambridge International College in UK') }}">
+                @if(setting('header-footer-logo'))
                 <img src="{{ asset('storage/' . setting('header-footer-logo')) }}" alt="Logo">
-            @elseif(setting('site_logo'))
+                @elseif(setting('site_logo'))
                 <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo">
                 @else
                 <i class="fas fa-graduation-cap logo-icon"></i>
                 @endif
-            <div class="title">
-                <strong>Cambridge</strong>
-                <span>International College in UK</span>
-            </div>
+                <div class="title">
+                    <strong>Cambridge</strong>
+                    <span>International College in UK</span>
+                </div>
             </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-        <div class="collapse navbar-collapse" id="navMain">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-                <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a></li>
-                <li class="nav-item">
-                    <a class="nav-link {{ (request()->routeIs('page.show') && request()->segment(2) == 'accreditations') ? 'active' : '' }}"
-                       href="{{ route('page.show', 'accreditations') }}">
-                        Accreditations
-                    </a>
-                </li>
+            <div class="collapse navbar-collapse" id="navMain">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ (request()->routeIs('page.show') && request()->segment(2) == 'accreditations') ? 'active' : '' }}"
+                            href="{{ route('page.show', 'accreditations') }}">
+                            Accreditations
+                        </a>
+                    </li>
 
-                @if(isset($pages) && $pages->count() > 0)
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
-                    <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
-                        @foreach($pages->take(6) as $page)
-                        <li>
-                            <a class="dropdown-item {{ request()->routeIs('page.show') && request()->segment(2) == $page->slug ? 'active' : '' }}"
-                               href="{{ route('page.show', $page->slug) }}">
-                                {{ $page->title }}
-                    </a>
-                </li>
-                @endforeach
-                        <li><a class="dropdown-item" href="{{ route('page.show', 'verification') }}">Verification</a></li>
-                        <li><a class="dropdown-item" href="{{ route('page.show', 'about-us') }}">About Us</a></li>
-                        <li><a class="dropdown-item" href="#contact">Contact</a></li>
-                    </ul>
-                </li>
-                @endif
+                    @if(isset($pages) && $pages->count() > 0)
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
+                        <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
+                            @foreach($pages->take(6) as $page)
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('page.show') && request()->segment(2) == $page->slug ? 'active' : '' }}"
+                                    href="{{ route('page.show', $page->slug) }}">
+                                    {{ $page->title }}
+                                </a>
+                            </li>
+                            @endforeach
+                            <li><a class="dropdown-item" href="{{ route('page.show', 'verification') }}">Verification</a></li>
+                        </ul>
+                    </li>
+                    @endif
 
-                @auth('student')
+                    @auth('student')
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}" href="{{ route('student.dashboard') }}">Dashboard</a>
                     </li>
-                @else
+                    @else
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('student.login') ? 'active' : '' }}" href="{{ route('student.login') }}">Login</a></li>
                     <li class="nav-item ms-lg-2"><a class="btn btn-primary" href="{{ route('student.register') }}"><i class="bi bi-person-plus"></i> Register</a></li>
-                @endauth
-            </ul>
+                    @endauth
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<!-- Main Content -->
-<main>
-    @yield('content')
-</main>
+    <!-- Main Content -->
+    <main>
+        @yield('content')
+    </main>
 
-<!-- Footer - Complete Redesign -->
-<footer id="contact" class="footer-new">
-    <div class="container">
-        <div class="row g-4">
-            <!-- Brand & Description -->
-            <div class="col-lg-4 col-md-6">
-                <div class="footer-brand-new">
-                    <a class="footer-logo-brand" href="{{ route('home') }}">
-                        @if(setting('header-footer-logo'))
+    <!-- Footer - Complete Redesign -->
+    <footer id="contact" class="footer-new">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Brand & Description -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand-new">
+                        <a class="footer-logo-brand" href="{{ route('home') }}">
+                            @if(setting('header-footer-logo'))
                             <img src="{{ asset('storage/' . setting('header-footer-logo')) }}" alt="{{ setting('site_name', 'Cambridge College') }} Logo" class="footer-logo-img">
-                        @elseif(setting('site_logo'))
+                            @elseif(setting('site_logo'))
                             <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name', 'Cambridge College') }} Logo" class="footer-logo-img">
-                        @else
+                            @else
                             <i class="fas fa-graduation-cap footer-logo-icon"></i>
-                        @endif
-                        <div class="footer-brand-text">
-                            <strong class="footer-brand-name">{{ setting('site_name', 'Cambridge International College in UK') }}</strong>
-                            <span class="footer-brand-desc" style="font-style: italic;">{{ setting('footer_site_descriptions', 'A leading UK-based provider of internationally recognized academic and professional programs, committed to excellence in education.') }}</span>
-                        </div>
-                    </a>
-                    <div class="footer-social-new mt-4">
-                        @if(setting('social_facebook'))
+                            @endif
+                            <div class="footer-brand-text">
+                                <strong class="footer-brand-name">{{ setting('site_name', 'Cambridge International College in UK') }}</strong>
+                                <span class="footer-brand-desc" style="font-style: italic;">{{ setting('footer_site_descriptions', 'A leading UK-based provider of internationally recognized academic and professional programs, committed to excellence in education.') }}</span>
+                            </div>
+                        </a>
+                        <div class="footer-social-new mt-4">
+                            @if(setting('social_facebook'))
                             <a href="{{ setting('social_facebook') }}" target="_blank" title="Facebook" class="social-btn"><i class="fab fa-facebook-f"></i></a>
-                        @endif
-                        @if(setting('social_instagram'))
+                            @endif
+                            @if(setting('social_instagram'))
                             <a href="{{ setting('social_instagram') }}" target="_blank" title="Instagram" class="social-btn"><i class="fab fa-instagram"></i></a>
-                        @endif
-                        @if(setting('social_twitter'))
+                            @endif
+                            @if(setting('social_twitter'))
                             <a href="{{ setting('social_twitter') }}" target="_blank" title="Twitter" class="social-btn"><i class="fab fa-twitter"></i></a>
-                        @endif
-                        @if(setting('social_linkedin'))
+                            @endif
+                            @if(setting('social_linkedin'))
                             <a href="{{ setting('social_linkedin') }}" target="_blank" title="LinkedIn" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
-                        @endif
-                        @if(setting('social_youtube'))
+                            @endif
+                            @if(setting('social_youtube'))
                             <a href="{{ setting('social_youtube') }}" target="_blank" title="YouTube" class="social-btn"><i class="fab fa-youtube"></i></a>
-                        @endif
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6">
-                <h5 class="footer-heading">Quick Links</h5>
-                <div class="footer-links-new">
-                    <a href="{{ route('home') }}" class="footer-link-item">
-                        <i class="fas fa-angle-right"></i>
-                        <span>Home</span>
-                    </a>
-                    <a href="{{ route('courses.index') }}" class="footer-link-item">
-                        <i class="fas fa-angle-right"></i>
-                        <span>Courses</span>
-                    </a>
-                    <a href="{{ route('success.stories') }}" class="footer-link-item">
-                        <i class="fas fa-angle-right"></i>
-                        <span>Success Stories</span>
-                    </a>
-                    <a href="#contact" class="footer-link-item">
-                        <i class="fas fa-angle-right"></i>
-                        <span>Contact</span>
-                    </a>
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-heading">Quick Links</h5>
+                    <div class="footer-links-new">
+                        <a href="{{ route('home') }}" class="footer-link-item">
+                            <i class="fas fa-angle-right"></i>
+                            <span>Home</span>
+                        </a>
+                        <a href="{{ route('courses.index') }}" class="footer-link-item">
+                            <i class="fas fa-angle-right"></i>
+                            <span>Courses</span>
+                        </a>
+                        <a href="{{ route('success.stories') }}" class="footer-link-item">
+                            <i class="fas fa-angle-right"></i>
+                            <span>Success Stories</span>
+                        </a>
+                        <a href="#contact" class="footer-link-item">
+                            <i class="fas fa-angle-right"></i>
+                            <span>Contact</span>
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Pages Links -->
-            @if(isset($pages) && $pages->count() > 0)
-            <div class="col-lg-2 col-md-6">
-                <h5 class="footer-heading">Pages</h5>
-                <div class="footer-links-new">
-                    @foreach($pages->take(8) as $page)
+                <!-- Pages Links -->
+                @if(isset($pages) && $pages->count() > 0)
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-heading">Pages</h5>
+                    <div class="footer-links-new">
+                        @foreach($pages->take(8) as $page)
                         <a href="{{ route('page.show', $page->slug) }}" class="footer-link-item">
                             <i class="fas fa-angle-right"></i>
                             <span>{{ $page->title }}</span>
                         </a>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            <!-- Contact Info -->
-            <div class="col-lg-4 col-md-6">
-                <h5 class="footer-heading">Contact Us</h5>
-                <div class="footer-contact-new">
-                    <a href="mailto:{{ setting('contact_email', 'info@cambridgecollege.ly') }}" class="contact-btn contact-btn-email">
-                        <div class="contact-btn-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="contact-btn-content">
-                            <span class="contact-btn-label">Email</span>
-                            <span class="contact-btn-value">{{ setting('contact_email', 'info@cambridgecollege.ly') }}</span>
-                        </div>
-                        <i class="fas fa-external-link-alt contact-btn-arrow"></i>
-                    </a>
-
-                    @if(setting('contact_whatsapp'))
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}" target="_blank" class="contact-btn contact-btn-whatsapp">
-                        <div class="contact-btn-icon">
-                            <i class="fab fa-whatsapp"></i>
-                        </div>
-                        <div class="contact-btn-content">
-                            <span class="contact-btn-label">WhatsApp</span>
-                            <span class="contact-btn-value">{{ setting('contact_whatsapp') }}</span>
-                        </div>
-                        <i class="fas fa-external-link-alt contact-btn-arrow"></i>
-                    </a>
-                    @endif
-
-                    @if(setting('contact_phone'))
-                    <a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('contact_phone')) }}" class="contact-btn contact-btn-phone">
-                        <div class="contact-btn-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="contact-btn-content">
-                            <span class="contact-btn-label">Phone</span>
-                            <span class="contact-btn-value">{{ setting('contact_phone', '+218 91 234 5678') }}</span>
-                        </div>
-                        <i class="fas fa-external-link-alt contact-btn-arrow"></i>
-                    </a>
-                    @endif
-
-                    @if(setting('contact_address'))
-                    <div class="contact-info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>{{ setting('contact_address') }}</span>
-                    </div>
-                    @endif
-
-                    <div class="contact-info-item">
-                        <i class="fas fa-clock"></i>
-                        <span>Saturday - Thursday (9AM - 5PM)</span>
+                        @endforeach
                     </div>
                 </div>
-            </div>
-        </div>
+                @endif
 
-    </div>
-
-    <!-- Footer Bottom - Full Width -->
-    <div class="footer-bottom-new">
-        <div class="container">
-            <div class="row align-items-center justify-content-between">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="footer-copyright">
-                        <i class="fas fa-copyright"></i>
-                        <span class="copyright-year">{{ date('Y') }}</span>
-                        <span class="copyright-name">{{ setting('site_name', 'Cambridge International College in UK') }}</span>
-                        <span class="copyright-separator">|</span>
-                        <span class="copyright-rights">All Rights Reserved</span>
-                    </p>
-                </div>
-                <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-                    <p class="footer-developer">
-                        <i class="fas fa-code"></i>
-                        <span class="dev-text">Developed with</span>
-                        <i class="fas fa-heart dev-heart"></i>
-                        <span class="dev-text">by</span>
-                        <a href="https://wa.me/970597092668" target="_blank" class="dev-link">
-                            <i class="fab fa-whatsapp"></i>
-                            <span>Hussien Mohamed</span>
+                <!-- Contact Info -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="footer-heading">Contact Us</h5>
+                    <div class="footer-contact-new">
+                        <a href="mailto:{{ setting('contact_email', 'info@cambridgecollege.ly') }}" class="contact-btn contact-btn-email">
+                            <div class="contact-btn-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-btn-content">
+                                <span class="contact-btn-label">Email</span>
+                                <span class="contact-btn-value">{{ setting('contact_email', 'info@cambridgecollege.ly') }}</span>
+                            </div>
+                            <i class="fas fa-external-link-alt contact-btn-arrow"></i>
                         </a>
-                    </p>
+
+                        @if(setting('contact_whatsapp'))
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}" target="_blank" class="contact-btn contact-btn-whatsapp">
+                            <div class="contact-btn-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="contact-btn-content">
+                                <span class="contact-btn-label">WhatsApp</span>
+                                <span class="contact-btn-value">{{ setting('contact_whatsapp') }}</span>
+                            </div>
+                            <i class="fas fa-external-link-alt contact-btn-arrow"></i>
+                        </a>
+                        @endif
+
+                        @if(setting('contact_phone'))
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('contact_phone')) }}" class="contact-btn contact-btn-phone">
+                            <div class="contact-btn-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-btn-content">
+                                <span class="contact-btn-label">Phone</span>
+                                <span class="contact-btn-value">{{ setting('contact_phone', '+218 91 234 5678') }}</span>
+                            </div>
+                            <i class="fas fa-external-link-alt contact-btn-arrow"></i>
+                        </a>
+                        @endif
+
+                        @if(setting('contact_address'))
+                        <div class="contact-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ setting('contact_address') }}</span>
+                        </div>
+                        @endif
+
+                        <div class="contact-info-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Saturday - Thursday (9AM - 5PM)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Bottom - Full Width -->
+        <div class="footer-bottom-new">
+            <div class="container">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="footer-copyright">
+                            <i class="fas fa-copyright"></i>
+                            <span class="copyright-year">{{ date('Y') }}</span>
+                            <span class="copyright-name">{{ setting('site_name', 'Cambridge International College in UK') }}</span>
+                            <span class="copyright-separator">|</span>
+                            <span class="copyright-rights">All Rights Reserved</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                        <p class="footer-developer">
+                            <i class="fas fa-code"></i>
+                            <span class="dev-text">Developed with</span>
+                            <i class="fas fa-heart dev-heart"></i>
+                            <span class="dev-text">by</span>
+                            <a href="https://wa.me/970597092668" target="_blank" class="dev-link">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>Hussien Mohamed</span>
+                            </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-</footer>
+        </div>
+    </footer>
 
-<style>
-@keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(1.2); }
-    50% { transform: scale(1); }
-}
-</style>
+    <style>
+        @keyframes heartbeat {
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+            0%,
+            100% {
+                transform: scale(1);
+            }
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            25% {
+                transform: scale(1.2);
+            }
 
-<!-- Organization Schema.org JSON-LD -->
-<script type="application/ld+json">
-{!! App\Helpers\SeoHelper::generateOrganizationSchema() !!}
-</script>
+            50% {
+                transform: scale(1);
+            }
+        }
+    </style>
 
-@stack('schema')
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-<!-- Setup CSRF Token for AJAX & Newsletter Script -->
-@vite('resources/js/csrf-setup.js')
-@vite('resources/js/frontend-newsletter.js')
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Cookie Consent Banner -->
-@include('frontend.partials.cookie-consent')
+    <!-- Organization Schema.org JSON-LD -->
+    <script type="application/ld+json">
+        {
+            !!App\ Helpers\ SeoHelper::generateOrganizationSchema() !!
+        }
+    </script>
 
-<!-- Scroll to Top Button -->
-@include('frontend.partials.scroll-to-top')
+    @stack('schema')
 
-<!-- Google reCAPTCHA v3 -->
-@if(config('services.recaptcha.site_key'))
-<div id="recaptcha-container" style="position: fixed; bottom: 0; left: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; z-index: -1;"></div>
-<script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
-<script>
-// Global reCAPTCHA function
-function executeRecaptcha(action) {
-    return new Promise((resolve, reject) => {
-        grecaptcha.ready(function() {
-            grecaptcha.execute('{{ config('services.recaptcha.site_key') }}', {action: action})
-                .then(function(token) {
-                    resolve(token);
-                })
-                .catch(function(error) {
-                    console.error('reCAPTCHA error:', error);
-                    reject(error);
+    <!-- Setup CSRF Token for AJAX & Newsletter Script -->
+    @vite('resources/js/csrf-setup.js')
+    @vite('resources/js/frontend-newsletter.js')
+
+    <!-- Cookie Consent Banner -->
+    @include('frontend.partials.cookie-consent')
+
+    <!-- Scroll to Top Button -->
+    @include('frontend.partials.scroll-to-top')
+
+    <!-- Google reCAPTCHA v3 -->
+    @if(config('services.recaptcha.site_key'))
+    <div id="recaptcha-container" style="position: fixed; bottom: 0; left: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; z-index: -1;"></div>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+    <script>
+        // Global reCAPTCHA function
+        function executeRecaptcha(action) {
+            return new Promise((resolve, reject) => {
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ config('
+                            services.recaptcha.site_key ') }}', {
+                                action: action
+                            })
+                        .then(function(token) {
+                            resolve(token);
+                        })
+                        .catch(function(error) {
+                            console.error('reCAPTCHA error:', error);
+                            reject(error);
+                        });
                 });
-        });
-    });
-}
-</script>
-@endif
+            });
+        }
+    </script>
+    @endif
 
-<!-- Google Analytics -->
-@if(setting('google_analytics'))
+    <!-- Google Analytics -->
+    @if(setting('google_analytics'))
     {!! setting('google_analytics') !!}
-@endif
+    @endif
 
-@stack('scripts')
+    @stack('scripts')
 
 </body>
+
 </html>
