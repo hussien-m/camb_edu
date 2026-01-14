@@ -188,6 +188,8 @@ body {
 
 .navbar .brand .title {
     line-height: 1.1;
+    flex: 1;
+    min-width: 0;
 }
 
 .navbar .brand .title strong {
@@ -195,6 +197,9 @@ body {
     font-weight: 900;
     font-size: 0.95rem;
     color: #0b1b3a;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .navbar .brand .title span {
@@ -202,6 +207,9 @@ body {
     font-size: 0.8rem;
     color: rgba(11,27,58,0.65);
     font-weight: 700;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 /* Responsive title for mobile */
@@ -209,14 +217,22 @@ body {
     .navbar .brand img {
         width: 56px;
         height: 56px;
+        flex-shrink: 0;
+    }
+    
+    .navbar .brand .title {
+        flex: 1;
+        min-width: 0;
     }
     
     .navbar .brand .title strong {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        line-height: 1.2;
     }
     
     .navbar .brand .title span {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
+        line-height: 1.2;
     }
 }
 
@@ -224,18 +240,27 @@ body {
     .navbar .brand img {
         width: 44px;
         height: 44px;
-    }
-    
-    .navbar .brand .title strong {
-        font-size: 0.75rem;
-    }
-    
-    .navbar .brand .title span {
-        font-size: 0.65rem;
+        flex-shrink: 0;
     }
     
     .navbar .brand {
         gap: 8px;
+        flex-wrap: nowrap;
+    }
+    
+    .navbar .brand .title {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .navbar .brand .title strong {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+    
+    .navbar .brand .title span {
+        font-size: 0.6rem;
+        line-height: 1.2;
     }
 }
 
@@ -243,18 +268,49 @@ body {
     .navbar .brand img {
         width: 36px;
         height: 36px;
-    }
-    
-    .navbar .brand .title strong {
-        font-size: 0.7rem;
-    }
-    
-    .navbar .brand .title span {
-        font-size: 0.6rem;
+        flex-shrink: 0;
     }
     
     .navbar .brand {
         gap: 6px;
+        flex-wrap: nowrap;
+    }
+    
+    .navbar .brand .title {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .navbar .brand .title strong {
+        font-size: 0.65rem;
+        line-height: 1.15;
+    }
+    
+    .navbar .brand .title span {
+        font-size: 0.55rem;
+        line-height: 1.15;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar .brand img {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+    }
+    
+    .navbar .brand {
+        gap: 5px;
+    }
+    
+    .navbar .brand .title strong {
+        font-size: 0.6rem;
+        line-height: 1.15;
+    }
+    
+    .navbar .brand .title span {
+        font-size: 0.5rem;
+        line-height: 1.15;
     }
 }
 
