@@ -58,6 +58,7 @@ class CourseInquiryController extends Controller
 
     public function show(CourseInquiry $inquiry)
     {
+        // load course details
         $inquiry->load('course');
         return view('admin.inquiries.show', compact('inquiry'));
     }

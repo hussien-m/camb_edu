@@ -152,7 +152,7 @@
                         @endif
                         <div class="footer-brand-text">
                             <strong class="footer-brand-name">{{ setting('site_name', 'Cambridge International College in UK') }}</strong>
-                            <span class="footer-brand-desc">{{ setting('site_description', 'Professional training and accredited programs.') }}</span>
+                            <span class="footer-brand-desc">{{ setting('footer_site_descriptions', 'A leading provider of internationally recognized academic and professional programs, committed to excellence in education.') }}</span>
                         </div>
                     </a>
                     <div class="footer-social-new mt-4">
@@ -270,7 +270,7 @@
         </div>
 
     </div>
-    
+
     <!-- Footer Bottom - Full Width -->
     <div class="footer-bottom-new">
         <div class="container">
@@ -279,7 +279,7 @@
                     <p class="footer-copyright">
                         <i class="fas fa-copyright"></i>
                         <span class="copyright-year">{{ date('Y') }}</span>
-                        <span class="copyright-name">{{ setting('site_name', 'Cambridge British International College') }}</span>
+                        <span class="copyright-name">{{ setting('site_name', 'Cambridge International College in UK') }}</span>
                         <span class="copyright-separator">|</span>
                         <span class="copyright-rights">All Rights Reserved</span>
                     </p>
