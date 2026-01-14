@@ -78,7 +78,7 @@
                 @else
                 <i class="fas fa-graduation-cap logo-icon"></i>
                 @endif
-            <div class="title d-none d-sm-block">
+            <div class="title">
                 <strong>Cambridge</strong>
                 <span>International College in UK</span>
             </div>

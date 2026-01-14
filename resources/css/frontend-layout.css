@@ -204,6 +204,60 @@ body {
     font-weight: 700;
 }
 
+/* Responsive title for mobile */
+@media (max-width: 991px) {
+    .navbar .brand img {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .navbar .brand .title strong {
+        font-size: 0.85rem;
+    }
+    
+    .navbar .brand .title span {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .brand img {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .navbar .brand .title strong {
+        font-size: 0.75rem;
+    }
+    
+    .navbar .brand .title span {
+        font-size: 0.65rem;
+    }
+    
+    .navbar .brand {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar .brand img {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .navbar .brand .title strong {
+        font-size: 0.7rem;
+    }
+    
+    .navbar .brand .title span {
+        font-size: 0.6rem;
+    }
+    
+    .navbar .brand {
+        gap: 6px;
+    }
+}
+
 .navbar .nav-link {
     color: rgba(11,27,58,0.84) !important;
     padding: 0.7rem 0.85rem !important;
