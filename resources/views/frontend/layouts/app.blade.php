@@ -152,7 +152,7 @@
                         @endif
                         <div class="footer-brand-text">
                             <strong class="footer-brand-name">{{ setting('site_name', 'Cambridge International College in UK') }}</strong>
-                            <span class="footer-brand-desc">{{ setting('footer_site_descriptions', 'A leading provider of internationally recognized academic and professional programs, committed to excellence in education.') }}</span>
+                            <span class="footer-brand-desc" style="font-style: italic;">{{ setting('footer_site_descriptions', 'A leading UK-based provider of internationally recognized academic and professional programs, committed to excellence in education.') }}</span>
                         </div>
                     </a>
                     <div class="footer-social-new mt-4">
