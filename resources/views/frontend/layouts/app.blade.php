@@ -67,150 +67,63 @@
 </head>
 <body>
 
-<!-- Main Navbar - University Style Center Logo Design -->
-<nav class="navbar navbar-expand-lg navbar-dark">
+<!-- Main Navbar (Template-style) -->
+<nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <!-- Mobile: Logo + Toggle + Register -->
-        <div class="d-lg-none w-100 d-flex justify-content-between align-items-center">
-            <a class="navbar-brand-mobile" href="{{ route('home') }}">
-                @if(setting('site_logo'))
-                    <img src="{{ asset('storage/' . setting('site_logo')) }}"
-                         alt="{{ setting('site_name') }}" style="height: 50px;">
+        <a class="navbar-brand brand" href="{{ route('home') }}" aria-label="{{ setting('site_name', 'Cambridge International College in UK') }}">
+            @if(setting('header-footer-logo'))
+                <img src="{{ asset('storage/' . setting('header-footer-logo')) }}" alt="Logo">
+            @elseif(setting('site_logo'))
+                <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo">
                 @else
-                    <i class="fas fa-graduation-cap" style="font-size: 2rem; color: #ffd700;"></i>
+                <i class="fas fa-graduation-cap logo-icon"></i>
                 @endif
+            <div class="title d-none d-sm-block">
+                <strong>Cambridge</strong>
+                <span>International College in UK</span>
+            </div>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            @guest('student')
-                <a class="mobile-register-btn" href="{{ route('student.register') }}">
-                    <i class="fas fa-user-plus"></i>
-                </a>
-            @else
-                <a class="mobile-register-btn" href="{{ route('student.dashboard') }}">
-                    <i class="fas fa-tachometer-alt"></i>
-                </a>
-            @endguest
-        </div>
-
-        <div class="collapse navbar-collapse" id="mainNav">
-            <!-- Navigation Links -->
-            <ul class="navbar-nav me-auto align-items-center">
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a></li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                        <i class="fas fa-home me-1"></i> Home
-                    </a>
-                </li>
-
-                <!-- Accreditations -->
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'accreditations' ? 'active' : '' }}"
+                    <a class="nav-link {{ (request()->routeIs('page.show') && request()->segment(2) == 'accreditations') ? 'active' : '' }}"
                        href="{{ route('page.show', 'accreditations') }}">
-                        <i class="fas fa-award me-1"></i> Accreditations
+                        Accreditations
                     </a>
                 </li>
 
-                <!-- Verification -->
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'verification' ? 'active' : '' }}"
-                       href="{{ route('page.show', 'verification') }}">
-                        <i class="fas fa-check-circle me-1"></i> Verification
-                    </a>
-                </li>
-
-                <!-- Attestation -->
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'attestation' ? 'active' : '' }}"
-                       href="{{ route('page.show', 'attestation') }}">
-                        <i class="fas fa-stamp me-1"></i> Attestation
-                    </a>
-                </li>
-
-                <!-- About Us -->
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('page.show') && request()->segment(2) == 'about-us' ? 'active' : '' }}"
-                       href="{{ route('page.show', 'about-us') }}">
-                        <i class="fas fa-info-circle me-1"></i> About Us
-                    </a>
-                </li>
-
-                <!-- Contact -->
-                <li class="nav-item">
-                    <a class="nav-link" href="#contact">
-                        <i class="fas fa-envelope me-1"></i> Contact
-                    </a>
-                </li>
-
-                <!-- Divider for Mobile -->
-                <li class="nav-item d-lg-none w-100" style="border-top: 2px solid rgba(255,204,0,0.3); margin: 15px 0 10px 0;">
-                    <div class="text-center text-white py-2" style="font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;">
-                        <i class="fas fa-graduation-cap me-2"></i>OUR PROGRAMS
-                    </div>
-                </li>
-
-                <!-- Course Levels -->
-                @php
-                    $levelsMenu = \App\Models\CourseLevel::orderBy('sort_order')->get();
-                @endphp
-                @foreach($levelsMenu as $level)
-                <li class="nav-item">
-                    <a class="nav-link courses-link {{ request()->has('level_id') && request()->get('level_id') == $level->id ? 'active' : '' }}"
-                       href="{{ route('courses.index', ['level_id' => $level->id]) }}">
-                        <i class="fas fa-certificate me-1"></i> {{ $level->name }}
+                @if(isset($pages) && $pages->count() > 0)
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
+                    <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
+                        @foreach($pages->take(6) as $page)
+                        <li>
+                            <a class="dropdown-item {{ request()->routeIs('page.show') && request()->segment(2) == $page->slug ? 'active' : '' }}"
+                               href="{{ route('page.show', $page->slug) }}">
+                                {{ $page->title }}
                     </a>
                 </li>
                 @endforeach
-
-                <!-- Divider for Mobile -->
-                <li class="nav-item d-lg-none w-100" style="border-top: 2px solid rgba(255,204,0,0.3); margin: 15px 0 10px 0;">
-                    <div class="text-center text-white py-2" style="font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;">
-                        <i class="fas fa-user me-2"></i>ACCOUNT
-                    </div>
+                        <li><a class="dropdown-item" href="{{ route('page.show', 'verification') }}">Verification</a></li>
+                        <li><a class="dropdown-item" href="{{ route('page.show', 'about-us') }}">About Us</a></li>
+                        <li><a class="dropdown-item" href="#contact">Contact</a></li>
+                    </ul>
                 </li>
+                @endif
 
-                <!-- Auth Links - Mobile Only -->
-                @auth('student')
-                    <li class="nav-item d-lg-none">
-                        <a class="nav-link btn-register" href="{{ route('student.dashboard') }}">
-                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-                        </a>
-                    </li>
-                @else
-                    <li class="nav-item d-lg-none">
-                        <a class="nav-link" href="{{ route('student.login') }}">
-                            <i class="fas fa-sign-in-alt me-1"></i> Login
-                        </a>
-                    </li>
-                    <li class="nav-item d-lg-none">
-                        <a class="nav-link btn-register" href="{{ route('student.register') }}">
-                            <i class="fas fa-user-plus me-1"></i> Register Now
-                        </a>
-                    </li>
-                @endauth
-            </ul>
-
-            <!-- Right Side - Auth Buttons (Desktop Only) -->
-            <ul class="navbar-nav ms-auto align-items-center d-none d-lg-flex">
                 @auth('student')
                     <li class="nav-item">
-                        <a class="nav-link btn-register" href="{{ route('student.dashboard') }}">
-                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-                        </a>
+                        <a class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}" href="{{ route('student.dashboard') }}">Dashboard</a>
                     </li>
                 @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('student.login') }}" style="margin-right: 10px;">
-                            <i class="fas fa-sign-in-alt me-1"></i> Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-register" href="{{ route('student.register') }}">
-                            <i class="fas fa-user-plus me-1"></i> Register Now
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('student.login') ? 'active' : '' }}" href="{{ route('student.login') }}">Login</a></li>
+                    <li class="nav-item ms-lg-2"><a class="btn btn-primary" href="{{ route('student.register') }}"><i class="bi bi-person-plus"></i> Register</a></li>
                 @endauth
             </ul>
         </div>
@@ -222,89 +135,78 @@
     @yield('content')
 </main>
 
-<!-- Footer - Professional Design -->
-<footer id="contact">
+<!-- Footer - Complete Redesign -->
+<footer id="contact" class="footer-new">
     <div class="container">
-        <div class="row">
-            <!-- Logo & Social Section -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="footer-logo-section">
-                    <div class="footer-logo mb-4">
-                        @if(setting('site_logo'))
-                            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name') }} Logo" class="footer-logo-img">
+        <div class="row g-4">
+            <!-- Brand & Description -->
+            <div class="col-lg-4 col-md-6">
+                <div class="footer-brand-new">
+                    <a class="footer-logo-brand" href="{{ route('home') }}">
+                        @if(setting('header-footer-logo'))
+                            <img src="{{ asset('storage/' . setting('header-footer-logo')) }}" alt="{{ setting('site_name', 'Cambridge College') }} Logo" class="footer-logo-img">
+                        @elseif(setting('site_logo'))
+                            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name', 'Cambridge College') }} Logo" class="footer-logo-img">
                         @else
-                            <img src="https://via.placeholder.com/150x150/ffffff/1e3a8a?text=CC" alt="Logo" class="footer-logo-img">
+                            <i class="fas fa-graduation-cap footer-logo-icon"></i>
                         @endif
-                    </div>
-
-                    <div class="social-links">
+                        <div class="footer-brand-text">
+                            <strong class="footer-brand-name">{{ setting('site_name', 'Cambridge International College in UK') }}</strong>
+                            <span class="footer-brand-desc">{{ setting('site_description', 'Professional training and accredited programs.') }}</span>
+                        </div>
+                    </a>
+                    <div class="footer-social-new mt-4">
                         @if(setting('social_facebook'))
-                            <a href="{{ setting('social_facebook') }}" target="_blank" title="Facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
+                            <a href="{{ setting('social_facebook') }}" target="_blank" title="Facebook" class="social-btn"><i class="fab fa-facebook-f"></i></a>
                         @endif
                         @if(setting('social_instagram'))
-                            <a href="{{ setting('social_instagram') }}" target="_blank" title="Instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
+                            <a href="{{ setting('social_instagram') }}" target="_blank" title="Instagram" class="social-btn"><i class="fab fa-instagram"></i></a>
                         @endif
                         @if(setting('social_twitter'))
-                            <a href="{{ setting('social_twitter') }}" target="_blank" title="Twitter">
-                                <i class="fab fa-twitter"></i>
-                            </a>
+                            <a href="{{ setting('social_twitter') }}" target="_blank" title="Twitter" class="social-btn"><i class="fab fa-twitter"></i></a>
                         @endif
                         @if(setting('social_linkedin'))
-                            <a href="{{ setting('social_linkedin') }}" target="_blank" title="LinkedIn">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
+                            <a href="{{ setting('social_linkedin') }}" target="_blank" title="LinkedIn" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
                         @endif
                         @if(setting('social_youtube'))
-                            <a href="{{ setting('social_youtube') }}" target="_blank" title="YouTube">
-                                <i class="fab fa-youtube"></i>
-                            </a>
+                            <a href="{{ setting('social_youtube') }}" target="_blank" title="YouTube" class="social-btn"><i class="fab fa-youtube"></i></a>
                         @endif
                     </div>
                 </div>
             </div>
 
             <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6 mb-4">
-                <h5>
-                    <i class="fas fa-link me-2"></i>
-                    Quick Links
-                </h5>
-                <div class="footer-links">
-                    <a href="{{ route('home') }}">
+            <div class="col-lg-2 col-md-6">
+                <h5 class="footer-heading">Quick Links</h5>
+                <div class="footer-links-new">
+                    <a href="{{ route('home') }}" class="footer-link-item">
                         <i class="fas fa-angle-right"></i>
-                        Home
+                        <span>Home</span>
                     </a>
-                    <a href="{{ route('courses.index') }}">
+                    <a href="{{ route('courses.index') }}" class="footer-link-item">
                         <i class="fas fa-angle-right"></i>
-                        Courses
+                        <span>Courses</span>
                     </a>
-                    <a href="{{ route('success.stories') }}">
+                    <a href="{{ route('success.stories') }}" class="footer-link-item">
                         <i class="fas fa-angle-right"></i>
-                        Success Stories
+                        <span>Success Stories</span>
                     </a>
-                    <a href="#contact">
+                    <a href="#contact" class="footer-link-item">
                         <i class="fas fa-angle-right"></i>
-                        Contact
+                        <span>Contact</span>
                     </a>
                 </div>
             </div>
 
             <!-- Pages Links -->
             @if(isset($pages) && $pages->count() > 0)
-            <div class="col-lg-2 col-md-6 mb-4">
-                <h5>
-                    <i class="fas fa-file-alt me-2"></i>
-                    Pages
-                </h5>
-                <div class="footer-links">
-                    @foreach($pages->take(10) as $page)
-                        <a href="{{ route('page.show', $page->slug) }}">
+            <div class="col-lg-2 col-md-6">
+                <h5 class="footer-heading">Pages</h5>
+                <div class="footer-links-new">
+                    @foreach($pages->take(8) as $page)
+                        <a href="{{ route('page.show', $page->slug) }}" class="footer-link-item">
                             <i class="fas fa-angle-right"></i>
-                            {{ $page->title }}
+                            <span>{{ $page->title }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -312,69 +214,91 @@
             @endif
 
             <!-- Contact Info -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <h5>
-                    <i class="fas fa-phone-alt me-2"></i>
-                    Contact Information
-                </h5>
-                <div class="contact-info">
-                    <p>
-                        <i class="fas fa-envelope"></i>
-                        {{ setting('contact_email', 'info@cambridgecollege.ly') }}
-                    </p>
-                    <p>
-                        <i class="fas fa-phone"></i>
-                        {{ setting('contact_phone', '+218 91 234 5678') }}
-                    </p>
+            <div class="col-lg-4 col-md-6">
+                <h5 class="footer-heading">Contact Us</h5>
+                <div class="footer-contact-new">
+                    <a href="mailto:{{ setting('contact_email', 'info@cambridgecollege.ly') }}" class="contact-btn contact-btn-email">
+                        <div class="contact-btn-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-btn-content">
+                            <span class="contact-btn-label">Email</span>
+                            <span class="contact-btn-value">{{ setting('contact_email', 'info@cambridgecollege.ly') }}</span>
+                        </div>
+                        <i class="fas fa-external-link-alt contact-btn-arrow"></i>
+                    </a>
+
                     @if(setting('contact_whatsapp'))
-                    <p>
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}"
-                           target="_blank"
-                           style="color: #25d366; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                            <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i>
-                            <span>{{ setting('contact_whatsapp') }}</span>
-                            <span style="background: #25d366; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Chat Now</span>
-                        </a>
-                    </p>
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}" target="_blank" class="contact-btn contact-btn-whatsapp">
+                        <div class="contact-btn-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="contact-btn-content">
+                            <span class="contact-btn-label">WhatsApp</span>
+                            <span class="contact-btn-value">{{ setting('contact_whatsapp') }}</span>
+                        </div>
+                        <i class="fas fa-external-link-alt contact-btn-arrow"></i>
+                    </a>
                     @endif
+
+                    @if(setting('contact_phone'))
+                    <a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('contact_phone')) }}" class="contact-btn contact-btn-phone">
+                        <div class="contact-btn-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-btn-content">
+                            <span class="contact-btn-label">Phone</span>
+                            <span class="contact-btn-value">{{ setting('contact_phone', '+218 91 234 5678') }}</span>
+                        </div>
+                        <i class="fas fa-external-link-alt contact-btn-arrow"></i>
+                    </a>
+                    @endif
+
                     @if(setting('contact_address'))
-                        <p>
-                            <i class="fas fa-map-marker-alt"></i>
-                            {{ setting('contact_address') }}
-                        </p>
+                    <div class="contact-info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ setting('contact_address') }}</span>
+                    </div>
                     @endif
-                    <p>
+
+                    <div class="contact-info-item">
                         <i class="fas fa-clock"></i>
-                        Working Hours: Saturday - Thursday (9AM - 5PM)
-                    </p>
+                        <span>Saturday - Thursday (9AM - 5PM)</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Footer Bottom -->
-        <div class="footer-bottom">
+    </div>
+    
+    <!-- Footer Bottom - Full Width -->
+    <div class="footer-bottom-new">
+        <div class="container">
             <div class="row align-items-center justify-content-between">
                 <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">
-                        <i class="fas fa-copyright me-1"></i>
-                        <strong>{{ date('Y') }} {{ setting('site_name', 'Cambridge British International College') }}</strong>
-                        <span class="mx-2">|</span>
-                        <span style="opacity: 0.95;">All Rights Reserved</span>
+                    <p class="footer-copyright">
+                        <i class="fas fa-copyright"></i>
+                        <span class="copyright-year">{{ date('Y') }}</span>
+                        <span class="copyright-name">{{ setting('site_name', 'Cambridge British International College') }}</span>
+                        <span class="copyright-separator">|</span>
+                        <span class="copyright-rights">All Rights Reserved</span>
                     </p>
                 </div>
                 <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-                    <p class="mb-0">
-                        <i class="fas fa-code me-1"></i>
-                        <span style="opacity: 0.9;">Developed with</span>
-                        <i class="fas fa-heart text-danger mx-1" style="animation: heartbeat 1.5s ease-in-out infinite;"></i>
-                        <span style="opacity: 0.9;">by</span>
-                        <a href="https://wa.me/970597092668" target="_blank" class="ms-1" style="color: #25d366; text-decoration: none; font-weight: 600;">
-                            <i class="fab fa-whatsapp me-1"></i>Hussien Mohamed
+                    <p class="footer-developer">
+                        <i class="fas fa-code"></i>
+                        <span class="dev-text">Developed with</span>
+                        <i class="fas fa-heart dev-heart"></i>
+                        <span class="dev-text">by</span>
+                        <a href="https://wa.me/970597092668" target="_blank" class="dev-link">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Hussien Mohamed</span>
                         </a>
                     </p>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </footer>
 

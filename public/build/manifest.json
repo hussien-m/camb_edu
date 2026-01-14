@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-FFdQ6Y9i.css",
+    "file": "assets/app-D7KCKOoe.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -18,7 +18,7 @@
     ]
   },
   "resources/css/frontend-course-detail.css": {
-    "file": "assets/frontend-course-detail-CMmFlJXe.css",
+    "file": "assets/frontend-course-detail-CbtiUOB7.css",
     "src": "resources/css/frontend-course-detail.css",
     "isEntry": true,
     "name": "frontend-course-detail",
@@ -27,7 +27,7 @@
     ]
   },
   "resources/css/frontend-courses.css": {
-    "file": "assets/frontend-courses-CIB_O2hv.css",
+    "file": "assets/frontend-courses-D-QmSbY6.css",
     "src": "resources/css/frontend-courses.css",
     "isEntry": true,
     "name": "frontend-courses",
@@ -36,7 +36,7 @@
     ]
   },
   "resources/css/frontend-home.css": {
-    "file": "assets/frontend-home-Bwf1R4y9.css",
+    "file": "assets/frontend-home-kNVfQyMv.css",
     "src": "resources/css/frontend-home.css",
     "isEntry": true,
     "name": "frontend-home",
@@ -45,7 +45,7 @@
     ]
   },
   "resources/css/frontend-layout.css": {
-    "file": "assets/frontend-layout-DYTmTNIh.css",
+    "file": "assets/frontend-layout-BuO6-1KM.css",
     "src": "resources/css/frontend-layout.css",
     "isEntry": true,
     "name": "frontend-layout",
@@ -54,7 +54,7 @@
     ]
   },
   "resources/css/student-auth.css": {
-    "file": "assets/student-auth-OcKqT0Ha.css",
+    "file": "assets/student-auth-C2AyIgCx.css",
     "src": "resources/css/student-auth.css",
     "isEntry": true,
     "name": "student-auth",

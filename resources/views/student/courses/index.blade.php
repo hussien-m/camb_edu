@@ -16,10 +16,10 @@
     }
     .course-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(30, 58, 138, 0.15);
+        box-shadow: 0 8px 30px rgba(14, 107, 80, 0.2);
     }
     .course-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
         padding: 1.5rem;
         color: white;
     }
@@ -33,10 +33,10 @@
         font-weight: 600;
     }
     .progress-card {
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
         border-radius: 15px;
         padding: 1.5rem;
-        border: 2px solid rgba(102, 126, 234, 0.1);
+        border: 2px solid rgba(14, 107, 80, 0.15);
     }
     .exam-card {
         background: white;
@@ -134,8 +134,8 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     .exam-card:hover {
-        border-color: #667eea;
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        border-color: #0e6b50;
+        box-shadow: 0 8px 25px rgba(14, 107, 80, 0.15);
         transform: translateY(-2px);
     }
     .page-header {
@@ -153,7 +153,7 @@
     <div class="page-header">
         <div class="d-flex align-items-center justify-content-between">
             <div>
-                <h2 class="mb-2 fw-bold" style="color: #1e3a8a;">
+                <h2 class="mb-2 fw-bold" style="color: #0e6b50;">
                     <i class="fas fa-book-open me-3"></i>My Courses
                 </h2>
                 <p class="text-muted mb-0">Continue your learning journey</p>

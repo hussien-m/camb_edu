@@ -47,6 +47,14 @@ class SettingSeeder extends Seeder
                 'description' => 'Upload your website logo',
             ],
             [
+                'key' => 'header-footer-logo',
+                'value' => null,
+                'type' => 'image',
+                'group' => 'general',
+                'label' => 'Header & Footer Logo',
+                'description' => 'Logo used in header and footer sections',
+            ],
+            [
                 'key' => 'site_favicon',
                 'value' => null,
                 'type' => 'image',

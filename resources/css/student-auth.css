@@ -6,7 +6,7 @@
     padding: 20px;
     margin-bottom: 20px;
     background: #ffffff;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0e6b50;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -15,7 +15,7 @@
 }
 
 .account-status-alert i {
-    color: #667eea;
+    color: #0e6b50;
     font-size: 20px;
     margin-right: 12px;
 }
@@ -37,7 +37,7 @@
 }
 
 .account-status-alert.alert-warning strong {
-    color: #667eea;
+    color: #0e6b50;
 }
 
 .account-status-alert.alert-danger strong {
@@ -75,22 +75,26 @@
 }
 
 .account-status-alert .btn-primary {
-    background: #667eea;
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
     color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(14,107,80,0.25);
 }
 
 .account-status-alert .btn-primary:hover {
-    background: #5568d3;
+    background: linear-gradient(135deg, #0c5d45 0%, #178b66 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(14,107,80,0.35);
 }
 
 .account-status-alert .btn-outline-primary {
     background: white;
-    color: #667eea;
-    border: 1px solid #667eea;
+    color: #0e6b50;
+    border: 1px solid #0e6b50;
 }
 
 .account-status-alert .btn-outline-primary:hover {
-    background: #667eea;
+    background: #0e6b50;
     color: white;
 }
 
@@ -132,7 +136,7 @@
    BACKGROUND - Modern Gradient with Patterns
    ============================================ */
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 25%, #0c5d45 50%, #178b66 75%, #0e6b50 100%);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     min-height: 100vh;
@@ -254,7 +258,7 @@ body::after {
    ============================================ */
 .login-header,
 .register-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
     color: white;
     padding: 50px 40px;
     text-align: center;
@@ -340,7 +344,7 @@ body::after {
 }
 
 .form-label i {
-    color: #667eea;
+    color: #0e6b50;
     font-size: 13px;
 }
 
@@ -357,10 +361,10 @@ body::after {
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #667eea;
+    border-color: #0e6b50;
     box-shadow: 
-        0 0 0 4px rgba(102, 126, 234, 0.1),
-        0 4px 12px rgba(102, 126, 234, 0.15);
+        0 0 0 4px rgba(14, 107, 80, 0.1),
+        0 4px 12px rgba(14, 107, 80, 0.15);
     outline: none;
     transform: translateY(-1px);
 }
@@ -387,15 +391,15 @@ body::after {
    ============================================ */
 .btn-login,
 .btn-register {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
     border: none;
     padding: 16px 24px;
     border-radius: 12px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 16px;
     color: white;
     box-shadow: 
-        0 4px 15px rgba(102, 126, 234, 0.4),
+        0 4px 15px rgba(14, 107, 80, 0.4),
         0 2px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -423,9 +427,9 @@ body::after {
 .btn-register:hover {
     transform: translateY(-2px);
     box-shadow: 
-        0 8px 25px rgba(102, 126, 234, 0.5),
+        0 8px 25px rgba(14, 107, 80, 0.5),
         0 4px 10px rgba(0, 0, 0, 0.15);
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    background: linear-gradient(135deg, #0c5d45 0%, #178b66 100%);
     color: white;
 }
 
@@ -461,7 +465,7 @@ body::after {
 
 .form-control-with-icon:focus + .form-icon,
 .form-control:focus ~ .form-icon {
-    color: #667eea;
+    color: #0e6b50;
 }
 
 .form-control-with-icon {
@@ -486,7 +490,7 @@ body::after {
 .section-title {
     font-size: 18px;
     font-weight: 700;
-    color: #667eea;
+    color: #0e6b50;
     margin-bottom: 25px;
     padding-bottom: 12px;
     border-bottom: 3px solid #e5e7eb;
@@ -519,10 +523,10 @@ body::after {
 }
 
 .country-search-input:focus {
-    border-color: #667eea;
+    border-color: #0e6b50;
     box-shadow: 
-        0 0 0 4px rgba(102, 126, 234, 0.1),
-        0 4px 12px rgba(102, 126, 234, 0.15);
+        0 0 0 4px rgba(14, 107, 80, 0.1),
+        0 4px 12px rgba(14, 107, 80, 0.15);
     outline: none;
     transform: translateY(-1px);
 }
@@ -590,10 +594,10 @@ body::after {
 }
 
 .country-option.selected {
-    background: linear-gradient(90deg, #eff6ff, #ffffff);
-    color: #667eea;
+    background: linear-gradient(90deg, #f0fdf4, #ffffff);
+    color: #0e6b50;
     font-weight: 600;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0e6b50;
 }
 
 .country-flag {
@@ -618,13 +622,13 @@ body::after {
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-    color: #1e40af;
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    color: #0e6b50;
     border-radius: 20px;
     font-size: 12px;
     margin-top: 8px;
     font-weight: 600;
-    box-shadow: 0 2px 5px rgba(30, 64, 175, 0.2);
+    box-shadow: 0 2px 5px rgba(14, 107, 80, 0.2);
 }
 
 /* ============================================
@@ -642,10 +646,10 @@ body::after {
 }
 
 .phone-input-wrapper:focus-within {
-    border-color: #667eea;
+    border-color: #0e6b50;
     box-shadow: 
-        0 0 0 4px rgba(102, 126, 234, 0.1),
-        0 4px 12px rgba(102, 126, 234, 0.15);
+        0 0 0 4px rgba(14, 107, 80, 0.1),
+        0 4px 12px rgba(14, 107, 80, 0.15);
     transform: translateY(-1px);
 }
 
@@ -656,7 +660,7 @@ body::after {
     padding: 14px 18px;
     background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
     border-right: 2px solid #e5e7eb;
-    color: #667eea;
+    color: #0e6b50;
     font-weight: 700;
     font-size: 15px;
     min-width: 70px;
@@ -782,7 +786,7 @@ body::after {
    ============================================ */
 .login-body a,
 .register-body a {
-    color: #667eea;
+    color: #0e6b50;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s;
@@ -797,13 +801,13 @@ body::after {
     left: 0;
     width: 0;
     height: 2px;
-    background: #667eea;
+    background: #0e6b50;
     transition: width 0.3s;
 }
 
 .login-body a:hover,
 .register-body a:hover {
-    color: #764ba2;
+    color: #0c5d45;
 }
 
 .login-body a:hover::after,
@@ -830,8 +834,8 @@ body::after {
 }
 
 .form-check-input:checked {
-    background-color: #667eea;
-    border-color: #667eea;
+    background-color: #0e6b50;
+    border-color: #0e6b50;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
 
@@ -978,10 +982,10 @@ body::after {
     }
 
 .country-dropdown::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0e6b50, #1a9b74);
     border-radius: 10px;
 }
 
 .country-dropdown::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #764ba2, #667eea);
+    background: linear-gradient(135deg, #0c5d45, #178b66);
 }

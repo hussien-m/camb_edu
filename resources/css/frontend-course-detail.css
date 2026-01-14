@@ -1,6 +1,6 @@
 /* Page Header Styles */
 .page-header {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
     padding: 100px 0 80px;
     position: relative;
     overflow: hidden;
@@ -68,11 +68,11 @@
 }
 
 .breadcrumb-item a:hover {
-    color: #ffcc00;
+    color: #f7fdf9;
 }
 
 .breadcrumb-item.active {
-    color: #ffcc00;
+    color: #f7fdf9;
     font-weight: 600;
 }
 
@@ -94,7 +94,7 @@
 .course-image-wrapper {
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 15px 50px rgba(30, 58, 138, 0.15);
+    box-shadow: 0 15px 50px rgba(14, 107, 80, 0.15);
     margin-bottom: 40px;
 }
 
@@ -110,8 +110,8 @@
 }
 
 .course-category-badge {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    color: #1e3a8a;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    color: #0e6b50;
     padding: 8px 20px;
     border-radius: 50px;
     font-size: 0.9rem;
@@ -123,7 +123,7 @@
 }
 
 .course-title {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 800;
     font-size: 2.5rem;
     margin-bottom: 20px;
@@ -131,13 +131,13 @@
 }
 
 .course-short-desc {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border-left: 5px solid #1e3a8a;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-left: 5px solid #0e6b50;
     padding: 25px 30px;
     margin: 30px 0;
     border-radius: 12px;
     font-size: 1.15rem;
-    color: #1e3a8a;
+    color: #0e6b50;
     line-height: 1.7;
 }
 
@@ -149,18 +149,18 @@
 
 .course-description h1,
 .course-description h2 {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 700;
     font-size: 2rem;
     margin-top: 40px;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 3px solid #ffcc00;
+    border-bottom: 3px solid #0e6b50;
     display: inline-block;
 }
 
 .course-description h3 {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 700;
     font-size: 1.5rem;
     margin-top: 30px;
@@ -168,7 +168,7 @@
 }
 
 .course-description h4 {
-    color: #3b82f6;
+    color: #0e6b50;
     font-weight: 600;
     font-size: 1.25rem;
     margin-top: 25px;
@@ -192,12 +192,12 @@
 }
 
 .course-description ul li::marker {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-size: 1.2rem;
 }
 
 .course-description ol li::marker {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 700;
 }
 
@@ -219,7 +219,7 @@
 }
 
 .sidebar-title {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 700;
     font-size: 1.5rem;
     margin-bottom: 25px;
@@ -229,7 +229,7 @@
 }
 
 .sidebar-title i {
-    color: #ffcc00;
+    color: #0e6b50;
     font-size: 1.8rem;
 }
 
@@ -246,13 +246,13 @@
 
 .info-item:hover {
     transform: translateX(5px);
-    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
+    box-shadow: 0 4px 15px rgba(14, 107, 80, 0.1);
 }
 
 .info-item-icon {
     width: 45px;
     height: 45px;
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
     color: white;
     border-radius: 12px;
     display: flex;
@@ -263,7 +263,7 @@
 }
 
 .info-item-content strong {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 700;
     display: block;
     margin-bottom: 5px;
@@ -271,26 +271,26 @@
 }
 
 .info-item-content span {
-    color: #ffcc00;
+    color: #0e6b50;
     font-size: 1rem;
 }
 
 .course-price {
     font-size: 2.5rem;
     font-weight: 800;
-    color: #1e3a8a;
+    color: #0e6b50;
     text-align: center;
     padding: 25px;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
     border-radius: 16px;
     margin: 25px 0;
-    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.15);
+    box-shadow: 0 4px 15px rgba(14, 107, 80, 0.15);
 }
 
 .btn-enroll {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
     color: white;
     border: none;
     border-radius: 12px;
@@ -307,9 +307,9 @@
 }
 
 .btn-enroll:hover {
-    background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+    background: linear-gradient(135deg, #0c5d45 0%, #178b66 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+    box-shadow: 0 8px 25px rgba(14, 107, 80, 0.3);
     color: white;
 }
 
@@ -322,8 +322,8 @@
     width: 100%;
     padding: 14px;
     background: white;
-    color: #1e3a8a;
-    border: 2px solid #1e3a8a;
+    color: #0e6b50;
+    border: 2px solid #0e6b50;
     border-radius: 12px;
     font-weight: 600;
     font-size: 1rem;
@@ -336,7 +336,7 @@
 }
 
 .btn-back:hover {
-    background: #1e3a8a;
+    background: #0e6b50;
     color: white;
     transform: translateY(-2px);
 }
@@ -361,28 +361,28 @@
 
 .related-course-item:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(30, 58, 138, 0.15);
+    box-shadow: 0 8px 20px rgba(14, 107, 80, 0.15);
 }
 
 .related-course-item h6 {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 700;
     margin-bottom: 10px;
     font-size: 1.05rem;
 }
 
 .related-course-item h6 a {
-    color: #1e3a8a;
+    color: #0e6b50;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .related-course-item h6 a:hover {
-    color: #3b82f6;
+    color: #0c5d45;
 }
 
 .badge-level {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
     color: white;
     padding: 5px 15px;
     border-radius: 50px;
@@ -391,7 +391,7 @@
 }
 
 .related-course-price {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 700;
     font-size: 1.1rem;
 }
@@ -411,7 +411,7 @@
 }
 
 .inquiry-form-box label {
-    color: #1e3a8a;
+    color: #0e6b50;
     font-weight: 600;
     margin-bottom: 8px;
     display: block;
@@ -427,8 +427,8 @@
 }
 
 .inquiry-form-box .form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #0e6b50;
+    box-shadow: 0 0 0 3px rgba(14, 107, 80, 0.1);
 }
 
 .inquiry-form-box textarea.form-control {

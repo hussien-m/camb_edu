@@ -24,87 +24,96 @@
 {{-- Top Ads removed - only popup ads are shown --}}
 
 <!-- ============================================
-     HERO SECTION WITH LOGO AND PROGRAMS
+     HERO SECTION - FROM SCRATCH (CLEAN)
 ============================================ -->
-<section class="hero">
-    <!-- Animated Decorative Circles -->
-    <div class="hero-circle hero-circle-1"></div>
-    <div class="hero-circle hero-circle-2"></div>
-    <div class="hero-circle hero-circle-3"></div>
-    <div class="hero-circle hero-circle-4"></div>
+<section class="hero-pro">
+    <div class="hero-pro-bg">
+        <img class="hero-pro-img" src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="{{ setting('site_name', 'Cambridge International College in UK') }}">
+        <span class="hero-pro-overlay"></span>
+    </div>
 
-    <div class="container">
-        <div class="hero-content">
-            <!-- Logo in Hero -->
-            <div class="hero-logo mb-4">
-                @if(setting('site_logo'))
-                    <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name') }} Logo" class="hero-logo-img">
-                @else
-                    <img src="https://via.placeholder.com/150x150/1e3a8a/ffcc00?text=CC" alt="Logo" class="hero-logo-img">
-                @endif
-            </div>
-
-            <!-- Our Programs Section -->
-            <div class="programs-section">
-                <div class="programs-header mb-3">
-                    <i class="fas fa-graduation-cap me-2"></i>
-                    <span>Our Programs</span>
+    <div class="container position-relative">
+        <div class="row align-items-center gy-4 hero-pro-grid">
+            <div class="col-xl-6" data-aos="fade-up">
+                <div class="hero-pro-kicker">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Accredited learning • UK based</span>
                 </div>
 
-                <div class="programs-grid">
-                    @php
-                        $levelsHero = \App\Models\CourseLevel::orderBy('sort_order')->get();
-                    @endphp
-                    @foreach($levelsHero as $level)
-                        <a href="{{ route('courses.level', ['level' => $level->slug]) }}"
-                           class="program-card {{ request()->has('level_id') && request()->get('level_id') == $level->id ? 'active' : '' }}">
-                            <i class="fas fa-certificate"></i>
-                            <span>{{ $level->name }}</span>
-                        </a>
-                    @endforeach
+                <h1 class="hero-pro-title">
+                    {{ setting('site_name', 'Cambridge International College in UK') }}
+                </h1>
+
+                <p class="hero-pro-subtitle">
+                    {{ setting('site_description', 'Select certificates and diplomas built with employers, delivered by expert trainers, and ready for real careers.') }}
+                </p>
+
+                <div class="hero-pro-cta">
+                    <a class="btn btn-hero-pro-primary" href="{{ route('courses.index') }}">
+                        <i class="bi bi-search"></i>
+                        Browse Courses
+                    </a>
+                    <a class="btn btn-hero-pro-secondary" href="#contact-section">
+                        <i class="bi bi-chat-dots"></i>
+                        Talk to us
+                    </a>
                 </div>
+
             </div>
 
-            {{-- Temporarily Hidden
-            @if($banners && $banners->count() > 0)
-                <h1>{{ $banners->first()->title }}</h1>
-                <p class="lead">{{ $banners->first()->subtitle }}</p>
-            @else
-                <h1>🎓 Learn Without Limits</h1>
-                <p class="lead">Discover courses that match your professional goals and develop your skills with the best trainers in Libya</p>
-            @endif
-            --}}
-
-            <!-- Advanced Search Box -->
-            <div class="search-box">
-                <form action="{{ route('courses.index') }}" method="GET">
-                    <div class="row g-3">
-                        <div class="col-lg-4 col-md-6">
-                            <select name="category_id" class="form-select">
-                                <option value="">📚 All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
+            <div class="col-xl-6" data-aos="fade-up" data-aos-delay="80">
+                <div class="hero-pro-card">
+                    <div class="hero-pro-card-head">
+                        <div>
+                            <div class="title">Find the right course</div>
+                            <div class="muted">Filter by keyword, category, and level</div>
                         </div>
-                        <div class="col-lg-3 col-md-6">
-                            <select name="level_id" class="form-select">
-                                <option value="">📊 All Levels</option>
-                                @foreach($levels as $level)
-                                    <option value="{{ $level->id }}">{{ $level->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-8">
-                            <input type="text" name="keyword" class="form-control" placeholder="Search for courses...">
-                        </div>
-                        <div class="col-lg-2 col-md-4">
-                            <button type="submit" class="btn btn-search w-100">
-                                <i class="fas fa-search me-1"></i> Search
-                            </button>
-                        </div>
+                        <span class="hero-pro-pill"><i class="bi bi-broadcast-pin"></i> Live / On-demand</span>
                     </div>
-                </form>
+
+                    <form class="hero-pro-form" action="{{ route('courses.index') }}" method="get">
+                        <div class="hero-pro-input">
+                            <i class="bi bi-search"></i>
+                            <input type="text" name="keyword" placeholder="Search courses (Leadership, IT, Education...)" />
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="hero-pro-select">
+                                    <i class="bi bi-layers"></i>
+                                    <select name="category_id">
+                                        <option value="">All Categories</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="hero-pro-select">
+                                    <i class="bi bi-diagram-3"></i>
+                                    <select name="level_id">
+                                        <option value="">All Levels</option>
+                                        @foreach($levels as $level)
+                                            <option value="{{ $level->id }}">{{ $level->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-hero-pro-primary w-100" type="submit">
+                            <i class="bi bi-arrow-right-circle"></i>
+                            Start Search
+                        </button>
+                    </form>
+
+                    <div class="hero-pro-quick">
+                        <span><i class="bi bi-shield-lock"></i> Accredited</span>
+                        <span><i class="bi bi-people"></i> Small cohorts</span>
+                        <span><i class="bi bi-laptop"></i> Mobile-ready</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -220,7 +229,7 @@
                     <div class="stat-icon">
                         <i class="fas fa-book-open"></i>
                     </div>
-                    <div class="stat-number">{{ \App\Models\Course::where('status', 'active')->count() }}+</div>
+                    <div class="stat-number" data-stat="{{ \App\Models\Course::where('status', 'active')->count() }}+">{{ \App\Models\Course::where('status', 'active')->count() }}+</div>
                     <div class="stat-label">Active Courses</div>
                 </div>
             </div>
@@ -229,7 +238,7 @@
                     <div class="stat-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <div class="stat-number">{{ \App\Models\SuccessStory::where('is_published', true)->count() * 100 }}+</div>
+                    <div class="stat-number" data-stat="{{ \App\Models\SuccessStory::where('is_published', true)->count() * 100 }}+">{{ \App\Models\SuccessStory::where('is_published', true)->count() * 100 }}+</div>
                     <div class="stat-label">Graduated Students</div>
                 </div>
             </div>
@@ -238,7 +247,7 @@
                     <div class="stat-icon">
                         <i class="fas fa-chalkboard-teacher"></i>
                     </div>
-                    <div class="stat-number">{{ \App\Models\CourseCategory::count() * 5 }}+</div>
+                    <div class="stat-number" data-stat="{{ \App\Models\CourseCategory::count() * 5 }}+">{{ \App\Models\CourseCategory::count() * 5 }}+</div>
                     <div class="stat-label">Expert Instructors</div>
                 </div>
             </div>
@@ -247,7 +256,7 @@
                     <div class="stat-icon">
                         <i class="fas fa-award"></i>
                     </div>
-                    <div class="stat-number">100%</div>
+                    <div class="stat-number" data-stat="100%">100%</div>
                     <div class="stat-label">Satisfaction Rate</div>
                 </div>
             </div>
@@ -259,7 +268,7 @@
      SUCCESS STORIES
 ============================================ -->
 @if($successStories->count() > 0)
-<section class="section-white">
+<section class="section-white" id="success-stories-section">
     <div class="container">
         <div class="section-header">
             <h2>🌟 Success Stories</h2>
@@ -326,7 +335,7 @@
 <!-- ============================================
      NEWSLETTER SECTION
 ============================================ -->
-<section class="newsletter-section py-5" style="background: linear-gradient(135deg, #1e3a8a 0%, #003366 100%); margin-top: 80px;">
+<section class="newsletter-section newsletter-green py-5" style="margin-top: 80px;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0 text-white">
@@ -398,7 +407,7 @@
 <!-- ============================================
      CONTACT SECTION
 ============================================ -->
-<section class="section-white">
+<section class="section-white" id="contact-section">
     <div class="container">
         <div class="section-header">
             <h2>📬 Contact Us</h2>
@@ -496,7 +505,7 @@
 
 @push('scripts')
     @vite('resources/js/frontend-home.js')
-    
+
     {{-- Popup Ads --}}
     @php
         $hasPopupAds = isset($popupAds) && $popupAds->count() > 0;
@@ -516,36 +525,36 @@
             }
         }
     @endphp
-    
+
     @if($hasPopupAds)
     <script>
         console.log('=== POPUP ADS DEBUG START ===');
-        console.log('Popup Ads Count:', {{ count($popupAdsData) }});
-        
+        console.log('Popup Ads Count:', @json(count($popupAdsData)));
+
         const popupAds = @json($popupAdsData);
         console.log('Popup Ads Array:', popupAds);
-        
+
         function showPopupAd(ad) {
             console.log('=== SHOWING POPUP AD ===', ad);
-            
+
             // Clear sessionStorage for testing
             // sessionStorage.removeItem('ad_popup_' + ad.id);
-            
+
             const overlay = document.createElement('div');
             overlay.id = 'popup-overlay-' + ad.id;
             overlay.style.cssText = 'position:fixed !important;top:0 !important;left:0 !important;right:0 !important;bottom:0 !important;background:rgba(0,0,0,0.75) !important;z-index:999999 !important;display:flex !important;align-items:center !important;justify-content:center !important;';
-            
+
             let contentHtml = '';
-            
+
             if (ad.image) {
                 const imageUrl = '{{ asset("storage/") }}/' + ad.image;
                 contentHtml += '<img src="' + imageUrl + '" alt="' + (ad.title || 'Ad') + '" style="width:100%;height:auto;display:block;">';
             }
-            
+
             if (ad.html_content) {
                 contentHtml += '<div style="padding:30px;">' + ad.html_content + '</div>';
             }
-            
+
             if (ad.title || ad.description) {
                 contentHtml += '<div style="padding:40px 30px;text-align:center;background:white;">';
                 if (ad.title) {
@@ -561,16 +570,16 @@
                 }
                 contentHtml += '</div>';
             }
-            
+
             if (!contentHtml) {
                 contentHtml = '<div style="padding:40px 30px;text-align:center;background:white;"><h3>Ad #' + ad.id + '</h3><p>No content available</p></div>';
             }
-            
+
             overlay.innerHTML = '<div style="position:relative;max-width:600px;width:90%;max-height:90vh;background:white;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.5);overflow:hidden;"><button onclick="document.getElementById(\'popup-overlay-' + ad.id + '\').remove()" style="position:absolute;top:15px;right:15px;width:40px;height:40px;background:rgba(0,0,0,0.5);border:none;border-radius:50%;color:white;font-size:1.2rem;cursor:pointer;z-index:10;">×</button><div style="width:100%;">' + contentHtml + '</div></div>';
-            
+
             document.body.appendChild(overlay);
             console.log('Popup overlay added to body. Body children:', document.body.children.length);
-            
+
             setTimeout(function() {
                 const el = document.getElementById('popup-overlay-' + ad.id);
                 if (el && el.parentNode) {
@@ -579,16 +588,16 @@
                 }
             }, 10000);
         }
-        
+
         function initPopups() {
             console.log('=== INITIALIZING POPUPS ===');
             console.log('Total popups:', popupAds.length);
-            
+
             if (popupAds.length === 0) {
                 console.log('No popup ads to show!');
                 return;
             }
-            
+
             popupAds.forEach(function(ad, index) {
                 // Check if ad has expired
                 if (ad.end_date) {
@@ -599,19 +608,19 @@
                         return;
                     }
                 }
-                
+
                 // Show popup on every page load/refresh until end date
                 // Don't use localStorage to block it - show it every time
                 const delay = (index + 1) * 2000;
                 console.log('Scheduling popup #' + ad.id + ' in ' + delay + 'ms');
-                
+
                 setTimeout(function() {
                     console.log('Showing popup #' + ad.id + ' now!');
                     showPopupAd(ad);
                 }, delay);
             });
         }
-        
+
         // Force show after page load
         if (document.readyState === 'loading') {
             console.log('Document still loading, waiting for DOMContentLoaded');
@@ -623,20 +632,20 @@
             console.log('Document already loaded, initializing immediately');
             setTimeout(initPopups, 1000);
         }
-        
+
         // Also try on window load
         window.addEventListener('load', function() {
             console.log('Window load event fired');
             setTimeout(initPopups, 1500);
         });
-        
+
         console.log('=== POPUP ADS DEBUG END ===');
     </script>
     @else
     <script>
         console.log('=== NO POPUP ADS FOUND ===');
-        console.log('popupAds isset:', {{ isset($popupAds) ? 'true' : 'false' }});
-        console.log('popupAds count:', {{ isset($popupAds) ? $popupAds->count() : 0 }});
+        console.log('popupAds isset:', @json(isset($popupAds)));
+        console.log('popupAds count:', @json(isset($popupAds) ? $popupAds->count() : 0));
     </script>
     @endif
 @endpush

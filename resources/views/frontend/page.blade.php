@@ -25,7 +25,7 @@
 <style>
     /* Page Header Styles */
     .page-header {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
         padding: 100px 0 80px;
         position: relative;
         overflow: hidden;
@@ -93,11 +93,11 @@
     }
 
     .breadcrumb-item a:hover {
-        color: #ffcc00;
+        color: #f7fdf9;
     }
 
     .breadcrumb-item.active {
-        color: #ffcc00;
+        color: #f7fdf9;
         font-weight: 600;
     }
 
@@ -116,7 +116,7 @@
     }
 
     .content-wrapper h1 {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-weight: 800;
         font-size: 2.5rem;
         margin-bottom: 20px;
@@ -124,18 +124,18 @@
     }
 
     .content-wrapper h2 {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-weight: 700;
         font-size: 2rem;
         margin-top: 40px;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 3px solid #ffcc00;
+        border-bottom: 3px solid #0e6b50;
         display: inline-block;
     }
 
     .content-wrapper h3 {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-weight: 700;
         font-size: 1.5rem;
         margin-top: 30px;
@@ -143,7 +143,7 @@
     }
 
     .content-wrapper h4 {
-        color: #3b82f6;
+        color: #0e6b50;
         font-weight: 600;
         font-size: 1.25rem;
         margin-top: 25px;
@@ -173,36 +173,36 @@
     }
 
     .content-wrapper ul li::marker {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-size: 1.2rem;
     }
 
     .content-wrapper ol li::marker {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-weight: 700;
     }
 
     .content-wrapper a {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-weight: 600;
         text-decoration: none;
-        border-bottom: 2px solid #ffcc00;
+        border-bottom: 2px solid #0e6b50;
         transition: all 0.3s ease;
     }
 
     .content-wrapper a:hover {
-        color: #3b82f6;
-        border-bottom-color: #3b82f6;
+        color: #0c5d45;
+        border-bottom-color: #0c5d45;
     }
 
     .content-wrapper blockquote {
-        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        border-left: 5px solid #1e3a8a;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-left: 5px solid #0e6b50;
         padding: 25px 30px;
         margin: 30px 0;
         border-radius: 12px;
         font-style: italic;
-        color: #1e3a8a;
+        color: #0e6b50;
         font-size: 1.15rem;
         line-height: 1.7;
     }
@@ -225,7 +225,7 @@
     }
 
     .content-wrapper table thead {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
         color: white;
     }
 
@@ -284,16 +284,16 @@
 
     /* Featured Box */
     .featured-box {
-        background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-        border-left: 5px solid #ffcc00;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-left: 5px solid #0e6b50;
         padding: 25px 30px;
         margin: 30px 0;
         border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(255, 204, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(14, 107, 80, 0.2);
     }
 
     .featured-box h4 {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-weight: 700;
         margin-top: 0;
         margin-bottom: 12px;
@@ -324,7 +324,7 @@
     }
 
     .meta-item i {
-        color: #1e3a8a;
+        color: #0e6b50;
         font-size: 1.1rem;
     }
 
@@ -437,7 +437,7 @@
                         <img src="{{ Storage::url($page->image_path) }}"
                              alt="{{ $page->title }}"
                              class="img-fluid"
-                             style="border-radius: 20px; box-shadow: 0 15px 50px rgba(30, 58, 138, 0.15);">
+                             style="border-radius: 20px; box-shadow: 0 15px 50px rgba(14, 107, 80, 0.15);">
                     </div>
                     @endif
 
@@ -601,10 +601,10 @@
                         }
                     @endphp
                     @if(count($accreditationsImages) > 0)
-                    <div class="accreditations-gallery-section mt-5 pt-5" style="border-top: 3px solid #ffcc00;">
+                    <div class="accreditations-gallery-section mt-5 pt-5" style="border-top: 3px solid #0e6b50;">
                         <div class="text-center mb-5">
-                            <h2 style="color: #1e3a8a; font-weight: 800; font-size: 2.8rem; margin-bottom: 15px;">
-                                <i class="fas fa-images me-3" style="color: #ffcc00;"></i>Accreditation Certificates
+                            <h2 style="color: #0e6b50; font-weight: 800; font-size: 2.8rem; margin-bottom: 15px;">
+                                <i class="fas fa-images me-3" style="color: #0e6b50;"></i>Accreditation Certificates
                             </h2>
                             <p style="color: #6b7280; font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
                                 View our official accreditation certificates
@@ -675,7 +675,7 @@
                         .commitment-card:hover {
                             transform: translateY(-5px);
                             box-shadow: 0 15px 40px rgba(30, 58, 138, 0.15);
-                            border-color: #ffcc00;
+                            border-color: #0e6b50;
                         }
 
                         .card-header-section {
@@ -684,13 +684,13 @@
                             gap: 15px;
                             margin-bottom: 25px;
                             padding-bottom: 20px;
-                            border-bottom: 3px solid #ffcc00;
+                            border-bottom: 3px solid #0e6b50;
                         }
 
                         .card-header-section i {
                             font-size: 2rem;
-                            color: #1e3a8a;
-                            background: linear-gradient(135deg, #ffcc00 0%, #ffd700 100%);
+                            color: #0e6b50;
+                            background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
                             width: 60px;
                             height: 60px;
                             display: flex;
@@ -701,7 +701,7 @@
                         }
 
                         .card-header-section h3 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 800;
                             font-size: 1.8rem;
                             margin: 0;
@@ -734,7 +734,7 @@
 
                         .info-label {
                             font-weight: 700;
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             min-width: 200px;
                             display: flex;
                             align-items: center;
@@ -765,7 +765,7 @@
                             padding: 25px;
                             background: white;
                             border-radius: 15px;
-                            border-left: 5px solid #1e3a8a;
+                            border-left: 5px solid #0e6b50;
                             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
                             transition: all 0.3s ease;
                         }
@@ -777,7 +777,7 @@
                         }
 
                         .accreditation-number {
-                            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                            background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
                             color: white;
                             width: 50px;
                             height: 50px;
@@ -796,7 +796,7 @@
                         }
 
                         .accreditation-details h4 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                             font-size: 1.4rem;
                             margin-bottom: 12px;
@@ -809,14 +809,14 @@
                         }
 
                         .accreditation-details a {
-                            color: #3b82f6;
+                            color: #0e6b50;
                             font-weight: 600;
                             text-decoration: none;
                             transition: all 0.3s ease;
                         }
 
                         .accreditation-details a:hover {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             text-decoration: underline;
                         }
 
@@ -827,18 +827,18 @@
                         }
 
                         .legal-name strong {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                         }
 
                         /* Summary Content */
                         .summary-content h4 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                             font-size: 1.5rem;
                             margin-bottom: 20px;
                             padding-bottom: 15px;
-                            border-bottom: 2px solid #ffcc00;
+                            border-bottom: 2px solid #0e6b50;
                         }
 
                         .summary-content p {
@@ -849,7 +849,7 @@
                         }
 
                         .summary-content strong {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                         }
 
@@ -866,12 +866,12 @@
                             padding: 25px;
                             border-radius: 15px;
                             margin-bottom: 25px;
-                            border-left: 5px solid #3b82f6;
+                            border-left: 5px solid #0e6b50;
                             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
                         }
 
                         .accreditation-detail-box h5 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                             font-size: 1.3rem;
                             margin-bottom: 15px;
@@ -896,16 +896,16 @@
                             padding: 12px 18px;
                             border-radius: 10px;
                             margin-top: 15px;
-                            border-left: 4px solid #3b82f6;
+                            border-left: 4px solid #0e6b50;
                         }
 
                         .verification-link i {
-                            color: #3b82f6;
+                            color: #0e6b50;
                             margin-right: 8px;
                         }
 
                         .verification-link a {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 600;
                             text-decoration: none;
                         }
@@ -1060,8 +1060,8 @@
 
                         .accreditation-image-wrapper:hover {
                             transform: translateY(-10px) scale(1.02);
-                            box-shadow: 0 20px 40px rgba(30, 58, 138, 0.2);
-                            border-color: #ffcc00;
+                            box-shadow: 0 20px 40px rgba(14, 107, 80, 0.2);
+                            border-color: #0e6b50;
                         }
 
                         .accreditation-image {
@@ -1106,7 +1106,7 @@
                         .accreditation-overlay i {
                             font-size: 2.5rem;
                             margin-bottom: 10px;
-                            color: #ffcc00;
+                            color: #0e6b50;
                         }
 
                         .accreditation-overlay span {
@@ -1314,7 +1314,7 @@
                         .commitment-card:hover {
                             transform: translateY(-5px);
                             box-shadow: 0 15px 40px rgba(30, 58, 138, 0.15);
-                            border-color: #ffcc00;
+                            border-color: #0e6b50;
                         }
 
                         .card-header-section {
@@ -1323,13 +1323,13 @@
                             gap: 15px;
                             margin-bottom: 25px;
                             padding-bottom: 20px;
-                            border-bottom: 3px solid #ffcc00;
+                            border-bottom: 3px solid #0e6b50;
                         }
 
                         .card-header-section i {
                             font-size: 2rem;
-                            color: #1e3a8a;
-                            background: linear-gradient(135deg, #ffcc00 0%, #ffd700 100%);
+                            color: #0e6b50;
+                            background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
                             width: 60px;
                             height: 60px;
                             display: flex;
@@ -1340,7 +1340,7 @@
                         }
 
                         .card-header-section h3 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 800;
                             font-size: 1.8rem;
                             margin: 0;
@@ -1373,7 +1373,7 @@
 
                         .info-label {
                             font-weight: 700;
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             min-width: 200px;
                             display: flex;
                             align-items: center;
@@ -1404,7 +1404,7 @@
                             padding: 25px;
                             background: white;
                             border-radius: 15px;
-                            border-left: 5px solid #1e3a8a;
+                            border-left: 5px solid #0e6b50;
                             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
                             transition: all 0.3s ease;
                         }
@@ -1416,7 +1416,7 @@
                         }
 
                         .accreditation-number {
-                            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+                            background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%);
                             color: white;
                             width: 50px;
                             height: 50px;
@@ -1435,7 +1435,7 @@
                         }
 
                         .accreditation-details h4 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                             font-size: 1.4rem;
                             margin-bottom: 12px;
@@ -1448,14 +1448,14 @@
                         }
 
                         .accreditation-details a {
-                            color: #3b82f6;
+                            color: #0e6b50;
                             font-weight: 600;
                             text-decoration: none;
                             transition: all 0.3s ease;
                         }
 
                         .accreditation-details a:hover {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             text-decoration: underline;
                         }
 
@@ -1466,18 +1466,18 @@
                         }
 
                         .legal-name strong {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                         }
 
                         /* Summary Content */
                         .summary-content h4 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                             font-size: 1.5rem;
                             margin-bottom: 20px;
                             padding-bottom: 15px;
-                            border-bottom: 2px solid #ffcc00;
+                            border-bottom: 2px solid #0e6b50;
                         }
 
                         .summary-content p {
@@ -1488,7 +1488,7 @@
                         }
 
                         .summary-content strong {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                         }
 
@@ -1505,12 +1505,12 @@
                             padding: 25px;
                             border-radius: 15px;
                             margin-bottom: 25px;
-                            border-left: 5px solid #3b82f6;
+                            border-left: 5px solid #0e6b50;
                             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
                         }
 
                         .accreditation-detail-box h5 {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 700;
                             font-size: 1.3rem;
                             margin-bottom: 15px;
@@ -1535,16 +1535,16 @@
                             padding: 12px 18px;
                             border-radius: 10px;
                             margin-top: 15px;
-                            border-left: 4px solid #3b82f6;
+                            border-left: 4px solid #0e6b50;
                         }
 
                         .verification-link i {
-                            color: #3b82f6;
+                            color: #0e6b50;
                             margin-right: 8px;
                         }
 
                         .verification-link a {
-                            color: #1e3a8a;
+                            color: #0e6b50;
                             font-weight: 600;
                             text-decoration: none;
                         }
@@ -1660,7 +1660,7 @@
                     <div class="mt-5 pt-4" style="border-top: 2px solid #f3f4f6;">
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                             <div>
-                                <h5 style="color: #1e3a8a; font-weight: 700; margin: 0;">
+                                <h5 style="color: #0e6b50; font-weight: 700; margin: 0;">
                                     <i class="fas fa-share-alt me-2"></i> Share This Page
                                 </h5>
                             </div>
@@ -1694,7 +1694,7 @@
                             <p>Explore our wide range of training courses and start your learning journey today!</p>
                             <a href="{{ route('courses.index') }}"
                                class="btn mt-3"
-                               style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 12px 30px; border-radius: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                               style="background: linear-gradient(135deg, #0e6b50 0%, #1a9b74 100%); color: white; padding: 12px 30px; border-radius: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(14,107,80,0.3);">
                                 <i class="fas fa-graduation-cap"></i> View All Courses
                             </a>
                         </div>
