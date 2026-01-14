@@ -238,8 +238,8 @@ body {
 
 @media (max-width: 768px) {
     .navbar .brand img {
-        width: 44px;
-        height: 44px;
+        width: 48px;
+        height: 48px;
         flex-shrink: 0;
     }
     
@@ -266,8 +266,8 @@ body {
 
 @media (max-width: 576px) {
     .navbar .brand img {
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         flex-shrink: 0;
     }
     
@@ -294,8 +294,8 @@ body {
 
 @media (max-width: 480px) {
     .navbar .brand img {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         flex-shrink: 0;
     }
     
