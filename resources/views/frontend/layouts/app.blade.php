@@ -335,7 +335,7 @@
 
     @stack('schema')
 
-    <!-- Setup CSRF Token for AJAX & Newsletter Script -->
+    <!-- Setup CSRF Token for AJAX & Newsletter Scripts -->
     @vite('resources/js/csrf-setup.js')
     @vite('resources/js/frontend-newsletter.js')
 
