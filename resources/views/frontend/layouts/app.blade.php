@@ -328,14 +328,12 @@
 
     <!-- Organization Schema.org JSON-LD -->
     <script type="application/ld+json">
-        {
-            !!App\ Helpers\ SeoHelper::generateOrganizationSchema() !!
-        }
+        {!! App\Helpers\SeoHelper::generateOrganizationSchema() !!}
     </script>
 
     @stack('schema')
 
-    <!-- Setup CSRF Token for AJAX & Newsletter Scripts -->
+    <!-- Setup CSRF Token for AJAX & Newsletter Script -->
     @vite('resources/js/csrf-setup.js')
     @vite('resources/js/frontend-newsletter.js')
 
