@@ -15,6 +15,7 @@ return [
     */
 
     'default' => env('MAIL_MAILER', 'log'),
+    'api_provider' => env('MAIL_API_PROVIDER'),
 
     /*
     |--------------------------------------------------------------------------

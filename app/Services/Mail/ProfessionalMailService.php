@@ -5,6 +5,7 @@ namespace App\Services\Mail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Services\Mail\SendGridApiService;
+use App\Services\Mail\ElasticEmailApiService;
 
 /**
  * Email Service with SendGrid API fallback
@@ -19,7 +20,16 @@ class ProfessionalMailService
         $from = $from ?? config('mail.from.address');
         $fromName = $fromName ?? config('mail.from.name');
 
-        // Send directly via SMTP (no SendGrid)
+        // Use API provider if configured
+        $apiProvider = config('mail.api_provider');
+        if ($apiProvider === 'elastic_email') {
+            return (new ElasticEmailApiService())->send($to, $subject, $html, $from, $fromName);
+        }
+        if ($apiProvider === 'sendgrid') {
+            return (new SendGridApiService())->send($to, $subject, $html, $from, $fromName);
+        }
+
+        // Send directly via SMTP
         try {
             // Set shorter timeout for SMTP
             config(['mail.mailers.smtp.timeout' => 15]);
@@ -59,7 +69,16 @@ class ProfessionalMailService
         $from = $from ?? config('mail.from.address');
         $fromName = $fromName ?? config('mail.from.name');
 
-        // Send directly via SMTP (no SendGrid)
+        // Use API provider if configured
+        $apiProvider = config('mail.api_provider');
+        if ($apiProvider === 'elastic_email') {
+            return (new ElasticEmailApiService())->sendWithPlainText($to, $subject, $html, $plainText, $from, $fromName);
+        }
+        if ($apiProvider === 'sendgrid') {
+            return (new SendGridApiService())->sendWithPlainText($to, $subject, $html, $plainText, $from, $fromName);
+        }
+
+        // Send directly via SMTP
         try {
             // Set shorter timeout for SMTP
             config(['mail.mailers.smtp.timeout' => 15]);

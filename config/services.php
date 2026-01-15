@@ -39,6 +39,11 @@ return [
         'api_key' => env('SENDGRID_API_KEY'),
     ],
 
+    'elastic_email' => [
+        'api_key' => env('ELASTIC_EMAIL_API_KEY'),
+        'api_url' => env('ELASTIC_EMAIL_API_URL', 'https://api.elasticemail.com/v2/email/send'),
+    ],
+
     'recaptcha' => [
         'site_key' => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),

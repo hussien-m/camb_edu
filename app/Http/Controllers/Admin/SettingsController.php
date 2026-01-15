@@ -228,6 +228,7 @@ class SettingsController extends Controller
     {
         $appName = config('app.name', 'Cambridge College');
         $timestamp = now()->format('Y-m-d H:i:s');
+        $deliveryMethod = $this->getDeliveryMethodLabel();
 
         $html = <<<HTML
 <!DOCTYPE html>
@@ -274,7 +275,7 @@ class SettingsController extends Controller
                 <strong>Test Details</strong>
                 <p>Application: {$appName}</p>
                 <p>Test Date: {$timestamp}</p>
-                <p>Delivery Method: SendGrid API</p>
+                <p>Delivery Method: {$deliveryMethod}</p>
                 <p>Status: Active</p>
             </div>
 
@@ -318,6 +319,20 @@ HTML;
 HTML;
 
         return $html;
+    }
+
+    private function getDeliveryMethodLabel(): string
+    {
+        $apiProvider = config('mail.api_provider');
+        if ($apiProvider === 'elastic_email') {
+            return 'Elastic Email HTTP API';
+        }
+        if ($apiProvider === 'sendgrid') {
+            return 'SendGrid API';
+        }
+
+        $defaultMailer = (string) config('mail.default');
+        return strtoupper($defaultMailer);
     }
 
     /**

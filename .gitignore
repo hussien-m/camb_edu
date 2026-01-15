@@ -35,3 +35,4 @@ Thumbs.db
 *.sql
 /sql/
 /database/*.sql
+mail.env
