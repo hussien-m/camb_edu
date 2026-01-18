@@ -99,7 +99,7 @@
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
 <!-- Google reCAPTCHA v3 -->
-@if(config('services.recaptcha.site_key'))
+@if(config('services.recaptcha.enabled') && config('services.recaptcha.site_key'))
 <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
 <script>
 // Global reCAPTCHA function

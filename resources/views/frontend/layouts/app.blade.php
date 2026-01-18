@@ -344,7 +344,7 @@
     @include('frontend.partials.scroll-to-top')
 
     <!-- Google reCAPTCHA v3 -->
-    @if(config('services.recaptcha.site_key'))
+    @if(config('services.recaptcha.enabled') && config('services.recaptcha.site_key'))
     <div id="recaptcha-container" style="position: fixed; bottom: 0; left: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; z-index: -1;"></div>
     <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
     <script>
@@ -352,10 +352,9 @@
         function executeRecaptcha(action) {
             return new Promise((resolve, reject) => {
                 grecaptcha.ready(function() {
-                    grecaptcha.execute('{{ config('
-                            services.recaptcha.site_key ') }}', {
-                                action: action
-                            })
+                    grecaptcha.execute("{{ config('services.recaptcha.site_key') }}", {
+                        action: action
+                    })
                         .then(function(token) {
                             resolve(token);
                         })

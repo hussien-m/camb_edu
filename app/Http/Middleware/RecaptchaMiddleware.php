@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,11 +12,15 @@ class RecaptchaMiddleware
 {
     /**
      * Handle an incoming request.
-     * 
+     *
      * Verify Google reCAPTCHA v3 token
      */
     public function handle(Request $request, Closure $next, float $minScore = 0.5): Response
     {
+        if (!config('services.recaptcha.enabled')) {
+            return $next($request);
+        }
+
         // Skip in local development
         if (app()->environment('local') && !config('services.recaptcha.enabled_locally')) {
             return $next($request);
@@ -41,8 +46,8 @@ class RecaptchaMiddleware
         // Check if verification was successful
         if (!$result['success']) {
             $errorCodes = $result['error-codes'] ?? [];
-            
-            \Log::warning('reCAPTCHA verification failed', [
+
+            Log::warning('reCAPTCHA verification failed', [
                 'ip' => $request->ip(),
                 'error_codes' => $errorCodes,
                 'full_response' => $result,
@@ -52,7 +57,7 @@ class RecaptchaMiddleware
             $errorMessage = 'reCAPTCHA verification failed. Please try again.';
             if (in_array('hostname-not-allowed', $errorCodes)) {
                 $errorMessage = 'Security verification failed. Domain not authorized.';
-                \Log::error('reCAPTCHA: Domain not authorized! Add cambridge-college.uk to Google reCAPTCHA Console.');
+                Log::error('reCAPTCHA: Domain not authorized! Add cambridge-college.uk to Google reCAPTCHA Console.');
             }
 
             return response()->json([
@@ -62,7 +67,7 @@ class RecaptchaMiddleware
 
         // Check score (v3 only)
         if (isset($result['score']) && $result['score'] < $minScore) {
-            \Log::warning('reCAPTCHA score too low - Possible bot', [
+            Log::warning('reCAPTCHA score too low - Possible bot', [
                 'ip' => $request->ip(),
                 'score' => $result['score'],
                 'action' => $result['action'] ?? 'unknown',
