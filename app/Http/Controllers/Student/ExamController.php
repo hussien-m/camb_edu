@@ -148,4 +148,12 @@ class ExamController extends Controller
 
         return view('student.exams.calendar', compact('scheduledExams'));
     }
+
+    public function index()
+    {
+        $student = Auth::guard('student')->user();
+        $exams = $this->examService->getExamsForStudent($student);
+
+        return view('student.exams.index', compact('exams'));
+    }
 }

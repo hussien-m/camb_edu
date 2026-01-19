@@ -110,20 +110,20 @@
                 </div>
                 <div class="mt-2 text-center">
                     @if($attempt->passed)
-                        <h4><span class="badge bg-success"><i class="fas fa-check-circle"></i> ناجح</span></h4>
+                        <h4><span class="badge bg-success"><i class="fas fa-check-circle"></i> Passed</span></h4>
                     @else
-                        <h4><span class="badge bg-danger"><i class="fas fa-times-circle"></i> راسب</span></h4>
+                        <h4><span class="badge bg-danger"><i class="fas fa-times-circle"></i> Failed</span></h4>
                     @endif
-                    <p class="text-muted">النسبة المطلوبة للنجاح: {{ $attempt->exam->passing_percentage }}%</p>
+                    <p class="text-muted">Passing percentage required: {{ $attempt->exam->passing_percentage }}%</p>
                 </div>
             </div>
 
             <div class="alert alert-{{ $attempt->certificate_enabled ? 'success' : 'secondary' }} mt-3">
                 <i class="fas fa-certificate"></i>
-                <strong>حالة الشهادة:</strong>
-                {{ $attempt->certificate_enabled ? 'مسموح' : 'غير مسموح' }}
+                <strong>Certificate access:</strong>
+                {{ $attempt->certificate_enabled ? 'Enabled' : 'Disabled' }}
                 @if($attempt->certificate)
-                    <div><small>رقم الشهادة: {{ $attempt->certificate->certificate_number }}</small></div>
+                    <div><small>Certificate Number: {{ $attempt->certificate->certificate_number }}</small></div>
                 @endif
             </div>
         </div>
@@ -170,9 +170,9 @@
                                         {{ $option->option_text }}
 
                                         @if($option->is_correct)
-                                            <span class="badge bg-success float-end">الإجابة الصحيحة</span>
+                                            <span class="badge bg-success float-end">Correct answer</span>
                                         @elseif($answer->selected_option_id == $option->id && !$answer->is_correct)
-                                            <span class="badge bg-danger float-end">اختيار الطالب</span>
+                                            <span class="badge bg-danger float-end">Student choice</span>
                                         @endif
                                     </div>
                                 </div>
@@ -196,26 +196,26 @@
         <div class="card-body">
             <div class="d-flex gap-2">
                 <a href="{{ route('admin.exam-results.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> رجوع للقائمة
+                    <i class="fas fa-arrow-left"></i> Back to list
                 </a>
                 <a href="{{ route('admin.exam-results.edit', $attempt->id) }}" class="btn btn-warning">
-                    <i class="fas fa-edit"></i> تعديل النتيجة
+                    <i class="fas fa-edit"></i> Edit result
                 </a>
                 <form action="{{ route('admin.exam-results.recalculate', $attempt->id) }}"
                       method="POST" class="d-inline"
-                      onsubmit="return confirm('هل أنت متأكد من إعادة حساب الدرجة؟');">
+                      onsubmit="return confirm('Recalculate the score for this attempt?');">
                     @csrf
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-calculator"></i> إعادة حساب الدرجة
+                        <i class="fas fa-calculator"></i> Recalculate score
                     </button>
                 </form>
                 <form action="{{ route('admin.exam-results.destroy', $attempt->id) }}"
                       method="POST" class="d-inline"
-                      onsubmit="return confirm('هل أنت متأكد من حذف هذه المحاولة؟ سيتم حذف جميع الإجابات والشهادة المرتبطة بها.');">
+                      onsubmit="return confirm('Delete this attempt? This will remove answers and any related certificate.');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash"></i> حذف المحاولة
+                        <i class="fas fa-trash"></i> Delete attempt
                     </button>
                 </form>
             </div>

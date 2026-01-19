@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'student_email_verification' => env('STUDENT_EMAIL_VERIFICATION', true),
 
     /*
     |--------------------------------------------------------------------------

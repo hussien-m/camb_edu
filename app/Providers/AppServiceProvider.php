@@ -48,5 +48,17 @@ class AppServiceProvider extends ServiceProvider
             // If settings table doesn't exist yet (during migration)
             View::share('settings', []);
         }
+
+        View::composer('student.layouts.app', function ($view) {
+            if (!auth()->guard('student')->check()) {
+                return;
+            }
+
+            $student = auth()->guard('student')->user();
+            $examService = app(\App\Services\Student\StudentExamService::class);
+            $notifications = $examService->getPendingNonScheduledExams($student);
+
+            $view->with('examNotifications', $notifications);
+        });
     }
 }

@@ -37,7 +37,7 @@ Route::middleware('student.guest')->group(function () {
 // Email Verification Routes (accessible by logged in but unverified students)
 Route::middleware('student')->group(function () {
     Route::get('email/verify', [VerificationController::class, 'notice'])->name('verify.notice');
-    Route::post('email/resend', [VerificationController::class, 'resend'])->name('verify.resend');
+    Route::post('email/resend-auth', [VerificationController::class, 'resend'])->name('verify.resend');
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
 
@@ -65,6 +65,7 @@ Route::middleware(['student', 'student.verified'])->group(function () {
     Route::post('courses/{course}/enroll', [App\Http\Controllers\Student\CourseController::class, 'enroll'])->name('courses.enroll');
 
     // Exams
+    Route::get('exams', [App\Http\Controllers\Student\ExamController::class, 'index'])->name('exams.index');
     Route::get('exams/calendar', [App\Http\Controllers\Student\ExamController::class, 'calendar'])->name('exams.calendar');
     Route::get('exams/{exam}', [App\Http\Controllers\Student\ExamController::class, 'show'])->name('exams.show');
     Route::post('exams/{exam}/start', [App\Http\Controllers\Student\ExamController::class, 'start'])->name('exams.start');

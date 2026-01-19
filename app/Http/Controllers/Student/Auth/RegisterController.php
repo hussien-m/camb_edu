@@ -30,6 +30,8 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
+        $requiresVerification = (bool) config('auth.student_email_verification', true);
+
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -62,19 +64,27 @@ class RegisterController extends Controller
             'phone' => $request->phone,
             'date_of_birth' => $request->date_of_birth,
             'country' => $countryName,
-            'status' => 'pending', // Pending until email verified
+            'status' => $requiresVerification ? 'pending' : 'active',
+            'email_verified_at' => $requiresVerification ? null : now(),
         ]);
 
         // Clear cache after creating new pending student
         Cache::forget('admin.pending_students');
 
-        // Send verification email
-        $this->emailService->sendVerificationEmail($student);
+        if ($requiresVerification) {
+            // Send verification email
+            $this->emailService->sendVerificationEmail($student);
+        }
 
         // Login the student
         Auth::guard('student')->login($student);
 
-        return redirect()->route('student.verify.notice')
-            ->with('success', 'Registration successful! Please check your email to verify your account.');
+        if ($requiresVerification) {
+            return redirect()->route('student.verify.notice')
+                ->with('success', 'Registration successful! Please check your email to verify your account.');
+        }
+
+        return redirect()->route('student.dashboard')
+            ->with('success', 'Registration successful! Your account is active.');
     }
 }

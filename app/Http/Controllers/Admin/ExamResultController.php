@@ -28,7 +28,7 @@ class ExamResultController extends Controller
 
     public function show($id)
     {
-        $data = $this->resultService->getAttemptDetail($id);
+        $data = $this->resultService->getAttemptDetails($id);
 
         return view('admin.exam-results.show', $data);
     }

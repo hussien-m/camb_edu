@@ -524,4 +524,56 @@ class StudentExamService
 
         return max(0, $remaining);
     }
+
+    /**
+     * Get all exams for enrolled courses with access info.
+     */
+    public function getExamsForStudent(Student $student)
+    {
+        $courseIds = $student->enrollments()
+            ->where('status', 'active')
+            ->pluck('course_id');
+
+        if ($courseIds->isEmpty()) {
+            return collect();
+        }
+
+        $exams = Exam::with(['course', 'attempts' => function ($query) use ($student) {
+                $query->where('student_id', $student->id)
+                    ->orderBy('created_at', 'desc');
+            }])
+            ->whereIn('course_id', $courseIds)
+            ->where('status', 'active')
+            ->whereHas('questions')
+            ->whereRaw('(SELECT SUM(points) FROM questions WHERE exam_id = exams.id) = exams.total_marks')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $exams->map(function ($exam) use ($student) {
+            $access = $this->checkExamAccess($student, $exam);
+            $attempts = $exam->attempts;
+            $inProgress = $attempts->firstWhere('status', 'in_progress');
+
+            return [
+                'exam' => $exam,
+                'access' => $access,
+                'attempts' => $attempts,
+                'in_progress' => $inProgress,
+                'schedule_status' => $exam->getScheduleStatus(),
+                'is_scheduled' => (bool) $exam->is_scheduled,
+            ];
+        });
+    }
+
+    /**
+     * Get non-scheduled exams that the student can start now.
+     */
+    public function getPendingNonScheduledExams(Student $student)
+    {
+        return $this->getExamsForStudent($student)
+            ->filter(function ($item) {
+                return !$item['is_scheduled'] && ($item['access']['allowed'] ?? false);
+            })
+            ->values();
+    }
 }

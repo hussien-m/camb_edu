@@ -55,6 +55,10 @@
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
+            <a href="{{ route('student.exams.index') }}" class="menu-item {{ request()->routeIs('student.exams.index') ? 'active' : '' }}">
+                <i class="fas fa-clipboard-list"></i>
+                <span>All Exams</span>
+            </a>
             <a href="{{ route('student.courses.index') }}" class="menu-item {{ request()->routeIs('student.courses.*') ? 'active' : '' }}">
                 <i class="fas fa-book-open"></i>
                 <span>My Courses</span>
@@ -96,7 +100,38 @@
         <!-- Top Header -->
         <div class="top-header">
             <h2>@yield('page-title')</h2>
-            <div class="user-info">
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-light position-relative" type="button" id="examNotificationDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        @if(!empty($examNotifications) && $examNotifications->count() > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ $examNotifications->count() }}
+                            </span>
+                        @endif
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="examNotificationDropdown" style="min-width: 280px;">
+                        <li class="dropdown-header">Exam Notifications</li>
+                        @if(!empty($examNotifications) && $examNotifications->count() > 0)
+                            @foreach($examNotifications as $notification)
+                                @php $exam = $notification['exam']; @endphp
+                                <li class="mb-2">
+                                    <div class="small fw-bold">{{ $exam->title }}</div>
+                                    <div class="text-muted small">{{ $exam->course->title }}</div>
+                                    <div class="mt-1">
+                                        <a href="{{ route('student.exams.show', $exam) }}" class="btn btn-sm btn-primary">
+                                            Go to Exam
+                                        </a>
+                                    </div>
+                                </li>
+                            @endforeach
+                        @else
+                            <li class="text-muted small px-2">No new exam notifications.</li>
+                        @endif
+                    </ul>
+                </div>
+                <div class="user-info">
                 <div class="user-avatar">
                     @if(auth()->guard('student')->user()->profile_photo)
                         <img src="{{ asset('storage/' . auth()->guard('student')->user()->profile_photo) }}" alt="Profile">
@@ -107,6 +142,7 @@
                 <div class="user-details">
                     <span class="user-name">{{ auth()->guard('student')->user()->full_name }}</span>
                     <span class="user-role">Student</span>
+                </div>
                 </div>
             </div>
         </div>

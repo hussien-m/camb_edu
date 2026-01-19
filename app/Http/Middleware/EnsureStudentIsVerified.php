@@ -20,6 +20,10 @@ class EnsureStudentIsVerified
             return redirect()->route('student.login');
         }
 
+        if (!config('auth.student_email_verification', true)) {
+            return $next($request);
+        }
+
         // Check if email is verified
         if (!$student->email_verified_at) {
             return redirect()->route('student.verify.notice')
