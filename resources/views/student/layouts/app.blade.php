@@ -27,11 +27,6 @@
     @stack('styles')
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button">
-        <i class="fas fa-bars"></i>
-    </button>
-
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -99,8 +94,13 @@
     <div class="main-content">
         <!-- Top Header -->
         <div class="top-header">
-            <h2>@yield('page-title')</h2>
-            <div class="d-flex align-items-center gap-3">
+            <div class="header-left">
+                <button class="mobile-menu-toggle-inline d-md-none" id="mobileMenuToggle" type="button" aria-label="Open menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 class="page-title">@yield('page-title')</h2>
+            </div>
+            <div class="header-right">
                 <div class="dropdown exam-notification">
                     <button class="btn btn-light position-relative exam-bell-btn" type="button" id="examNotificationDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -129,18 +129,38 @@
                         @endif
                     </ul>
                 </div>
-                <div class="user-info">
-                <div class="user-avatar">
-                    @if(auth()->guard('student')->user()->profile_photo)
-                        <img src="{{ asset('storage/' . auth()->guard('student')->user()->profile_photo) }}" alt="Profile">
-                    @else
-                        {{ strtoupper(substr(auth()->guard('student')->user()->first_name, 0, 1)) }}
-                    @endif
-                </div>
-                <div class="user-details">
-                    <span class="user-name">{{ auth()->guard('student')->user()->full_name }}</span>
-                    <span class="user-role">Student</span>
-                </div>
+                <div class="dropdown user-dropdown">
+                    <button class="btn user-dropdown-btn" type="button" id="userDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="user-avatar">
+                            @if(auth()->guard('student')->user()->profile_photo)
+                                <img src="{{ asset('storage/' . auth()->guard('student')->user()->profile_photo) }}" alt="Profile">
+                            @else
+                                {{ strtoupper(substr(auth()->guard('student')->user()->first_name, 0, 1)) }}
+                            @endif
+                        </span>
+                        <span class="user-details">
+                            <span class="user-name">{{ auth()->guard('student')->user()->full_name }}</span>
+                            <span class="user-role">Student</span>
+                        </span>
+                        <i class="fas fa-chevron-down ms-2 text-muted d-none d-md-inline"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('student.profile') }}">
+                                <i class="fas fa-user-circle me-2"></i>My Profile
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('student.logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
