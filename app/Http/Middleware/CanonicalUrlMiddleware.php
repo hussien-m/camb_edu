@@ -21,6 +21,12 @@ class CanonicalUrlMiddleware
 
         $url = $request->url();
         $query = $request->query();
+        $path = ltrim($request->path(), '/');
+
+        // Block malformed paths like "/http://example.com" to avoid bad indexing
+        if (preg_match('#^https?://#i', $path)) {
+            abort(404);
+        }
 
         // Remove trailing slash (except for root)
         if ($request->path() !== '/' && str_ends_with($request->path(), '/')) {

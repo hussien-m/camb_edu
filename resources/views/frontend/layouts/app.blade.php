@@ -16,11 +16,11 @@
     <meta name="robots" content="index, follow">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="@yield('canonical', url()->current())">
+    <link rel="canonical" href="@yield('canonical', \App\Helpers\UrlHelper::canonicalUrl())">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="@yield('og_type', 'website')">
-    <meta property="og:url" content="@yield('og_url', url()->current())">
+    <meta property="og:url" content="@yield('og_url', \App\Helpers\UrlHelper::canonicalUrl())">
     <meta property="og:title" content="@yield('og_title', setting('site_title', 'Cambridge International College in UK'))">
     <meta property="og:description" content="@yield('og_description', setting('site_description', 'Cambridge International College in UK offers top-quality education'))">
     <meta property="og:image" content="@yield('og_image', asset('storage/' . setting('site_logo', 'images/og-default.jpg')))">
@@ -29,7 +29,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="@yield('twitter_card', 'summary_large_image')">
-    <meta name="twitter:url" content="@yield('twitter_url', url()->current())">
+    <meta name="twitter:url" content="@yield('twitter_url', \App\Helpers\UrlHelper::canonicalUrl())">
     <meta name="twitter:title" content="@yield('twitter_title', setting('site_title', 'Cambridge International College in UK'))">
     <meta name="twitter:description" content="@yield('twitter_description', setting('site_description', 'Cambridge International College in UK offers top-quality education'))">
     <meta name="twitter:image" content="@yield('twitter_image', asset('storage/' . setting('site_logo', 'images/og-default.jpg')))">
