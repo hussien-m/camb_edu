@@ -59,6 +59,10 @@
                 <i class="fas fa-book-open"></i>
                 <span>My Courses</span>
             </a>
+            <a href="{{ route('student.courses.content') }}" class="menu-item {{ request()->routeIs('student.courses.content') ? 'active' : '' }}">
+                <i class="fas fa-file-alt"></i>
+                <span>Course Content</span>
+            </a>
             <a href="{{ route('student.exams.calendar') }}" class="menu-item {{ request()->routeIs('student.exams.calendar') ? 'active' : '' }}">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Exam Calendar</span>

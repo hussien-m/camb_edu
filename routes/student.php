@@ -60,6 +60,8 @@ Route::middleware(['student', 'student.verified'])->group(function () {
 
     // My Courses
     Route::get('courses', [App\Http\Controllers\Student\CourseController::class, 'index'])->name('courses.index');
+    Route::get('courses/content', [App\Http\Controllers\Student\CourseController::class, 'content'])
+        ->name('courses.content');
     Route::post('courses/{course}/enroll', [App\Http\Controllers\Student\CourseController::class, 'enroll'])->name('courses.enroll');
 
     // Exams

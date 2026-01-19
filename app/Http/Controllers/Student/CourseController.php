@@ -24,6 +24,14 @@ class CourseController extends Controller
         return view('student.courses.index', compact('courses'));
     }
 
+    public function content()
+    {
+        $student = Auth::guard('student')->user();
+        $courses = $this->courseService->getEnrolledCourses($student);
+
+        return view('student.courses.content', compact('courses'));
+    }
+
     public function enroll(Course $course)
     {
         $student = Auth::guard('student')->user();
