@@ -101,8 +101,8 @@
         <div class="top-header">
             <h2>@yield('page-title')</h2>
             <div class="d-flex align-items-center gap-3">
-                <div class="dropdown">
-                    <button class="btn btn-light position-relative" type="button" id="examNotificationDropdown"
+                <div class="dropdown exam-notification">
+                    <button class="btn btn-light position-relative exam-bell-btn" type="button" id="examNotificationDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-bell"></i>
                         @if(!empty($examNotifications) && $examNotifications->count() > 0)
@@ -111,23 +111,21 @@
                             </span>
                         @endif
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="examNotificationDropdown" style="min-width: 280px;">
-                        <li class="dropdown-header">Exam Notifications</li>
+                    <ul class="dropdown-menu dropdown-menu-end p-0 exam-notification-menu" aria-labelledby="examNotificationDropdown">
+                        <li class="dropdown-header px-3 py-2">Exam Notifications</li>
                         @if(!empty($examNotifications) && $examNotifications->count() > 0)
                             @foreach($examNotifications as $notification)
                                 @php $exam = $notification['exam']; @endphp
-                                <li class="mb-2">
-                                    <div class="small fw-bold">{{ $exam->title }}</div>
-                                    <div class="text-muted small">{{ $exam->course->title }}</div>
-                                    <div class="mt-1">
-                                        <a href="{{ route('student.exams.show', $exam) }}" class="btn btn-sm btn-primary">
-                                            Go to Exam
-                                        </a>
-                                    </div>
+                                <li class="px-3 py-2 border-top exam-notification-item">
+                                    <div class="small fw-bold mb-1">{{ $exam->title }}</div>
+                                    <div class="text-muted small mb-2">{{ $exam->course->title }}</div>
+                                    <a href="{{ route('student.exams.show', $exam) }}" class="btn btn-sm btn-primary w-100">
+                                        Go to Exam
+                                    </a>
                                 </li>
                             @endforeach
                         @else
-                            <li class="text-muted small px-2">No new exam notifications.</li>
+                            <li class="text-muted small px-3 py-3">No new exam notifications.</li>
                         @endif
                     </ul>
                 </div>
@@ -160,5 +158,40 @@
     @vite('resources/js/student-layout.js')
 
     @stack('scripts')
+
+@push('styles')
+<style>
+    .exam-notification .exam-bell-btn {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    }
+    .exam-notification .exam-bell-btn:hover {
+        background: #f8fafc;
+    }
+    .exam-notification-menu {
+        min-width: 320px;
+        border-radius: 14px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+        z-index: 2000;
+    }
+    .exam-notification .dropdown-menu {
+        z-index: 2000;
+    }
+    .exam-notification-item {
+        background: #fff;
+    }
+    .exam-notification-item:hover {
+        background: #f8fafc;
+    }
+</style>
+@endpush
 </body>
 </html>
