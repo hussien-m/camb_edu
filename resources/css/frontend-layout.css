@@ -1799,6 +1799,21 @@ footer .contact-info i {
     box-shadow: 0 6px 16px rgba(14,107,80,0.12);
 }
 
+.contact-info-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    border: 1px solid rgba(11,27,58,0.08);
+}
+
+.contact-info-card h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #0b1b3a;
+    margin-bottom: 16px;
+}
+
 
 /* Footer Bottom */
 .footer-bottom-new {

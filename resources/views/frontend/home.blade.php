@@ -530,8 +530,111 @@
             <p>Have a question? We're here to answer all your inquiries</p>
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-5">
+                <div class="contact-info-card">
+                    <h3>Branches & Contacts</h3>
+
+                    @php
+                        $ukPhone = setting('contact_phone');
+                        $ukWhatsapp = setting('contact_whatsapp');
+                        $canadaPhone = setting('contact_phone_ca') ?: setting('contact_phone_2');
+                        $canadaWhatsapp = setting('contact_whatsapp_ca');
+                    @endphp
+
+                    @if(setting('contact_address_uk') || $ukPhone || $ukWhatsapp)
+                        <div class="contact-branch-section mb-3">
+                            <div class="contact-branch-header">UK Branch</div>
+                            <div class="contact-branch-items">
+                                @if(setting('contact_address_uk'))
+                                    <div class="contact-branch-row">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <div class="contact-branch-text">
+                                            <span class="contact-branch-label">Address</span>
+                                            <span class="contact-branch-value">{{ setting('contact_address_uk') }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if($ukPhone)
+                                    <a href="tel:{{ preg_replace('/[^0-9+]/', '', $ukPhone) }}" class="contact-branch-row contact-branch-link">
+                                        <i class="fas fa-phone"></i>
+                                        <div class="contact-branch-text">
+                                            <span class="contact-branch-label">Phone</span>
+                                            <span class="contact-branch-value">{{ $ukPhone }}</span>
+                                        </div>
+                                        <i class="fas fa-external-link-alt contact-branch-arrow"></i>
+                                    </a>
+                                @endif
+                                @if($ukWhatsapp)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $ukWhatsapp) }}" target="_blank" class="contact-branch-row contact-branch-link">
+                                        <i class="fab fa-whatsapp"></i>
+                                        <div class="contact-branch-text">
+                                            <span class="contact-branch-label">WhatsApp</span>
+                                            <span class="contact-branch-value">{{ $ukWhatsapp }}</span>
+                                        </div>
+                                        <i class="fas fa-external-link-alt contact-branch-arrow"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
+                    @if(setting('contact_address') || $canadaPhone || $canadaWhatsapp)
+                        <div class="contact-branch-section mb-3">
+                            <div class="contact-branch-header">Canada Branch</div>
+                            <div class="contact-branch-items">
+                                @if(setting('contact_address'))
+                                    <div class="contact-branch-row">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <div class="contact-branch-text">
+                                            <span class="contact-branch-label">Address</span>
+                                            <span class="contact-branch-value">{{ setting('contact_address') }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if($canadaPhone)
+                                    <a href="tel:{{ preg_replace('/[^0-9+]/', '', $canadaPhone) }}" class="contact-branch-row contact-branch-link">
+                                        <i class="fas fa-phone"></i>
+                                        <div class="contact-branch-text">
+                                            <span class="contact-branch-label">Phone</span>
+                                            <span class="contact-branch-value">{{ $canadaPhone }}</span>
+                                        </div>
+                                        <i class="fas fa-external-link-alt contact-branch-arrow"></i>
+                                    </a>
+                                @endif
+                                @if($canadaWhatsapp)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $canadaWhatsapp) }}" target="_blank" class="contact-branch-row contact-branch-link">
+                                        <i class="fab fa-whatsapp"></i>
+                                        <div class="contact-branch-text">
+                                            <span class="contact-branch-label">WhatsApp</span>
+                                            <span class="contact-branch-value">{{ $canadaWhatsapp }}</span>
+                                        </div>
+                                        <i class="fas fa-external-link-alt contact-branch-arrow"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="contact-info-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Saturday - Thursday (9AM - 5PM)</span>
+                    </div>
+
+                    <a href="mailto:{{ setting('contact_email', 'info@cambridgecollege.ly') }}" class="contact-btn contact-btn-email mt-3">
+                        <div class="contact-btn-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-btn-content">
+                            <span class="contact-btn-label">Email (All Branches)</span>
+                            <span class="contact-btn-value">{{ setting('contact_email', 'info@cambridgecollege.ly') }}</span>
+                        </div>
+                        <i class="fas fa-external-link-alt contact-btn-arrow"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
                 <div class="card" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none;">
                     <div class="card-body p-5">
                         @if(session('success'))
