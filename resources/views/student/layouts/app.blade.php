@@ -176,7 +176,7 @@
         background: #f8fafc;
     }
     .exam-notification-menu {
-        min-width: 320px;
+        min-width: 380px;
         border-radius: 14px;
         border: 1px solid #e5e7eb;
         box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
@@ -184,6 +184,10 @@
     }
     .exam-notification .dropdown-menu {
         z-index: 2000;
+    }
+    .top-header {
+        position: relative;
+        z-index: 2100;
     }
     .exam-notification-item {
         background: #fff;
