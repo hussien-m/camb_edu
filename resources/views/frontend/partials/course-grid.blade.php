@@ -37,7 +37,7 @@
             <div class="card-body">
                 <span class="course-category">{{ $course->category->name ?? 'General' }}</span>
                 <h5 class="course-title">{{ Str::limit($course->title, 60) }}</h5>
-                <p class="course-description">{{ Str::limit($course->description, 100) }}</p>
+                <p class="course-description">{{ Str::limit(strip_tags(html_entity_decode($course->description)), 100) }}</p>
 
                 <div class="course-meta">
                     <span class="meta-item">
@@ -62,11 +62,14 @@
         </div>
     </div>
     @empty
+    @php
+        $resetRoute = $resetRoute ?? route('courses.index');
+    @endphp
     <div class="col-12">
         <div class="empty-state">
             <i class="fas fa-search"></i>
             <h4>No Results Found</h4>
-            <p>Try adjusting your search criteria or <a href="{{ route('courses.index') }}" style="color: #1e3a8a; font-weight: 700;">reset the filter</a></p>
+            <p>Try adjusting your search criteria or <a href="{{ $resetRoute }}" style="color: #1e3a8a; font-weight: 700;">reset the filter</a></p>
         </div>
     </div>
     @endforelse

@@ -113,8 +113,7 @@
 
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
-                            <strong>Note:</strong> If you change the status to "Passed" and the student doesn't have a certificate, one will be created automatically.
-                            If you change the status to "Failed", the certificate will be deleted if it exists.
+                            <strong>Note:</strong> Certificate access is controlled separately by the admin and is not tied to pass/fail status.
                         </div>
 
                         <div class="d-flex gap-2">
@@ -206,9 +205,22 @@
                         <div class="alert alert-secondary mb-0">
                             <i class="fas fa-minus-circle"></i>
                             <strong>Not Issued</strong><br>
-                            <small>Certificate will be created when status is changed to "Passed"</small>
+                            <small>Certificate will be created when admin enables access</small>
                         </div>
                     @endif
+                    <div class="mt-3">
+                        <form action="{{ route('admin.exam-results.toggle-certificate', $attempt->id) }}"
+                              method="POST" onsubmit="return confirm('Toggle certificate access for this student?');">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-success">
+                                <i class="fas fa-certificate"></i>
+                                {{ $attempt->certificate_enabled ? 'Disable Access' : 'Enable Access' }}
+                            </button>
+                        </form>
+                        <small class="text-muted d-block mt-2">
+                            Current access: {{ $attempt->certificate_enabled ? 'Enabled' : 'Disabled' }}
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>

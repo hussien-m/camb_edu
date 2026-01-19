@@ -1,12 +1,22 @@
 @extends('frontend.layouts.app')
 
-@section('title', 'Our Courses - ' . setting('site_name', 'Cambridge International College in UK'))
+@php
+    $pageTitle = $pageTitle ?? '🎓 All Training Courses';
+    $pageSubtitle = $pageSubtitle ?? 'Choose the right course for you and start your learning journey with us';
+    $breadcrumbTitle = $breadcrumbTitle ?? 'Courses';
+    $filterRoute = $filterRoute ?? route('courses.index');
+    $resetRoute = $resetRoute ?? route('courses.index');
+    $canonical = $canonical ?? route('courses.index');
+    $showFilters = $showFilters ?? true;
+@endphp
+
+@section('title', $pageTitle . ' - ' . setting('site_name', 'Cambridge International College in UK'))
 
 @section('description', 'Browse our comprehensive catalog of professional courses and training programs. Find the perfect course to advance your career.')
 
 @section('keywords', 'courses, training, education, professional development, ' . setting('seo_keywords', 'Cambridge International College in UK'))
 
-@section('canonical', route('courses.index'))
+@section('canonical', $canonical)
 
 @section('og_title', 'Our Courses - ' . setting('site_name', 'Cambridge College'))
 @section('og_description', 'Browse our comprehensive catalog of professional courses and training programs')
@@ -21,12 +31,12 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-12 text-center">
-                <h1>🎓 All Training Courses</h1>
-                <p>Choose the right course for you and start your learning journey with us</p>
+                <h1>{{ $pageTitle }}</h1>
+                <p>{{ $pageSubtitle }}</p>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                        <li class="breadcrumb-item active">Courses</li>
+                        <li class="breadcrumb-item active">{{ $breadcrumbTitle }}</li>
                     </ol>
                 </nav>
             </div>
@@ -38,6 +48,7 @@
 <section class="py-5" style="background: #f9fafb;">
     <div class="container">
         <!-- Mobile Filter Toggle Button -->
+        @if($showFilters)
         <div class="mobile-filter-toggle d-lg-none">
             <button class="btn-mobile-filter" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilterCollapse">
                 <i class="fas fa-sliders-h"></i>
@@ -51,11 +62,13 @@
                 <i class="fas fa-chevron-down toggle-icon"></i>
             </button>
         </div>
+        @endif
 
         <!-- Mobile Filter Collapse -->
+        @if($showFilters)
         <div class="collapse d-lg-none {{ request()->hasAny(['category_id', 'level_id', 'keyword']) ? 'show' : '' }}" id="mobileFilterCollapse">
             <div class="mobile-filter-content">
-                <form id="mobileFilterForm" action="{{ route('courses.index') }}" method="GET" data-url="{{ route('courses.index') }}">
+                <form id="mobileFilterForm" action="{{ $filterRoute }}" method="GET" data-url="{{ $filterRoute }}">
                     <div class="mobile-filter-grid">
                         <div class="filter-item">
                             <label><i class="fas fa-folder"></i> Category</label>
@@ -93,7 +106,7 @@
                             <i class="fas fa-search"></i> Apply
                         </button>
                         @if(request()->hasAny(['category_id', 'level_id', 'keyword']))
-                            <a href="{{ route('courses.index') }}" class="btn btn-filter-reset">
+                            <a href="{{ $resetRoute }}" class="btn btn-filter-reset">
                                 <i class="fas fa-times"></i> Reset
                             </a>
                         @endif
@@ -101,16 +114,18 @@
                 </form>
             </div>
         </div>
+        @endif
 
         <div class="row">
             <!-- Filter Sidebar (Desktop) -->
+            @if($showFilters)
             <div class="col-lg-3 d-none d-lg-block">
                 <div class="filter-sidebar">
                     <h5>
                         <i class="fas fa-filter"></i>
                         Filter Results
                     </h5>
-                    <form id="filterForm" action="{{ route('courses.index') }}" method="GET" data-url="{{ route('courses.index') }}">
+                    <form id="filterForm" action="{{ $filterRoute }}" method="GET" data-url="{{ $filterRoute }}">
                         <div class="mb-3">
                             <label class="form-label">Category</label>
                             <select name="category_id" id="categorySelect" class="form-select filter-input">
@@ -150,7 +165,7 @@
                         </button>
 
                         @if(request()->hasAny(['category_id', 'level_id', 'keyword']))
-                            <a href="{{ route('courses.index') }}" class="btn btn-reset" id="resetBtn">
+                            <a href="{{ $resetRoute }}" class="btn btn-reset" id="resetBtn">
                                 <i class="fas fa-redo"></i>
                                 Reset
                             </a>
@@ -158,9 +173,10 @@
                     </form>
                 </div>
             </div>
+            @endif
 
             <!-- Courses Grid -->
-            <div class="col-lg-9" style="position: relative;">
+            <div class="{{ $showFilters ? 'col-lg-9' : 'col-lg-12' }}" style="position: relative;">
                 <div id="coursesWrapper">
                     <div id="coursesContainer">
                         @include('frontend.partials.course-grid', ['courses' => $courses])

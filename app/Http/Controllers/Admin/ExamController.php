@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\StoreExamRequest;
 use App\Http\Requests\Admin\UpdateExamRequest;
 use App\Models\Course;
 use App\Models\Exam;
+use App\Models\ExamStudentAssignment;
+use App\Models\Student;
 use App\Services\Admin\ExamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -79,10 +81,72 @@ class ExamController extends Controller
             ->with('success', 'Exam created successfully.');
     }
 
-    public function show(Exam $exam)
+    public function show(Request $request, Exam $exam)
     {
         $exam->load(['course', 'questions.options', 'attempts']);
-        return view('admin.exams.show', compact('exam'));
+
+        $assignmentStats = [];
+        $assignments = collect();
+        $verifiedStudents = collect();
+        $assignmentFilters = [
+            'status' => $request->get('assignment_status'),
+            'search' => $request->get('assignment_search'),
+        ];
+
+        if ($exam->group_assignment_enabled) {
+            ExamStudentAssignment::where('exam_id', $exam->id)
+                ->where('mode', 'scheduled')
+                ->where('status', 'assigned')
+                ->whereNotNull('ends_at')
+                ->where('ends_at', '<', now())
+                ->update(['status' => 'missed', 'last_activity_at' => now()]);
+
+            $assignmentQuery = ExamStudentAssignment::with('student')
+                ->where('exam_id', $exam->id);
+
+            if (!empty($assignmentFilters['status'])) {
+                $assignmentQuery->where('status', $assignmentFilters['status']);
+            }
+
+            if (!empty($assignmentFilters['search'])) {
+                $search = $assignmentFilters['search'];
+                $assignmentQuery->whereHas('student', function ($query) use ($search) {
+                    $query->where('email', 'like', "%{$search}%")
+                        ->orWhere('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                });
+            }
+
+            $assignments = $assignmentQuery
+                ->orderBy('assigned_at', 'desc')
+                ->paginate(20)
+                ->withQueryString();
+
+            $allAssignments = ExamStudentAssignment::where('exam_id', $exam->id)->get();
+            $assignmentStats = [
+                'total' => $allAssignments->count(),
+                'assigned' => $allAssignments->where('status', 'assigned')->count(),
+                'started' => $allAssignments->where('status', 'started')->count(),
+                'submitted' => $allAssignments->whereIn('status', ['submitted', 'graded'])->count(),
+                'missed' => $allAssignments->where('status', 'missed')->count(),
+                'expired' => $allAssignments->where('status', 'expired')->count(),
+                'avg_score' => $allAssignments->whereIn('status', ['submitted', 'graded'])
+                    ->avg('percentage') ?? 0,
+            ];
+
+            $verifiedStudents = Student::whereNotNull('email_verified_at')
+                ->orderBy('first_name')
+                ->orderBy('last_name')
+                ->get();
+        }
+
+        return view('admin.exams.show', compact(
+            'exam',
+            'assignmentStats',
+            'assignments',
+            'assignmentFilters',
+            'verifiedStudents'
+        ));
     }
 
     public function edit(Exam $exam)

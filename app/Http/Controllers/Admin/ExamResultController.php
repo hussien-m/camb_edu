@@ -71,4 +71,27 @@ class ExamResultController extends Controller
             return back()->with('error', 'Failed to delete: ' . $e->getMessage());
         }
     }
+
+    public function toggleCertificate($id)
+    {
+        $attempt = ExamAttempt::with('exam')->findOrFail($id);
+        $enabled = !$attempt->certificate_enabled;
+
+        $this->resultService->setCertificateAccess($attempt, $enabled);
+
+        $message = $enabled ? 'Certificate access enabled.' : 'Certificate access disabled.';
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function enableCertificatesForExam(Request $request)
+    {
+        $validated = $request->validate([
+            'exam_id' => 'required|exists:exams,id',
+        ]);
+
+        $count = $this->resultService->enableCertificatesForExam((int) $validated['exam_id']);
+
+        return redirect()->back()->with('success', "Enabled certificates for {$count} attempt(s).");
+    }
 }

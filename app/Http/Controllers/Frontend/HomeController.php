@@ -13,6 +13,7 @@ use App\Models\Page;
 use App\Models\SuccessStory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -212,6 +213,84 @@ class HomeController extends Controller
     }
 
     /**
+     * Show courses with offers (Category: OFFER, Level: N/A)
+     */
+    public function offers(Request $request)
+    {
+        $categories = Cache::remember(
+            'courses_page_categories',
+            3600,
+            fn() => CourseCategory::select('id', 'name', 'slug')->get()
+        );
+
+        $levels = Cache::remember(
+            'courses_page_levels',
+            3600,
+            fn() => CourseLevel::select('id', 'name', 'slug', 'sort_order')->orderBy('sort_order')->get()
+        );
+
+        $category = CourseCategory::where(function ($query) {
+            $query->whereRaw('LOWER(name) = ?', ['offers'])
+                ->orWhereRaw('LOWER(slug) = ?', ['offers']);
+        })->first();
+        $level = CourseLevel::whereRaw('LOWER(name) = ?', ['n/a'])->first();
+
+        $query = Course::with(['category:id,name,slug', 'level:id,name,slug'])
+            ->select('id', 'title', 'slug', 'description', 'image', 'duration', 'is_featured', 'category_id', 'level_id', 'status')
+            ->where('status', 'active');
+
+        if ($category) {
+            $query->where('category_id', $category->id);
+        } else {
+            $query->whereRaw('1=0');
+        }
+
+        if ($level) {
+            $query->where('level_id', $level->id);
+        } else {
+            $query->whereRaw('1=0');
+        }
+
+        $courses = $query->latest()->paginate(12);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('frontend.partials.course-grid', compact('courses'))->render();
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'hasMore' => $courses->hasMorePages(),
+                'currentPage' => $courses->currentPage(),
+                'total' => $courses->total(),
+                'lastPage' => $courses->lastPage(),
+            ]);
+        }
+
+        $pageTitle = '🔥 New Offers';
+        $pageSubtitle = 'Special offers for courses tagged with OFFER and Level N/A';
+        $breadcrumbTitle = 'New Offers';
+        $filterRoute = route('courses.offers');
+        $resetRoute = route('courses.offers');
+        $canonical = route('courses.offers');
+        $showFilters = false;
+
+        return view('frontend.courses', compact(
+            'courses',
+            'categories',
+            'levels',
+            'category',
+            'level',
+            'pageTitle',
+            'pageSubtitle',
+            'breadcrumbTitle',
+            'filterRoute',
+            'resetRoute',
+            'canonical',
+            'showFilters'
+        ));
+    }
+
+    /**
      * Filter courses by level slug (SEO-friendly URL)
      */
     public function filterByLevel(Request $request, $levelSlug)
@@ -362,6 +441,15 @@ class HomeController extends Controller
             })
             ->firstOrFail();
 
+        $isOfferCategory = false;
+        if ($course->category) {
+            $categoryName = strtolower($course->category->name ?? '');
+            $categorySlugValue = strtolower($course->category->slug ?? '');
+            $isOfferCategory = $categoryName === 'offers' || $categorySlugValue === 'offers';
+        }
+
+        $lockOfferContent = $isOfferCategory && !Auth::guard('student')->check();
+
         // Get related courses from same category
         $relatedCourses = Course::with(['category', 'level'])
             ->where('status', 'active')
@@ -370,7 +458,7 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        return view('frontend.course-detail', compact('course', 'relatedCourses'));
+        return view('frontend.course-detail', compact('course', 'relatedCourses', 'lockOfferContent'));
     }
 
     public function successStories()

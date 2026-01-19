@@ -16,6 +16,9 @@ class StudentCertificateService
     {
         return Certificate::with(['course', 'examAttempt.exam'])
             ->where('student_id', $student->id)
+            ->whereHas('examAttempt', function ($query) {
+                $query->where('certificate_enabled', true);
+            })
             ->latest('issue_date')
             ->get();
     }

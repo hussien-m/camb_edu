@@ -110,6 +110,25 @@
 
                 <hr class="my-4">
 
+                <!-- Group Assignment Section -->
+                <div class="card bg-light mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users mr-2"></i>Group Assignment (Optional)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" id="group_assignment_enabled"
+                                   name="group_assignment_enabled" value="1" {{ old('group_assignment_enabled') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="group_assignment_enabled">
+                                <strong>Enable group assignment for this exam</strong>
+                                <small class="d-block text-muted">Only assigned students can access this exam if enabled.</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Scheduling Section -->
                 <div class="card bg-light">
                     <div class="card-header">

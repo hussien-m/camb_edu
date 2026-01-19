@@ -14,6 +14,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [HomeController::class, 'search'])->name('courses.index');
+Route::get('/courses/offers', [HomeController::class, 'offers'])->name('courses.offers');
 Route::get('/courses/search', [HomeController::class, 'search'])->name('courses.search');
 Route::get('/courses/level/{level}', [HomeController::class, 'filterByLevel'])->name('courses.level');
 Route::get('/courses/category/{category}', [HomeController::class, 'filterByCategory'])->name('courses.category');

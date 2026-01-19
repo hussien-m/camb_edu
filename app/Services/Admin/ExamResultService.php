@@ -82,17 +82,6 @@ class ExamResultService
                 'admin_notes' => $data['admin_notes'] ?? null,
             ]);
 
-            // Handle certificate generation/deletion
-            if ($data['passed']) {
-                if (!$attempt->certificate) {
-                    $this->generateCertificate($attempt);
-                }
-            } else {
-                if ($attempt->certificate) {
-                    $attempt->certificate->delete();
-                }
-            }
-
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -141,13 +130,6 @@ class ExamResultService
                 'percentage' => round($percentage, 2),
                 'passed' => $passed,
             ]);
-
-            // Handle certificate
-            if ($passed && !$attempt->certificate) {
-                $this->generateCertificate($attempt);
-            } elseif (!$passed && $attempt->certificate) {
-                $attempt->certificate->delete();
-            }
 
             DB::commit();
             return true;
@@ -208,5 +190,32 @@ class ExamResultService
     private function generateCertificateNumber()
     {
         return 'CERT-' . strtoupper(uniqid()) . '-' . date('Y');
+    }
+
+    public function setCertificateAccess(ExamAttempt $attempt, bool $enabled): void
+    {
+        $attempt->update(['certificate_enabled' => $enabled]);
+
+        if ($enabled && !$attempt->certificate) {
+            $this->generateCertificate($attempt);
+        }
+    }
+
+    public function enableCertificatesForExam(int $examId): int
+    {
+        $attempts = ExamAttempt::with('certificate')
+            ->where('exam_id', $examId)
+            ->whereNotNull('end_time')
+            ->get();
+
+        $enabledCount = 0;
+        foreach ($attempts as $attempt) {
+            if (!$attempt->certificate_enabled) {
+                $this->setCertificateAccess($attempt, true);
+                $enabledCount++;
+            }
+        }
+
+        return $enabledCount;
     }
 }

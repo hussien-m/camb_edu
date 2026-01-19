@@ -18,6 +18,7 @@ class ExamAttempt extends Model
         'score',
         'percentage',
         'passed',
+        'certificate_enabled',
         'attempt_number',
         'status',
         'admin_notes',
@@ -28,6 +29,7 @@ class ExamAttempt extends Model
         'end_time' => 'datetime',
         'passed' => 'boolean',
         'percentage' => 'decimal:2',
+        'certificate_enabled' => 'boolean',
     ];
 
     public function student()

@@ -4,10 +4,13 @@ namespace App\Services\Student;
 
 use App\Models\Exam;
 use App\Models\ExamAttempt;
+use App\Models\ExamStudentAssignment;
 use App\Models\Enrollment;
 use App\Models\Student;
 use App\Models\StudentAnswer;
 use App\Models\Certificate;
+use App\Notifications\ExamAssignmentStartedNotification;
+use App\Notifications\ExamAssignmentSubmittedNotification;
 use Illuminate\Support\Facades\DB;
 
 class StudentExamService
@@ -83,6 +86,55 @@ class StudentExamService
                     'allowed' => false,
                     'message' => 'This exam has ended. The exam was available until ' .
                                  $exam->scheduled_end_date->format('l, F j, Y \a\t g:i A')
+                ];
+            }
+        }
+
+        // Group assignment checks (optional)
+        if ($exam->group_assignment_enabled) {
+            if (!$student->email_verified_at) {
+                return [
+                    'allowed' => false,
+                    'message' => 'Please verify your email address before accessing this exam.'
+                ];
+            }
+
+            $assignment = $this->getLatestAssignment($student, $exam);
+            if (!$assignment) {
+                return [
+                    'allowed' => false,
+                    'message' => 'You are not assigned to this exam.'
+                ];
+            }
+
+            if ($assignment->mode === 'scheduled') {
+                $now = now();
+                if ($assignment->starts_at && $now->lt($assignment->starts_at)) {
+                    return [
+                        'allowed' => false,
+                        'message' => 'This exam is scheduled and not available yet.'
+                    ];
+                }
+
+                if ($assignment->ends_at && $now->gt($assignment->ends_at)) {
+                    if ($assignment->status === 'assigned') {
+                        $assignment->update([
+                            'status' => 'missed',
+                            'last_activity_at' => now(),
+                        ]);
+                    }
+
+                    return [
+                        'allowed' => false,
+                        'message' => 'This exam assignment has expired.'
+                    ];
+                }
+            }
+
+            if (in_array($assignment->status, ['started', 'submitted', 'expired', 'missed', 'graded'], true)) {
+                return [
+                    'allowed' => false,
+                    'message' => 'You have already started this exam and cannot re-enter.'
                 ];
             }
         }
@@ -206,6 +258,13 @@ class StudentExamService
             ]
         );
 
+        if ($attempt->exam->group_assignment_enabled) {
+            $assignment = ExamStudentAssignment::where('exam_attempt_id', $attempt->id)->first();
+            if ($assignment) {
+                $assignment->update(['last_activity_at' => now()]);
+            }
+        }
+
         return true;
     }
 
@@ -270,10 +329,28 @@ class StudentExamService
             ->first();
 
         if ($inProgressAttempt) {
+            if ($exam->group_assignment_enabled) {
+                return [
+                    'success' => false,
+                    'message' => 'You already started this exam and cannot re-enter.'
+                ];
+            }
+
             return [
                 'success' => true,
                 'attempt' => $inProgressAttempt
             ];
+        }
+
+        $assignment = null;
+        if ($exam->group_assignment_enabled) {
+            $assignment = $this->getLatestAssignment($student, $exam);
+            if (!$assignment || $assignment->status !== 'assigned') {
+                return [
+                    'success' => false,
+                    'message' => 'You are not allowed to start this exam.'
+                ];
+            }
         }
 
         $enrollment = Enrollment::where('student_id', $student->id)
@@ -293,6 +370,19 @@ class StudentExamService
             'attempt_number' => $attemptNumber,
             'status' => 'in_progress',
         ]);
+
+        if ($assignment) {
+            $assignment->update([
+                'status' => 'started',
+                'started_at' => now(),
+                'last_activity_at' => now(),
+                'exam_attempt_id' => $attempt->id,
+            ]);
+
+            if ($assignment->assignedBy) {
+                $assignment->assignedBy->notify(new ExamAssignmentStartedNotification($exam, $student, $assignment));
+            }
+        }
 
         return [
             'success' => true,
@@ -340,13 +430,39 @@ class StudentExamService
                 'status' => $expired ? 'expired' : 'completed',
             ]);
 
-            // Generate certificate if passed
-            if ($passed) {
-                $this->generateCertificate($attempt);
+            // Certificate creation is controlled by admin approval
+
+            if ($attempt->exam->group_assignment_enabled) {
+                $assignment = ExamStudentAssignment::where('exam_attempt_id', $attempt->id)->first();
+                if ($assignment) {
+                    $assignment->update([
+                        'status' => $expired ? 'expired' : 'submitted',
+                        'submitted_at' => now(),
+                        'score' => $totalScore,
+                        'percentage' => $percentage,
+                        'passed' => $passed,
+                        'last_activity_at' => now(),
+                    ]);
+
+                    if (!$expired && $assignment->assignedBy) {
+                        $assignment->assignedBy->notify(
+                            new ExamAssignmentSubmittedNotification($attempt->exam, $attempt->student, $assignment)
+                        );
+                    }
+                }
             }
 
             return $attempt;
         });
+    }
+
+    private function getLatestAssignment(Student $student, Exam $exam): ?ExamStudentAssignment
+    {
+        return ExamStudentAssignment::where('student_id', $student->id)
+            ->where('exam_id', $exam->id)
+            ->orderByDesc('assigned_at')
+            ->orderByDesc('id')
+            ->first();
     }
 
     /**

@@ -27,6 +27,7 @@ class StoreExamRequest extends FormRequest
             'scheduled_end_date' => 'nullable|date|after:scheduled_start_date',
             'timezone' => 'nullable|string|timezone',
             'scheduling_notes' => 'nullable|string|max:1000',
+            'group_assignment_enabled' => 'nullable|boolean',
         ];
     }
 
@@ -37,6 +38,7 @@ class StoreExamRequest extends FormRequest
     {
         $this->merge([
             'is_scheduled' => $this->has('is_scheduled') ? true : false,
+            'group_assignment_enabled' => $this->has('group_assignment_enabled') ? true : false,
         ]);
     }
 

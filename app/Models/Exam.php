@@ -23,12 +23,14 @@ class Exam extends Model
         'scheduled_end_date',
         'timezone',
         'scheduling_notes',
+        'group_assignment_enabled',
     ];
 
     protected $casts = [
         'is_scheduled' => 'boolean',
         'scheduled_start_date' => 'datetime',
         'scheduled_end_date' => 'datetime',
+        'group_assignment_enabled' => 'boolean',
     ];
 
     public function course()
@@ -44,6 +46,11 @@ class Exam extends Model
     public function attempts()
     {
         return $this->hasMany(ExamAttempt::class);
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(ExamStudentAssignment::class);
     }
 
     public function reminders()

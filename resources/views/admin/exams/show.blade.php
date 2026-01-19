@@ -251,6 +251,212 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            @if(!$exam->group_assignment_enabled)
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Group assignment is disabled for this exam.
+                    <a href="{{ route('admin.exams.edit', $exam) }}" class="alert-link">Enable it here</a>.
+                </div>
+            @else
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-users mr-2"></i>Group Assignments</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-2 mb-2">
+                                <div class="border rounded p-3 text-center">
+                                    <div class="text-muted">Assigned</div>
+                                    <strong>{{ $assignmentStats['total'] ?? 0 }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <div class="border rounded p-3 text-center">
+                                    <div class="text-muted">Started</div>
+                                    <strong>{{ $assignmentStats['started'] ?? 0 }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <div class="border rounded p-3 text-center">
+                                    <div class="text-muted">Submitted</div>
+                                    <strong>{{ $assignmentStats['submitted'] ?? 0 }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <div class="border rounded p-3 text-center">
+                                    <div class="text-muted">Missed</div>
+                                    <strong>{{ $assignmentStats['missed'] ?? 0 }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <div class="border rounded p-3 text-center">
+                                    <div class="text-muted">Expired</div>
+                                    <strong>{{ $assignmentStats['expired'] ?? 0 }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <div class="border rounded p-3 text-center">
+                                    <div class="text-muted">Avg Score</div>
+                                    <strong>{{ number_format($assignmentStats['avg_score'] ?? 0, 1) }}%</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form action="{{ route('admin.exams.assignments.store', $exam) }}" method="POST" class="mb-4" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Assignment Mode</label>
+                                    <select class="form-control" id="assignment_mode" name="mode" required>
+                                        <option value="open">Open (any time)</option>
+                                        <option value="scheduled">Scheduled</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Start Date & Time</label>
+                                    <input type="datetime-local" class="form-control" id="assignment_starts_at" name="starts_at">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">End Date & Time</label>
+                                    <input type="datetime-local" class="form-control" id="assignment_ends_at" name="ends_at">
+                                </div>
+                                <div class="col-md-3 mb-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-paper-plane mr-2"></i>Assign Students
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Add by Emails (one per line)</label>
+                                    <textarea name="emails" class="form-control" rows="4" placeholder="student1@example.com&#10;student2@example.com"></textarea>
+                                    <small class="text-muted">Only verified students will be assigned.</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Select Verified Students</label>
+                                    <input type="text" id="student_search" class="form-control mb-2" placeholder="Search by name or email">
+                                    <select name="student_ids[]" class="form-control" multiple size="8">
+                                        @foreach($verifiedStudents as $student)
+                                            <option value="{{ $student->id }}">
+                                                {{ $student->full_name }} ({{ $student->email }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">Hold Ctrl (Windows) to select multiple students. Only verified students appear.</small>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Upload CSV (emails only)</label>
+                                    <input type="file" name="csv_file" class="form-control" accept=".csv,.txt">
+                                    <small class="text-muted">One email per line or comma-separated.</small>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <form method="GET" action="{{ route('admin.exams.show', $exam) }}" class="row g-2 align-items-end">
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0">Search</label>
+                                        <input type="text" name="assignment_search" class="form-control"
+                                               value="{{ $assignmentFilters['search'] ?? '' }}" placeholder="Name or email">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label mb-0">Status</label>
+                                        <select name="assignment_status" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="assigned" {{ ($assignmentFilters['status'] ?? '') === 'assigned' ? 'selected' : '' }}>Assigned</option>
+                                            <option value="started" {{ ($assignmentFilters['status'] ?? '') === 'started' ? 'selected' : '' }}>Started</option>
+                                            <option value="submitted" {{ ($assignmentFilters['status'] ?? '') === 'submitted' ? 'selected' : '' }}>Submitted</option>
+                                            <option value="graded" {{ ($assignmentFilters['status'] ?? '') === 'graded' ? 'selected' : '' }}>Graded</option>
+                                            <option value="expired" {{ ($assignmentFilters['status'] ?? '') === 'expired' ? 'selected' : '' }}>Expired</option>
+                                            <option value="missed" {{ ($assignmentFilters['status'] ?? '') === 'missed' ? 'selected' : '' }}>Missed</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-outline-primary w-100">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a href="{{ route('admin.exams.show', $exam) }}" class="btn btn-outline-secondary w-100">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Student</th>
+                                                <th>Mode</th>
+                                                <th>Status</th>
+                                                <th>Assigned</th>
+                                                <th>Started</th>
+                                                <th>Submitted</th>
+                                                <th>Score</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($assignments as $assignment)
+                                                <tr>
+                                                    <td>
+                                                        <div>{{ $assignment->student->full_name }}</div>
+                                                        <small class="text-muted">{{ $assignment->student->email }}</small>
+                                                    </td>
+                                                    <td>{{ ucfirst($assignment->mode) }}</td>
+                                                    <td>
+                                                        <span class="badge badge-secondary text-uppercase">{{ $assignment->status }}</span>
+                                                    </td>
+                                                    <td>{{ $assignment->assigned_at?->format('Y-m-d H:i') }}</td>
+                                                    <td>{{ $assignment->started_at?->format('Y-m-d H:i') }}</td>
+                                                    <td>{{ $assignment->submitted_at?->format('Y-m-d H:i') }}</td>
+                                                    <td>
+                                                        @if(!is_null($assignment->percentage))
+                                                            {{ number_format($assignment->percentage, 2) }}%
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <form action="{{ route('admin.exams.assignments.destroy', [$exam, $assignment]) }}" method="POST" onsubmit="return confirm('Remove this assignment?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="8" class="text-center text-muted py-4">No assignments found.</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                                @if(method_exists($assignments, 'links'))
+                                    <div class="p-3">
+                                        {{ $assignments->links() }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
 </div>
 
 <!-- Edit Question Modal -->
@@ -385,6 +591,71 @@
     font-weight: bold;
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    const $mode = $('#assignment_mode');
+    const $starts = $('#assignment_starts_at');
+    const $ends = $('#assignment_ends_at');
+    const $studentSearch = $('#student_search');
+    const $studentSelect = $('select[name="student_ids[]"]');
+    const originalOptions = $studentSelect.find('option').clone();
+
+    function toggleAssignmentSchedule() {
+        const isScheduled = $mode.val() === 'scheduled';
+        $starts.prop('required', isScheduled);
+        $starts.prop('disabled', !isScheduled);
+        $ends.prop('disabled', !isScheduled);
+
+        if (!isScheduled) {
+            $starts.val('');
+            $ends.val('');
+        }
+    }
+
+    if ($mode.length) {
+        toggleAssignmentSchedule();
+        $mode.on('change', toggleAssignmentSchedule);
+    }
+
+    let searchTimer = null;
+    function renderStudentOptions(items) {
+        $studentSelect.empty();
+        items.forEach(function(item) {
+            $studentSelect.append(
+                $('<option/>', {
+                    value: item.id,
+                    text: item.name + ' (' + item.email + ')'
+                })
+            );
+        });
+    }
+
+    if ($studentSearch.length) {
+        $studentSearch.on('input', function() {
+            const query = $(this).val().trim();
+            clearTimeout(searchTimer);
+
+            if (query.length === 0) {
+                $studentSelect.empty().append(originalOptions.clone());
+                return;
+            }
+
+            searchTimer = setTimeout(function() {
+                $.get('{{ route('admin.exams.assignments.students', $exam) }}', { q: query })
+                    .done(function(response) {
+                        renderStudentOptions(response.data || []);
+                    })
+                    .fail(function() {
+                        $studentSelect.empty();
+                    });
+            }, 300);
+        });
+    }
+});
+</script>
 @endpush
 
 @push('scripts')

@@ -115,6 +115,12 @@ Route::middleware('admin')->group(function () {
 
     // Exams Management
     Route::resource('exams', App\Http\Controllers\Admin\ExamController::class);
+    Route::get('exams/{exam}/assignments/students', [App\Http\Controllers\Admin\ExamAssignmentController::class, 'searchStudents'])
+        ->name('exams.assignments.students');
+    Route::post('exams/{exam}/assignments', [App\Http\Controllers\Admin\ExamAssignmentController::class, 'store'])
+        ->name('exams.assignments.store');
+    Route::delete('exams/{exam}/assignments/{assignment}', [App\Http\Controllers\Admin\ExamAssignmentController::class, 'destroy'])
+        ->name('exams.assignments.destroy');
 
     // Questions Management
     Route::get('exams/{exam}/questions/create', [App\Http\Controllers\Admin\QuestionController::class, 'create'])->name('questions.create');
@@ -131,6 +137,10 @@ Route::middleware('admin')->group(function () {
     Route::get('exam-results/{id}/edit', [App\Http\Controllers\Admin\ExamResultController::class, 'edit'])->name('exam-results.edit');
     Route::put('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'update'])->name('exam-results.update');
     Route::post('exam-results/{id}/recalculate', [App\Http\Controllers\Admin\ExamResultController::class, 'recalculate'])->name('exam-results.recalculate');
+    Route::post('exam-results/{id}/toggle-certificate', [App\Http\Controllers\Admin\ExamResultController::class, 'toggleCertificate'])
+        ->name('exam-results.toggle-certificate');
+    Route::post('exam-results/enable-certificates', [App\Http\Controllers\Admin\ExamResultController::class, 'enableCertificatesForExam'])
+        ->name('exam-results.enable-certificates');
     Route::delete('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'destroy'])->name('exam-results.destroy');
 
     // Activity Log

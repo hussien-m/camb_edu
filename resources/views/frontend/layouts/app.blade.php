@@ -93,6 +93,7 @@
             <div class="collapse navbar-collapse" id="navMain">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('courses.offers') ? 'active' : '' }}" href="{{ route('courses.offers') }}">New Offers</a></li>
                     <li class="nav-item">
                         <a class="nav-link {{ (request()->routeIs('page.show') && request()->segment(2) == 'accreditations') ? 'active' : '' }}"
                             href="{{ route('page.show', 'accreditations') }}">

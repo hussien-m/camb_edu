@@ -118,12 +118,14 @@
                 </div>
             </div>
 
-            @if($attempt->certificate)
-                <div class="alert alert-success mt-3">
-                    <i class="fas fa-certificate"></i>
-                    <strong>تم إصدار الشهادة:</strong> {{ $attempt->certificate->certificate_number }}
-                </div>
-            @endif
+            <div class="alert alert-{{ $attempt->certificate_enabled ? 'success' : 'secondary' }} mt-3">
+                <i class="fas fa-certificate"></i>
+                <strong>حالة الشهادة:</strong>
+                {{ $attempt->certificate_enabled ? 'مسموح' : 'غير مسموح' }}
+                @if($attempt->certificate)
+                    <div><small>رقم الشهادة: {{ $attempt->certificate->certificate_number }}</small></div>
+                @endif
+            </div>
         </div>
     </div>
 

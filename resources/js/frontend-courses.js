@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If has keyword param, include it in base URL
         const keyword = urlParams.get('keyword');
         if (keyword) {
-            currentBaseUrl = `/courses?keyword=${encodeURIComponent(keyword)}`;
+            currentBaseUrl = `${currentPath}?keyword=${encodeURIComponent(keyword)}`;
         }
 
         // Store filters from URL
@@ -98,7 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('[id^="resetBtn"], .btn-filter-reset').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = '/courses';
+                const href = btn.getAttribute('href') || '/courses';
+                window.location.href = href;
             });
         });
     }

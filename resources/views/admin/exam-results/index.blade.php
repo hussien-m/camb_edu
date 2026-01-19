@@ -57,6 +57,16 @@
                             <a href="{{ route('admin.exam-results.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-undo"></i> Reset
                             </a>
+                            @if(request('exam_id'))
+                                <form action="{{ route('admin.exam-results.enable-certificates') }}" method="POST" class="d-inline"
+                                      onsubmit="return confirm('Enable certificates for all completed attempts of this exam?');">
+                                    @csrf
+                                    <input type="hidden" name="exam_id" value="{{ request('exam_id') }}">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-certificate"></i> Enable Certificates for Exam
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </form>
                 </div>
@@ -74,8 +84,9 @@
                             <th>Percentage</th>
                             <th>Status</th>
                             <th>Certificate</th>
+                            <th>Access</th>
                             <th>Date</th>
-                            <th style="width: 280px">Actions</th>
+                            <th style="width: 320px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,6 +139,13 @@
                                     @endif
                                 </td>
                                 <td>
+                                    @if($attempt->certificate_enabled)
+                                        <span class="badge bg-success">Enabled</span>
+                                    @else
+                                        <span class="badge bg-secondary">Disabled</span>
+                                    @endif
+                                </td>
+                                <td>
                                     {{ $attempt->created_at->format('Y-m-d') }}<br>
                                     <small class="text-muted">{{ $attempt->created_at->format('h:i A') }}</small>
                                 </td>
@@ -147,6 +165,14 @@
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-primary" title="إعادة حساب">
                                                 <i class="fas fa-calculator"></i>
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.exam-results.toggle-certificate', $attempt->id) }}"
+                                              method="POST" class="d-inline"
+                                              onsubmit="return confirm('Toggle certificate access for this student?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success" title="Toggle Certificate Access">
+                                                <i class="fas fa-certificate"></i>
                                             </button>
                                         </form>
                                         <form action="{{ route('admin.exam-results.destroy', $attempt->id) }}"

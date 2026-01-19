@@ -112,123 +112,135 @@
                     </div>
                     @endif
 
-                    <!-- Short Description -->
-                    @if($course->short_description)
-                    <div class="course-short-desc">
-                        <i class="fas fa-info-circle me-2"></i>
-                        {{ $course->short_description }}
-                    </div>
-                    @endif
-
-                    <!-- Course Description -->
-                    @if($course->description)
-                    <div class="course-description">
-                        {!! $course->description !!}
-                    </div>
-                    @endif
-
-                    <!-- Contact Us Buttons -->
-                    <div class="contact-buttons-section mt-4">
-                        <h4 class="contact-section-title">
-                            <i class="fas fa-headset"></i>
-                            <span>Need Help? Contact Us</span>
-                        </h4>
-                        <div class="contact-buttons-wrapper">
-                            @if(setting('contact_whatsapp'))
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}?text={{ urlencode('Hello! I am interested in the course: ' . $course->title) }}"
-                               class="contact-btn whatsapp-btn" target="_blank">
-                                <i class="fab fa-whatsapp"></i>
-                                <div class="btn-content">
-                                    <span class="btn-label">Chat on WhatsApp</span>
-                                    <span class="btn-info">Quick Response</span>
-                                </div>
+                    @if($lockOfferContent)
+                        <div class="alert alert-warning mt-4">
+                            <h5 class="mb-2"><i class="fas fa-lock me-2"></i>Content Locked</h5>
+                            <p class="mb-3">This course is part of our offers. Please log in or register to view the full details.</p>
+                            <a href="{{ route('student.login') }}" class="btn btn-primary me-2">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
                             </a>
-                            @endif
-
-                            @if(setting('contact_email'))
-                            @php
-                                $emailSubject = 'Inquiry about: ' . $course->title;
-                                $emailBody = "Hello,\n\nI am interested in learning more about the course: " . $course->title . "\n\nPlease provide me with more information.\n\nThank you.";
-                                $gmailLink = 'https://mail.google.com/mail/?view=cm&to=' . setting('contact_email') . '&su=' . rawurlencode($emailSubject) . '&body=' . rawurlencode($emailBody);
-                            @endphp
-                            <a href="{{ $gmailLink }}"
-                               class="contact-btn email-btn" target="_blank" rel="noopener noreferrer">
-                                <i class="fas fa-envelope"></i>
-                                <div class="btn-content">
-                                    <span class="btn-label">Send Email</span>
-                                    <span class="btn-info">{{ setting('contact_email') }}</span>
-                                </div>
+                            <a href="{{ route('student.register') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus me-1"></i>Register
                             </a>
-                            @endif
                         </div>
-                    </div>
+                    @else
+                        <!-- Short Description -->
+                        @if($course->short_description)
+                        <div class="course-short-desc">
+                            <i class="fas fa-info-circle me-2"></i>
+                            {{ $course->short_description }}
+                        </div>
+                        @endif
 
-                    <!-- Course Inquiry Form -->
-                    <div class="inquiry-form-box mt-5">
-                        <h4 class="sidebar-title">
-                            <i class="fas fa-envelope"></i>
-                            <span>Inquire About This Course</span>
-                        </h4>
+                        <!-- Course Description -->
+                        @if($course->description)
+                        <div class="course-description">
+                            {!! $course->description !!}
+                        </div>
+                        @endif
 
-                        <div id="inquiry-alert" style="display: none;"></div>
-
-                        <form id="inquiryForm" action="{{ route('course.inquiry.store', $course->id) }}" method="POST">
-                            @csrf
-
-                            <!-- Honeypot Fields (hidden from real users, visible to bots) -->
-                            <input type="text" name="website_url" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
-                            <input type="text" name="phone_number_confirm" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="name">Full Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control"
-                                               id="name" name="name"
-                                               placeholder="Enter your full name" required>
-                                        <div class="invalid-feedback"></div>
+                        <!-- Contact Us Buttons -->
+                        <div class="contact-buttons-section mt-4">
+                            <h4 class="contact-section-title">
+                                <i class="fas fa-headset"></i>
+                                <span>Need Help? Contact Us</span>
+                            </h4>
+                            <div class="contact-buttons-wrapper">
+                                @if(setting('contact_whatsapp'))
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', setting('contact_whatsapp')) }}?text={{ urlencode('Hello! I am interested in the course: ' . $course->title) }}"
+                                   class="contact-btn whatsapp-btn" target="_blank">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <div class="btn-content">
+                                        <span class="btn-label">Chat on WhatsApp</span>
+                                        <span class="btn-info">Quick Response</span>
                                     </div>
-                                </div>
+                                </a>
+                                @endif
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="email">Email Address <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control"
-                                               id="email" name="email"
-                                               placeholder="your.email@example.com" required>
-                                        <div class="invalid-feedback"></div>
+                                @if(setting('contact_email'))
+                                @php
+                                    $emailSubject = 'Inquiry about: ' . $course->title;
+                                    $emailBody = "Hello,\n\nI am interested in learning more about the course: " . $course->title . "\n\nPlease provide me with more information.\n\nThank you.";
+                                    $gmailLink = 'https://mail.google.com/mail/?view=cm&to=' . setting('contact_email') . '&su=' . rawurlencode($emailSubject) . '&body=' . rawurlencode($emailBody);
+                                @endphp
+                                <a href="{{ $gmailLink }}"
+                                   class="contact-btn email-btn" target="_blank" rel="noopener noreferrer">
+                                    <i class="fas fa-envelope"></i>
+                                    <div class="btn-content">
+                                        <span class="btn-label">Send Email</span>
+                                        <span class="btn-info">{{ setting('contact_email') }}</span>
                                     </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="phone">Phone Number</label>
-                                        <input type="tel" class="form-control"
-                                               id="phone" name="phone"
-                                               placeholder="+1 (555) 123-4567">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="message">Your Message <span class="text-danger">*</span></label>
-                                        <textarea class="form-control"
-                                                  id="message" name="message" rows="5"
-                                                  placeholder="Tell us about your interest in this course..." required></textarea>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-12">
-                                    <button type="submit" class="btn-submit-inquiry" id="submitBtn">
-                                        <i class="fas fa-paper-plane"></i>
-                                        <span>Send Inquiry</span>
-                                    </button>
-                                </div>
+                                </a>
+                                @endif
                             </div>
-                        </form>
-                    </div>
+                        </div>
+
+                        <!-- Course Inquiry Form -->
+                        <div class="inquiry-form-box mt-5">
+                            <h4 class="sidebar-title">
+                                <i class="fas fa-envelope"></i>
+                                <span>Inquire About This Course</span>
+                            </h4>
+
+                            <div id="inquiry-alert" style="display: none;"></div>
+
+                            <form id="inquiryForm" action="{{ route('course.inquiry.store', $course->id) }}" method="POST">
+                                @csrf
+
+                                <!-- Honeypot Fields (hidden from real users, visible to bots) -->
+                                <input type="text" name="website_url" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+                                <input type="text" name="phone_number_confirm" value="" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Full Name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control"
+                                                   id="name" name="name"
+                                                   placeholder="Enter your full name" required>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">Email Address <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control"
+                                                   id="email" name="email"
+                                                   placeholder="your.email@example.com" required>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="phone">Phone Number</label>
+                                            <input type="tel" class="form-control"
+                                                   id="phone" name="phone"
+                                                   placeholder="+1 (555) 123-4567">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="message">Your Message <span class="text-danger">*</span></label>
+                                            <textarea class="form-control"
+                                                      id="message" name="message" rows="5"
+                                                      placeholder="Tell us about your interest in this course..." required></textarea>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn-submit-inquiry" id="submitBtn">
+                                            <i class="fas fa-paper-plane"></i>
+                                            <span>Send Inquiry</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
 

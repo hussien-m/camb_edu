@@ -57,6 +57,11 @@ class Student extends Authenticatable
         return $this->hasMany(ExamAttempt::class);
     }
 
+    public function examAssignments()
+    {
+        return $this->hasMany(ExamStudentAssignment::class);
+    }
+
     public function certificates()
     {
         return $this->hasMany(Certificate::class);
