@@ -534,6 +534,7 @@ body {
         top: var(--header-height-mobile);
         height: calc(100vh - var(--header-height-mobile));
         border-radius: 0 16px 16px 0;
+        overflow-y: auto;
     }
 
     .sidebar-overlay {
