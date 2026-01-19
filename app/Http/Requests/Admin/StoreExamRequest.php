@@ -28,6 +28,7 @@ class StoreExamRequest extends FormRequest
             'timezone' => 'nullable|string|timezone',
             'scheduling_notes' => 'nullable|string|max:1000',
             'group_assignment_enabled' => 'nullable|boolean',
+            'allow_enrolled_access' => 'nullable|boolean',
         ];
     }
 
@@ -39,6 +40,7 @@ class StoreExamRequest extends FormRequest
         $this->merge([
             'is_scheduled' => $this->has('is_scheduled') ? true : false,
             'group_assignment_enabled' => $this->has('group_assignment_enabled') ? true : false,
+            'allow_enrolled_access' => $this->has('allow_enrolled_access') ? true : false,
         ]);
     }
 

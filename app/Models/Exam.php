@@ -24,6 +24,7 @@ class Exam extends Model
         'timezone',
         'scheduling_notes',
         'group_assignment_enabled',
+        'allow_enrolled_access',
     ];
 
     protected $casts = [
@@ -31,6 +32,7 @@ class Exam extends Model
         'scheduled_start_date' => 'datetime',
         'scheduled_end_date' => 'datetime',
         'group_assignment_enabled' => 'boolean',
+        'allow_enrolled_access' => 'boolean',
     ];
 
     public function course()

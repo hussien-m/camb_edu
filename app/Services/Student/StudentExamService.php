@@ -90,8 +90,8 @@ class StudentExamService
             }
         }
 
-        // Group assignment checks (optional)
-        if ($exam->group_assignment_enabled) {
+        // Group assignment checks (optional, unless enrolled access is allowed)
+        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access) {
             if (!$student->email_verified_at) {
                 return [
                     'allowed' => false,
@@ -343,7 +343,7 @@ class StudentExamService
         }
 
         $assignment = null;
-        if ($exam->group_assignment_enabled) {
+        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access) {
             $assignment = $this->getLatestAssignment($student, $exam);
             if (!$assignment || $assignment->status !== 'assigned') {
                 return [

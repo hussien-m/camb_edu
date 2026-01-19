@@ -103,6 +103,15 @@
                         </h5>
                     </div>
                     <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="allow_enrolled_access"
+                                   name="allow_enrolled_access" value="1"
+                                   {{ old('allow_enrolled_access', $exam->allow_enrolled_access ?? true) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="allow_enrolled_access">
+                                <strong>Allow all enrolled students to access this exam</strong>
+                                <small class="d-block text-muted">If enabled, enrolled students can access the exam without assignment.</small>
+                            </label>
+                        </div>
                         <div class="form-check mb-0">
                             <input class="form-check-input" type="checkbox" id="group_assignment_enabled"
                                    name="group_assignment_enabled" value="1"

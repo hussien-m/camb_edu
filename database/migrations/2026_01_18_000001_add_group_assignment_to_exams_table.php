@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('exams', function (Blueprint $table) {
             $table->boolean('group_assignment_enabled')->default(false)->after('scheduling_notes');
+            $table->boolean('allow_enrolled_access')->default(true)->after('group_assignment_enabled');
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('exams', function (Blueprint $table) {
-            $table->dropColumn('group_assignment_enabled');
+            $table->dropColumn(['group_assignment_enabled', 'allow_enrolled_access']);
         });
     }
 };
