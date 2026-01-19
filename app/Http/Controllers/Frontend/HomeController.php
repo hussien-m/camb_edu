@@ -479,6 +479,10 @@ class HomeController extends Controller
             ->where('is_published', true)
             ->firstOrFail();
 
+        if ($page->slug === 'contact-us') {
+            return view('frontend.contact-us', compact('page'));
+        }
+
         return view('frontend.page', compact('page'));
     }
 }

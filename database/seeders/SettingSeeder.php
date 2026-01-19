@@ -74,7 +74,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'contact_phone',
-                'value' => '+218 91 234 5678',
+                'value' => '+44 7848 195975',
                 'type' => 'text',
                 'group' => 'contact',
                 'label' => 'Phone Number',
@@ -89,6 +89,14 @@ class SettingSeeder extends Seeder
                 'description' => 'Secondary contact phone',
             ],
             [
+                'key' => 'contact_phone_ca',
+                'value' => null,
+                'type' => 'text',
+                'group' => 'contact',
+                'label' => 'Canada Phone Number',
+                'description' => 'Canada branch phone number',
+            ],
+            [
                 'key' => 'contact_address',
                 'value' => 'Tripoli, Libya',
                 'type' => 'textarea',
@@ -97,12 +105,28 @@ class SettingSeeder extends Seeder
                 'description' => 'Physical address',
             ],
             [
+                'key' => 'contact_address_uk',
+                'value' => '86-90 Paul Street, London, England, EC2A 4NE',
+                'type' => 'textarea',
+                'group' => 'contact',
+                'label' => 'UK Address',
+                'description' => 'United Kingdom branch address',
+            ],
+            [
                 'key' => 'contact_whatsapp',
-                'value' => '+218912345678',
+                'value' => '+44 7848 195975',
                 'type' => 'text',
                 'group' => 'contact',
                 'label' => 'WhatsApp Number',
                 'description' => 'WhatsApp contact number',
+            ],
+            [
+                'key' => 'contact_whatsapp_ca',
+                'value' => null,
+                'type' => 'text',
+                'group' => 'contact',
+                'label' => 'Canada WhatsApp Number',
+                'description' => 'Canada branch WhatsApp number',
             ],
 
             // Social Media
