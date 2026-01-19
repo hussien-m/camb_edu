@@ -159,43 +159,5 @@
 
     @stack('scripts')
 
-@push('styles')
-<style>
-    .exam-notification .exam-bell-btn {
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-    }
-    .exam-notification .exam-bell-btn:hover {
-        background: #f8fafc;
-    }
-    .exam-notification-menu {
-        min-width: 380px;
-        border-radius: 14px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
-        z-index: 2000;
-    }
-    .exam-notification .dropdown-menu {
-        z-index: 2000;
-    }
-    .top-header {
-        position: relative;
-        z-index: 2100;
-    }
-    .exam-notification-item {
-        background: #fff;
-    }
-    .exam-notification-item:hover {
-        background: #f8fafc;
-    }
-</style>
-@endpush
 </body>
 </html>
