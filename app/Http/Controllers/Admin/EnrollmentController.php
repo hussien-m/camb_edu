@@ -26,7 +26,21 @@ class EnrollmentController extends Controller
             $enrollments = $this->enrollmentService->getEnrollmentsWithExamStatus($request->all());
             $levels = $this->enrollmentService->getLevels();
 
-            return view('admin.enrollments.index', compact('enrollments', 'levels'));
+            // Get statistics
+            $stats = [
+                'total' => \App\Models\Enrollment::count(),
+                'active' => \App\Models\Enrollment::where('status', 'active')->count(),
+                'completed' => \App\Models\Enrollment::where('status', 'completed')->count(),
+                'content_disabled' => \App\Models\Enrollment::where('content_disabled', true)->count(),
+                'content_enabled' => \App\Models\Enrollment::where('content_disabled', false)->count(),
+                'exam_disabled' => \App\Models\Enrollment::where('exam_disabled', true)->count(),
+                'exam_enabled' => \App\Models\Enrollment::where('exam_disabled', false)->count(),
+                'with_exams' => \App\Models\Enrollment::whereHas('course.exams')->count(),
+                'recent_week' => \App\Models\Enrollment::where('created_at', '>=', now()->subWeek())->count(),
+                'recent_month' => \App\Models\Enrollment::where('created_at', '>=', now()->subMonth())->count(),
+            ];
+
+            return view('admin.enrollments.index', compact('enrollments', 'levels', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error fetching enrollments: ' . $e->getMessage(), [
                 'file' => $e->getFile(),

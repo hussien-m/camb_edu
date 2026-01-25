@@ -23,7 +23,22 @@ class ExamResultController extends Controller
         $attempts = $this->resultService->getFilteredAttempts($request->all());
         $exams = Exam::all();
 
-        return view('admin.exam-results.index', compact('attempts', 'exams'));
+        // Get statistics
+        $stats = [
+            'total' => ExamAttempt::count(),
+            'completed' => ExamAttempt::where('status', 'completed')->count(),
+            'in_progress' => ExamAttempt::where('status', 'in_progress')->count(),
+            'expired' => ExamAttempt::where('status', 'expired')->count(),
+            'passed' => ExamAttempt::where('passed', true)->count(),
+            'failed' => ExamAttempt::where('passed', false)->where('status', 'completed')->count(),
+            'with_certificates' => ExamAttempt::whereHas('certificate')->count(),
+            'avg_score' => ExamAttempt::where('status', 'completed')->avg('percentage') ?? 0,
+            'today' => ExamAttempt::whereDate('created_at', today())->count(),
+            'this_week' => ExamAttempt::where('created_at', '>=', now()->startOfWeek())->count(),
+            'this_month' => ExamAttempt::where('created_at', '>=', now()->startOfMonth())->count(),
+        ];
+
+        return view('admin.exam-results.index', compact('attempts', 'exams', 'stats'));
     }
 
     public function show($id)

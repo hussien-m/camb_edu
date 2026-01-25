@@ -75,40 +75,113 @@
         <div class="col-12 mb-3">
             <div class="card card-outline card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-book-reader mr-2"></i> Enrollments</h3>
-                    <div class="card-tools">
-                        <small class="text-muted">Manage and monitor student enrollments and exam status</small>
+                    <div class="d-flex align-items-center">
+                        <span class="badge badge-light mr-3" style="font-size: 1.5rem; padding: 10px 15px; background: rgba(255,255,255,0.3);">4</span>
+                        <div class="flex-grow-1">
+                            <h3 class="card-title mb-0"><i class="fas fa-book-reader mr-2"></i> Enrollments</h3>
+                            <small class="text-muted">Manage and monitor student enrollments with content & exam controls</small>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body p-3">
                     <!-- STATS: use AdminLTE info-box -->
                     <div class="row enrollment-stats">
-                        <div class="col-md-4 col-sm-6">
-                            <div class="info-box bg-white">
-                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="info-box bg-gradient-info">
+                                <span class="info-box-icon"><i class="fas fa-users"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Total Enrollments</span>
-                                    <span class="info-box-number h3 mb-0">{{ $enrollments->total() }}</span>
+                                    <span class="info-box-number">{{ $stats['total'] ?? $enrollments->total() }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-white" style="width: 100%"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4 col-sm-6">
-                            <div class="info-box bg-white">
-                                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-check-circle"></i></span>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="info-box bg-gradient-success">
+                                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">With Active Exams</span>
-                                    <span class="info-box-number h3 mb-0">{{ $enrollments->getCollection()->filter(fn($item) => $item['hasExam'])->count() }}</span>
+                                    <span class="info-box-text">Active Enrollments</span>
+                                    <span class="info-box-number">{{ $stats['active'] ?? 0 }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['active'] / $stats['total'] * 100) : 0 }}%"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4 col-sm-6">
-                            <div class="info-box bg-white">
-                                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-times-circle"></i></span>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="info-box bg-gradient-warning">
+                                <span class="info-box-icon"><i class="fas fa-lock"></i></span>
                                 <div class="info-box-content">
-                                    <span class="info-box-text">Missing Exams</span>
-                                    <span class="info-box-number h3 mb-0">{{ $enrollments->getCollection()->filter(fn($item) => !$item['hasExam'])->count() }}</span>
+                                    <span class="info-box-text">Content Disabled</span>
+                                    <span class="info-box-number">{{ $stats['content_disabled'] ?? 0 }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['content_disabled'] / $stats['total'] * 100) : 0 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="info-box bg-gradient-danger">
+                                <span class="info-box-icon"><i class="fas fa-ban"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Exams Disabled</span>
+                                    <span class="info-box-number">{{ $stats['exam_disabled'] ?? 0 }}</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['exam_disabled'] / $stats['total'] * 100) : 0 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Stats Row -->
+                    <div class="row mt-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>{{ $stats['content_enabled'] ?? 0 }}</h3>
+                                    <p>Content Enabled</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-unlock"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>{{ $stats['exam_enabled'] ?? 0 }}</h3>
+                                    <p>Exams Enabled</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    <h3>{{ $stats['recent_week'] ?? 0 }}</h3>
+                                    <p>New This Week</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-calendar-week"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="small-box bg-primary">
+                                <div class="inner">
+                                    <h3>{{ $stats['completed'] ?? 0 }}</h3>
+                                    <p>Completed</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-trophy"></i>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +189,10 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Filters and Table -->
+    <div class="row">
         <!-- FILTERS -->
         <div class="col-12">
             <div class="card filters-card">
@@ -180,6 +256,7 @@
                     <table id="enrollmentsTable" class="table table-hover table-striped table-valign-middle w-100">
                         <thead class="bg-primary">
                             <tr>
+                                <th style="width: 50px" class="text-center">#</th>
                                 <th>Student</th>
                                 <th>Course</th>
                                 <th>Enrolled Date</th>
@@ -198,6 +275,9 @@
                             $enrolledAt = $item['enrolledAt'];
                             @endphp
                             <tr>
+                                <td class="text-center">
+                                    <strong class="text-primary">{{ ($enrollments->currentPage() - 1) * $enrollments->perPage() + $loop->iteration }}</strong>
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <img src="https://ui-avatars.com/api/?name={{ urlencode($student->full_name) }}&size=64&background=3b82f6&color=fff&bold=true" alt="{{ $student->full_name }}" class="student-avatar mr-3">
@@ -253,7 +333,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5">
+                                <td colspan="6" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="fas fa-inbox fa-2x mb-2"></i>
                                         <div class="h5">No Enrollments Found</div>

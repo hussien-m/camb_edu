@@ -9,9 +9,123 @@
 @endsection
 
 @section('content')
+<div class="container-fluid">
+    <!-- Page Number Badge -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-warning d-flex align-items-center" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none;">
+                <span class="badge badge-light mr-3" style="font-size: 1.5rem; padding: 10px 15px; background: rgba(255,255,255,0.3);">2</span>
+                <div class="flex-grow-1">
+                    <h4 class="mb-0" style="color: white;"><i class="fas fa-chart-bar me-2"></i>Exam Results Management</h4>
+                    <small style="color: rgba(255,255,255,0.9);">View, manage, and analyze all exam attempts and results</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-warning">
+                <span class="info-box-icon"><i class="fas fa-clipboard-check"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Attempts</span>
+                    <span class="info-box-number">{{ $stats['total'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-success">
+                <span class="info-box-icon"><i class="fas fa-check-double"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Completed</span>
+                    <span class="info-box-number">{{ $stats['completed'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['completed'] / $stats['total'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-info">
+                <span class="info-box-icon"><i class="fas fa-trophy"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Passed</span>
+                    <span class="info-box-number">{{ $stats['passed'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['completed'] > 0 ? ($stats['passed'] / $stats['completed'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-primary">
+                <span class="info-box-icon"><i class="fas fa-certificate"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">With Certificates</span>
+                    <span class="info-box-number">{{ $stats['with_certificates'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['completed'] > 0 ? ($stats['with_certificates'] / $stats['completed'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Stats Row -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ $stats['failed'] ?? 0 }}</h3>
+                    <p>Failed Attempts</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ number_format($stats['avg_score'] ?? 0, 1) }}%</h3>
+                    <p>Average Score</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ $stats['today'] ?? 0 }}</h3>
+                    <p>Today's Attempts</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ $stats['this_month'] ?? 0 }}</h3>
+                    <p>This Month</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">All Exam Results</h3>
+            <h3 class="card-title"><i class="fas fa-list me-2"></i>All Exam Results</h3>
         </div>
         <div class="card-body">
             <!-- Filters -->
@@ -77,7 +191,7 @@
                 <table class="table table-bordered table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 60px">ID</th>
+                            <th style="width: 50px" class="text-center">#</th>
                             <th>Student</th>
                             <th>Exam</th>
                             <th>Score</th>
@@ -92,9 +206,11 @@
                     <tbody>
                         @forelse($attempts as $attempt)
                             <tr>
-                                <td>{{ $attempt->id }}</td>
+                                <td class="text-center">
+                                    <strong class="text-primary">{{ ($attempts->currentPage() - 1) * $attempts->perPage() + $loop->iteration }}</strong>
+                                </td>
                                 <td>
-                                    <strong>{{ $attempt->student->name }}</strong><br>
+                                    <strong>{{ $attempt->student->full_name ?? ($attempt->student->first_name . ' ' . $attempt->student->last_name) }}</strong><br>
                                     <small class="text-muted">{{ $attempt->student->email }}</small>
                                 </td>
                                 <td>
@@ -205,4 +321,5 @@
             </div>
         </div>
     </div>
+</div>
 @endsection

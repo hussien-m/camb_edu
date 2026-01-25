@@ -56,7 +56,21 @@ class ExamController extends Controller
             $exams = $query->paginate(20)->withQueryString();
             $courses = Course::where('status', 'active')->orderBy('title')->get();
 
-            return view('admin.exams.index', compact('exams', 'courses'));
+            // Get statistics
+            $stats = [
+                'total' => Exam::count(),
+                'active' => Exam::where('status', 'active')->count(),
+                'inactive' => Exam::where('status', 'inactive')->count(),
+                'with_questions' => Exam::whereHas('questions')->count(),
+                'scheduled' => Exam::where('is_scheduled', true)->count(),
+                'ready' => Exam::whereHas('questions')
+                    ->whereRaw('(SELECT SUM(points) FROM questions WHERE exam_id = exams.id) = exams.total_marks')
+                    ->count(),
+                'total_attempts' => \App\Models\ExamAttempt::count(),
+                'completed_attempts' => \App\Models\ExamAttempt::where('status', 'completed')->count(),
+            ];
+
+            return view('admin.exams.index', compact('exams', 'courses', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error fetching exams: ' . $e->getMessage());
             return redirect()->route('admin.dashboard')

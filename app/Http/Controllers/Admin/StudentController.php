@@ -21,7 +21,20 @@ class StudentController extends Controller
     {
         try {
             $students = $this->studentService->getAllStudents($request);
-            return view('admin.students.index', compact('students'));
+            
+            // Get statistics
+            $stats = [
+                'total' => \App\Models\Student::count(),
+                'active' => \App\Models\Student::where('status', 'active')->count(),
+                'pending' => \App\Models\Student::where('status', 'pending')->count(),
+                'inactive' => \App\Models\Student::where('status', 'inactive')->count(),
+                'verified' => \App\Models\Student::whereNotNull('email_verified_at')->count(),
+                'with_enrollments' => \App\Models\Student::whereHas('enrollments')->count(),
+                'recent_week' => \App\Models\Student::where('created_at', '>=', now()->subWeek())->count(),
+                'recent_month' => \App\Models\Student::where('created_at', '>=', now()->subMonth())->count(),
+            ];
+            
+            return view('admin.students.index', compact('students', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error fetching students: ' . $e->getMessage(), [
                 'file' => $e->getFile(),

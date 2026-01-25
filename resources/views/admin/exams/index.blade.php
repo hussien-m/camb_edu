@@ -2,11 +2,124 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Page Number Badge -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-success d-flex align-items-center" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none;">
+                <span class="badge badge-light mr-3" style="font-size: 1.5rem; padding: 10px 15px; background: rgba(255,255,255,0.3);">3</span>
+                <div class="flex-grow-1">
+                    <h4 class="mb-0" style="color: white;"><i class="fas fa-clipboard-list me-2"></i>Exams Management</h4>
+                    <small style="color: rgba(255,255,255,0.9);">Create, manage, and monitor all course exams</small>
+                </div>
+                <a href="{{ route('admin.exams.create') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-plus me-1"></i>Create New Exam
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-success">
+                <span class="info-box-icon"><i class="fas fa-clipboard-list"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Exams</span>
+                    <span class="info-box-number">{{ $stats['total'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-info">
+                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Active Exams</span>
+                    <span class="info-box-number">{{ $stats['active'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['active'] / $stats['total'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-warning">
+                <span class="info-box-icon"><i class="fas fa-check-double"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Ready Exams</span>
+                    <span class="info-box-number">{{ $stats['ready'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['ready'] / $stats['total'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-primary">
+                <span class="info-box-icon"><i class="fas fa-calendar-alt"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Scheduled Exams</span>
+                    <span class="info-box-number">{{ $stats['scheduled'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['scheduled'] / $stats['total'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Stats Row -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ $stats['with_questions'] ?? 0 }}</h3>
+                    <p>With Questions</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ $stats['total_attempts'] ?? 0 }}</h3>
+                    <p>Total Attempts</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-pencil-alt"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ $stats['completed_attempts'] ?? 0 }}</h3>
+                    <p>Completed Attempts</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-check-double"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ $stats['inactive'] ?? 0 }}</h3>
+                    <p>Inactive Exams</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Exams Management</h2>
-        <a href="{{ route('admin.exams.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Create New Exam
-        </a>
+        <h2><i class="fas fa-list me-2"></i>All Exams</h2>
     </div>
 
     @if(session('success'))
@@ -65,7 +178,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th style="width: 50px" class="text-center">#</th>
                             <th>Title</th>
                             <th>Course</th>
                             <th>Duration</th>
@@ -80,7 +193,9 @@
                     <tbody>
                         @forelse($exams as $exam)
                             <tr>
-                                <td>{{ $exam->id }}</td>
+                                <td class="text-center">
+                                    <strong class="text-primary">{{ ($exams->currentPage() - 1) * $exams->perPage() + $loop->iteration }}</strong>
+                                </td>
                                 <td>{{ $exam->title }}</td>
                                 <td>{{ $exam->course->title }}</td>
                                 <td>{{ $exam->duration }} min</td>

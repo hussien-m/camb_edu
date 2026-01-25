@@ -9,9 +9,123 @@
 @endsection
 
 @section('content')
+<div class="container-fluid">
+    <!-- Page Number Badge -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-primary d-flex align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <span class="badge badge-light mr-3" style="font-size: 1.5rem; padding: 10px 15px; background: rgba(255,255,255,0.3);">1</span>
+                <div class="flex-grow-1">
+                    <h4 class="mb-0" style="color: white;"><i class="fas fa-users me-2"></i>Students Management</h4>
+                    <small style="color: rgba(255,255,255,0.9);">Comprehensive student management with advanced features</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-info">
+                <span class="info-box-icon"><i class="fas fa-users"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Students</span>
+                    <span class="info-box-number">{{ $stats['total'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-success">
+                <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Active Students</span>
+                    <span class="info-box-number">{{ $stats['active'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['active'] / $stats['total'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-warning">
+                <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Pending Verification</span>
+                    <span class="info-box-number">{{ $stats['pending'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['pending'] / $stats['total'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="info-box bg-gradient-primary">
+                <span class="info-box-icon"><i class="fas fa-envelope-check"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Verified Students</span>
+                    <span class="info-box-number">{{ $stats['verified'] ?? 0 }}</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-white" style="width: {{ $stats['total'] > 0 ? ($stats['verified'] / $stats['total'] * 100) : 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Stats Row -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ $stats['with_enrollments'] ?? 0 }}</h3>
+                    <p>With Enrollments</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ $stats['recent_week'] ?? 0 }}</h3>
+                    <p>New This Week</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-week"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ $stats['recent_month'] ?? 0 }}</h3>
+                    <p>New This Month</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ $stats['inactive'] ?? 0 }}</h3>
+                    <p>Inactive Students</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-user-slash"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">All Students</h3>
+            <h3 class="card-title"><i class="fas fa-list me-2"></i>All Students</h3>
             <div class="card-tools">
                 <a href="{{ route('admin.export.students') }}" class="btn btn-success btn-sm mr-2">
                     <i class="fas fa-download"></i> Export CSV
@@ -59,10 +173,10 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
+                        <th style="width: 50px" class="text-center">#</th>
                         <th style="width: 30px">
                             <input type="checkbox" id="selectAll">
                         </th>
-                        <th style="width: 60px">ID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -77,10 +191,12 @@
                 <tbody>
                     @forelse($students as $student)
                         <tr>
+                            <td class="text-center">
+                                <strong class="text-primary">{{ ($students->currentPage() - 1) * $students->perPage() + $loop->iteration }}</strong>
+                            </td>
                             <td>
                                 <input type="checkbox" class="row-checkbox" value="{{ $student->id }}">
                             </td>
-                            <td>{{ $student->id }}</td>
                             <td>
                                 <strong>{{ $student->full_name }}</strong>
                             </td>
@@ -137,7 +253,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center">No students found</td>
+                            <td colspan="10" class="text-center">No students found</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -147,6 +263,7 @@
             {{ $students->links('vendor.pagination.adminlte') }}
         </div>
     </div>
+</div>
 
 @push('scripts')
 <script>
