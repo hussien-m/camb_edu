@@ -14,32 +14,62 @@ class ExamResultService
      */
     public function getFilteredAttempts(array $filters)
     {
-        $query = ExamAttempt::with(['student', 'exam', 'certificate'])
-            ->orderBy('created_at', 'desc');
+        $query = ExamAttempt::with(['student', 'exam', 'certificate']);
 
+        // Student search
         if (!empty($filters['student'])) {
             $query->whereHas('student', function($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['student'] . '%');
+                $search = $filters['student'];
+                $q->where(function($sq) use ($search) {
+                    $sq->where('first_name', 'like', '%' . $search . '%')
+                       ->orWhere('last_name', 'like', '%' . $search . '%')
+                       ->orWhere('email', 'like', '%' . $search . '%')
+                       ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+                });
             });
         }
 
+        // Exam filter
         if (!empty($filters['exam_id'])) {
             $query->where('exam_id', $filters['exam_id']);
         }
 
+        // Status filter (passed/failed)
         if (!empty($filters['status'])) {
-            $query->where('passed', $filters['status'] === 'passed' ? 1 : 0);
+            if ($filters['status'] === 'passed') {
+                $query->where('passed', true)->where('status', 'completed');
+            } elseif ($filters['status'] === 'failed') {
+                $query->where('passed', false)->where('status', 'completed');
+            }
         }
 
+        // Attempt status filter (completed/not_completed)
+        if (!empty($filters['attempt_status'])) {
+            if ($filters['attempt_status'] === 'completed') {
+                $query->where('status', 'completed');
+            } elseif ($filters['attempt_status'] === 'not_completed') {
+                $query->where('status', '!=', 'completed');
+            }
+        }
+
+        // Date from
         if (!empty($filters['date_from'])) {
             $query->whereDate('created_at', '>=', $filters['date_from']);
         }
 
+        // Date to
         if (!empty($filters['date_to'])) {
             $query->whereDate('created_at', '<=', $filters['date_to']);
         }
 
-        return $query->paginate(20);
+        // Sort by date
+        $sortOrder = $filters['sort_date'] ?? 'desc'; // 'asc' for oldest first, 'desc' for newest first
+        $query->orderBy('created_at', $sortOrder);
+
+        $perPage = 20;
+        $page = isset($filters['page']) ? (int)$filters['page'] : 1;
+        
+        return $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
     }
 
     /**

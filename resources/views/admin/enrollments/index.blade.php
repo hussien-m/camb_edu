@@ -193,28 +193,26 @@
 
     <!-- Filters and Table -->
     <div class="row">
-        <!-- FILTERS -->
+        <!-- Advanced AJAX Filters -->
         <div class="col-12">
-            <div class="card filters-card">
-                <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-filter mr-2"></i> Advanced Filters</h3>
+            <div class="card filters-card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Advanced Filters (AJAX)</h5>
                     <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                        <button type="button" class="btn btn-tool text-white" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form method="GET" id="filterForm" action="{{ route('admin.enrollments.index') }}" class="w-100 d-flex flex-wrap">
-                        <div class="form-group">
-                            <label for="studentSearch">Search Student</label>
-                            <div class="input-group">
-                                <input id="studentSearch" type="text" name="student" class="form-control" placeholder="Name or email..." value="{{ request('student') }}">
-                                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
-                            </div>
+                    <form id="filterForm" class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-user me-1"></i>Student Name</label>
+                            <input type="text" name="student" id="filter_student" class="form-control" 
+                                   placeholder="Search by name or email..." value="{{ request('student') }}">
                         </div>
 
-                        <div class="form-group">
-                            <label for="levelSelect">Level / Stage</label>
-                            <select name="level_id" id="levelSelect" class="form-control select2-basic">
+                        <div class="col-md-2">
+                            <label class="form-label"><i class="fas fa-layer-group me-1"></i>Level / Stage</label>
+                            <select name="level_id" id="filter_level_id" class="form-control">
                                 <option value="">All Levels</option>
                                 @foreach($levels ?? [] as $level)
                                 <option value="{{ $level->id }}" {{ request('level_id') == $level->id ? 'selected' : '' }}>
@@ -224,19 +222,75 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="examSelect">Exam Status</label>
-                            <select name="exam_status" id="examSelect" class="form-control select2-basic">
-                                <option value="">All Status</option>
-                                <option value="has_exam" {{ request('exam_status') == 'has_exam' ? 'selected' : '' }}>Has Exam</option>
-                                <option value="no_exam" {{ request('exam_status') == 'no_exam' ? 'selected' : '' }}>Missing Exam</option>
+                        <div class="col-md-2">
+                            <label class="form-label"><i class="fas fa-clipboard-check me-1"></i>Has Exam</label>
+                            <select name="has_exam" id="filter_has_exam" class="form-control">
+                                <option value="">All</option>
+                                <option value="yes">✅ Has Exam</option>
+                                <option value="no">❌ No Exam</option>
                             </select>
                         </div>
 
-                        <div class="form-group ml-auto d-flex align-items-center gap-2">
-                            <a href="{{ route('admin.enrollments.index') }}" class="btn btn-outline-secondary"><i class="fas fa-redo"></i> Reset</a>
+                        <div class="col-md-2">
+                            <label class="form-label"><i class="fas fa-lock me-1"></i>Content Status</label>
+                            <select name="content_status" id="filter_content_status" class="form-control">
+                                <option value="">All</option>
+                                <option value="enabled">✅ Enabled</option>
+                                <option value="disabled">🔒 Disabled</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label"><i class="fas fa-ban me-1"></i>Exam Status</label>
+                            <select name="exam_status" id="filter_exam_status" class="form-control">
+                                <option value="">All</option>
+                                <option value="enabled">✅ Enabled</option>
+                                <option value="disabled">🔒 Disabled</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-1">
+                            <label class="form-label"><i class="fas fa-sort me-1"></i>Sort Date</label>
+                            <select name="sort_date" id="filter_sort_date" class="form-control">
+                                <option value="desc" {{ request('sort_date', 'desc') === 'desc' ? 'selected' : '' }}>🕐 Newest</option>
+                                <option value="asc" {{ request('sort_date') === 'asc' ? 'selected' : '' }}>🕐 Oldest</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-calendar-alt me-1"></i>Date From</label>
+                            <input type="date" name="date_from" id="filter_date_from" class="form-control" value="{{ request('date_from') }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-calendar-check me-1"></i>Date To</label>
+                            <input type="date" name="date_to" id="filter_date_to" class="form-control" value="{{ request('date_to') }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-info-circle me-1"></i>Enrollment Status</label>
+                            <select name="enrollment_status" id="filter_enrollment_status" class="form-control">
+                                <option value="">All Status</option>
+                                <option value="active">✅ Active</option>
+                                <option value="completed">🏆 Completed</option>
+                                <option value="cancelled">❌ Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <button type="button" id="filterBtn" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i>Filter
+                            </button>
+                            <button type="button" id="resetBtn" class="btn btn-secondary">
+                                <i class="fas fa-undo me-1"></i>Reset
+                            </button>
+                            <span id="filterLoading" class="ml-2" style="display: none;">
+                                <i class="fas fa-spinner fa-spin text-primary"></i> Loading...
+                            </span>
                         </div>
                     </form>
+                    <div id="filterResults" class="mt-3"></div>
                 </div>
             </div>
         </div>
@@ -264,98 +318,13 @@
                                 <th style="width:120px">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @forelse($enrollments as $item)
-                            @php
-                            $enrollment = $item['enrollment'];
-                            $student = $item['student'];
-                            $course = $item['course'];
-                            $hasExam = $item['hasExam'];
-                            $examsCount = $item['examsCount'];
-                            $enrolledAt = $item['enrolledAt'];
-                            @endphp
-                            <tr>
-                                <td class="text-center">
-                                    <strong class="text-primary">{{ ($enrollments->currentPage() - 1) * $enrollments->perPage() + $loop->iteration }}</strong>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($student->full_name) }}&size=64&background=3b82f6&color=fff&bold=true" alt="{{ $student->full_name }}" class="student-avatar mr-3">
-                                        <div>
-                                            <div class="font-weight-bold">{{ $student->full_name }}</div>
-                                            <div class="text-muted small">{{ $student->email }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <div class="font-weight-bold">{{ $course->title }}</div>
-                                    <div><span class="badge badge-light">{{ $course->level?->name ?? 'N/A' }}</span></div>
-                                </td>
-
-                                <td>
-                                    <div class="font-weight-bold">{{ $enrolledAt->format('M d, Y') }}</div>
-                                    <div class="text-muted small">{{ $enrolledAt->diffForHumans() }}</div>
-                                </td>
-
-                                <td>
-                                    @if($hasExam)
-                                    <span class="badge badge-success badge-status"><i class="fas fa-check mr-1"></i> {{ $examsCount }} Active</span>
-                                    @else
-                                    <span class="badge badge-danger badge-status"><i class="fas fa-times mr-1"></i> No Exam</span>
-                                    @endif
-                                </td>
-
-                                <td>
-                                    <div class="btn-group">
-                                        <button type="button" 
-                                                class="btn btn-sm {{ $enrollment->content_disabled ? 'btn-warning' : 'btn-success' }} toggle-content-btn" 
-                                                data-enrollment-id="{{ $enrollment->id }}"
-                                                data-disabled="{{ $enrollment->content_disabled ? '1' : '0' }}"
-                                                title="{{ $enrollment->content_disabled ? 'Enable Content' : 'Disable Content' }}">
-                                            <i class="fas fa-{{ $enrollment->content_disabled ? 'unlock' : 'lock' }}"></i>
-                                        </button>
-                                        <button type="button" 
-                                                class="btn btn-sm {{ $enrollment->exam_disabled ? 'btn-danger' : 'btn-success' }} toggle-exam-btn" 
-                                                data-enrollment-id="{{ $enrollment->id }}"
-                                                data-disabled="{{ $enrollment->exam_disabled ? '1' : '0' }}"
-                                                title="{{ $enrollment->exam_disabled ? 'Enable Exams' : 'Disable Exams' }}">
-                                            <i class="fas fa-{{ $enrollment->exam_disabled ? 'ban' : 'check-circle' }}"></i>
-                                        </button>
-                                        @if(!$hasExam)
-                                        <a href="{{ route('admin.exams.create') }}?course_id={{ $course->id }}" class="btn btn-sm btn-warning" title="Add Exam"><i class="fas fa-plus"></i></a>
-                                        @else
-                                        <a href="{{ route('admin.exams.index') }}?course_id={{ $course->id }}" class="btn btn-sm btn-info" title="View Exams"><i class="fas fa-eye"></i></a>
-                                        @endif
-                                        <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-sm btn-primary" title="Edit Course"><i class="fas fa-edit"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="fas fa-inbox fa-2x mb-2"></i>
-                                        <div class="h5">No Enrollments Found</div>
-                                        <p class="mb-0">Try adjusting your filters or add new enrollments</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
+                        @include('admin.enrollments.partials.table')
                     </table>
                 </div>
 
-                @if($enrollments->hasPages())
-                <div class="card-footer clearfix">
-                    <div class="float-left">
-                        {{ $enrollments->links() }}
-                    </div>
-                    <div class="float-right text-muted">
-                        Page {{ $enrollments->currentPage() }} of {{ $enrollments->lastPage() }}
-                    </div>
+                <div id="paginationContainer">
+                    @include('admin.enrollments.partials.pagination')
                 </div>
-                @endif
             </div>
         </div>
     </div>
@@ -537,6 +506,287 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+});
+
+// AJAX Filtering Script
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.getElementById('filterForm');
+    const filterBtn = document.getElementById('filterBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const filterLoading = document.getElementById('filterLoading');
+    const enrollmentsTableBody = document.getElementById('enrollmentsTableBody');
+    const paginationContainer = document.getElementById('paginationContainer');
+    const filterResults = document.getElementById('filterResults');
+
+    if (!filterForm || !filterBtn) return; // Exit if elements don't exist
+
+    // Filter inputs
+    const filterInputs = [
+        'filter_student',
+        'filter_level_id',
+        'filter_has_exam',
+        'filter_content_status',
+        'filter_exam_status',
+        'filter_sort_date',
+        'filter_date_from',
+        'filter_date_to',
+        'filter_enrollment_status'
+    ];
+
+    let filterTimeout;
+
+    // Auto-filter on input change (with debounce)
+    filterInputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('change', function() {
+                clearTimeout(filterTimeout);
+                filterTimeout = setTimeout(() => {
+                    performFilter();
+                }, 500);
+            });
+        }
+    });
+
+    // Manual filter button
+    filterBtn.addEventListener('click', function() {
+        performFilter();
+    });
+
+    // Reset button
+    resetBtn.addEventListener('click', function() {
+        // Clear all filters
+        filterInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+            }
+        });
+        performFilter();
+    });
+
+    function performFilter() {
+        // Show loading
+        if (filterLoading) filterLoading.style.display = 'inline-block';
+        filterBtn.disabled = true;
+        resetBtn.disabled = true;
+
+        // Get form data
+        const formData = new FormData(filterForm);
+        const data = {};
+        formData.forEach((value, key) => {
+            if (value) {
+                data[key] = value;
+            }
+        });
+
+        // Make AJAX request
+        fetch('{{ route("admin.enrollments.filter") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => Promise.reject(err));
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                // Update table body
+                if (enrollmentsTableBody) {
+                    enrollmentsTableBody.innerHTML = result.html;
+                }
+                
+                // Update pagination
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = result.pagination;
+                }
+                
+                // Show results count
+                if (filterResults) {
+                    filterResults.innerHTML = `
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Found <strong>${result.count}</strong> enrollment(s)
+                        </div>
+                    `;
+                }
+
+                // Re-attach event listeners
+                attachPaginationListeners();
+                attachToggleListeners();
+            } else {
+                if (filterResults) {
+                    filterResults.innerHTML = `
+                        <div class="alert alert-danger mb-0">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            ${result.message || 'Error filtering enrollments'}
+                        </div>
+                    `;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Filter error:', error);
+            if (filterResults) {
+                filterResults.innerHTML = `
+                    <div class="alert alert-danger mb-0">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        An error occurred while filtering. Please try again.
+                    </div>
+                `;
+            }
+        })
+        .finally(() => {
+            if (filterLoading) filterLoading.style.display = 'none';
+            filterBtn.disabled = false;
+            resetBtn.disabled = false;
+        });
+    }
+
+    function attachPaginationListeners() {
+        const paginationLinks = paginationContainer?.querySelectorAll('a[href]');
+        if (paginationLinks) {
+            paginationLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = new URL(this.href);
+                    const page = url.searchParams.get('page');
+                    
+                    const formData = new FormData(filterForm);
+                    const data = {};
+                    formData.forEach((value, key) => {
+                        if (value) data[key] = value;
+                    });
+                    data.page = page;
+
+                    if (filterLoading) filterLoading.style.display = 'inline-block';
+                    fetch('{{ route("admin.enrollments.filter") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            if (enrollmentsTableBody) enrollmentsTableBody.innerHTML = result.html;
+                            if (paginationContainer) paginationContainer.innerHTML = result.pagination;
+                            attachPaginationListeners();
+                            attachToggleListeners();
+                            if (enrollmentsTableBody) {
+                                enrollmentsTableBody.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }
+                    })
+                    .finally(() => {
+                        if (filterLoading) filterLoading.style.display = 'none';
+                    });
+                });
+            });
+        }
+    }
+
+    function attachToggleListeners() {
+        // Re-attach toggle content listeners
+        document.querySelectorAll('.toggle-content-btn').forEach(btn => {
+            if (btn.dataset.listenerAttached) return;
+            btn.dataset.listenerAttached = 'true';
+            btn.addEventListener('click', function() {
+                const enrollmentId = this.dataset.enrollmentId;
+                const btn = this;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                fetch(`/admin/enrollments/${enrollmentId}/toggle-content-disabled`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.dataset.disabled = data.content_disabled ? '1' : '0';
+                        btn.className = `btn btn-sm ${data.content_disabled ? 'btn-warning' : 'btn-success'} toggle-content-btn`;
+                        btn.innerHTML = `<i class="fas fa-${data.content_disabled ? 'unlock' : 'lock'}"></i>`;
+                        btn.title = data.content_disabled ? 'Enable Content' : 'Disable Content';
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                });
+            });
+        });
+
+        // Re-attach toggle exam listeners
+        document.querySelectorAll('.toggle-exam-btn').forEach(btn => {
+            if (btn.dataset.listenerAttached) return;
+            btn.dataset.listenerAttached = 'true';
+            btn.addEventListener('click', function() {
+                const enrollmentId = this.dataset.enrollmentId;
+                const btn = this;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                fetch(`/admin/enrollments/${enrollmentId}/toggle-exam-disabled`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.dataset.disabled = data.exam_disabled ? '1' : '0';
+                        btn.className = `btn btn-sm ${data.exam_disabled ? 'btn-danger' : 'btn-success'} toggle-exam-btn`;
+                        btn.innerHTML = `<i class="fas fa-${data.exam_disabled ? 'ban' : 'check-circle' }}"></i>`;
+                        btn.title = data.exam_disabled ? 'Enable Exams' : 'Disable Exams';
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                });
+            });
+        });
+    }
+
+    // Initial listeners
+    attachPaginationListeners();
+    attachToggleListeners();
 });
 </script>
 @endpush

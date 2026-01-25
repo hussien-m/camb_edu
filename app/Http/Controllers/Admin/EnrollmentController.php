@@ -112,4 +112,42 @@ class EnrollmentController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Filter enrollments via AJAX
+     */
+    public function filter(Request $request)
+    {
+        try {
+            $filters = $request->all();
+            
+            // Handle pagination
+            if ($request->has('page')) {
+                $page = $request->get('page', 1);
+            } else {
+                $page = 1;
+            }
+            
+            $enrollments = $this->enrollmentService->getEnrollmentsWithExamStatus($filters);
+            $levels = $this->enrollmentService->getLevels();
+
+            $html = view('admin.enrollments.partials.table', compact('enrollments'))->render();
+            $pagination = view('admin.enrollments.partials.pagination', compact('enrollments'))->render();
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'pagination' => $pagination,
+                'count' => $enrollments->total()
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Filter error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error filtering enrollments: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

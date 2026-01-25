@@ -128,18 +128,21 @@
             <h3 class="card-title"><i class="fas fa-list me-2"></i>All Exam Results</h3>
         </div>
         <div class="card-body">
-            <!-- Filters -->
-            <div class="card mb-3">
+            <!-- Advanced AJAX Filters -->
+            <div class="card mb-3 border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Advanced Filters (AJAX)</h5>
+                </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.exam-results.index') }}" method="GET" class="row g-3">
+                    <form id="filterForm" class="row g-3">
                         <div class="col-md-3">
-                            <label class="form-label">Student Name</label>
-                            <input type="text" name="student" class="form-control"
-                                   placeholder="Search by student name..." value="{{ request('student') }}">
+                            <label class="form-label"><i class="fas fa-user me-1"></i>Student Name</label>
+                            <input type="text" name="student" id="filter_student" class="form-control"
+                                   placeholder="Search by name or email..." value="{{ request('student') }}">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Exam</label>
-                            <select name="exam_id" class="form-control">
+                            <label class="form-label"><i class="fas fa-clipboard-list me-1"></i>Exam</label>
+                            <select name="exam_id" id="filter_exam_id" class="form-control">
                                 <option value="">All Exams</option>
                                 @foreach($exams as $exam)
                                     <option value="{{ $exam->id }}" {{ request('exam_id') == $exam->id ? 'selected' : '' }}>
@@ -149,40 +152,50 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">Status</label>
-                            <select name="status" class="form-control">
-                                <option value="">All</option>
-                                <option value="passed" {{ request('status') === 'passed' ? 'selected' : '' }}>Passed</option>
-                                <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>Failed</option>
+                            <label class="form-label"><i class="fas fa-trophy me-1"></i>Result Status</label>
+                            <select name="status" id="filter_status" class="form-control">
+                                <option value="">All Results</option>
+                                <option value="passed" {{ request('status') === 'passed' ? 'selected' : '' }}>✅ Passed</option>
+                                <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>❌ Failed</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">Date From</label>
-                            <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
+                            <label class="form-label"><i class="fas fa-check-circle me-1"></i>Attempt Status</label>
+                            <select name="attempt_status" id="filter_attempt_status" class="form-control">
+                                <option value="">All Attempts</option>
+                                <option value="completed">✅ Completed</option>
+                                <option value="not_completed">⏳ Not Completed</option>
+                            </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">Date To</label>
-                            <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+                            <label class="form-label"><i class="fas fa-sort me-1"></i>Sort by Date</label>
+                            <select name="sort_date" id="filter_sort_date" class="form-control">
+                                <option value="desc" {{ request('sort_date', 'desc') === 'desc' ? 'selected' : '' }}>🕐 Newest First</option>
+                                <option value="asc" {{ request('sort_date') === 'asc' ? 'selected' : '' }}>🕐 Oldest First</option>
+                            </select>
                         </div>
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Search
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-calendar-alt me-1"></i>Date From</label>
+                            <input type="date" name="date_from" id="filter_date_from" class="form-control" value="{{ request('date_from') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-calendar-check me-1"></i>Date To</label>
+                            <input type="date" name="date_to" id="filter_date_to" class="form-control" value="{{ request('date_to') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <button type="button" id="filterBtn" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i>Filter
                             </button>
-                            <a href="{{ route('admin.exam-results.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-undo"></i> Reset
-                            </a>
-                            @if(request('exam_id'))
-                                <form action="{{ route('admin.exam-results.enable-certificates') }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Enable certificates for all completed attempts of this exam?');">
-                                    @csrf
-                                    <input type="hidden" name="exam_id" value="{{ request('exam_id') }}">
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fas fa-certificate"></i> Enable Certificates for Exam
-                                    </button>
-                                </form>
-                            @endif
+                            <button type="button" id="resetBtn" class="btn btn-secondary">
+                                <i class="fas fa-undo me-1"></i>Reset
+                            </button>
+                            <span id="filterLoading" class="ml-2" style="display: none;">
+                                <i class="fas fa-spinner fa-spin text-primary"></i> Loading...
+                            </span>
                         </div>
                     </form>
+                    <div id="filterResults" class="mt-3"></div>
                 </div>
             </div>
 
@@ -203,123 +216,201 @@
                             <th style="width: 320px">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse($attempts as $attempt)
-                            <tr>
-                                <td class="text-center">
-                                    <strong class="text-primary">{{ ($attempts->currentPage() - 1) * $attempts->perPage() + $loop->iteration }}</strong>
-                                </td>
-                                <td>
-                                    <strong>{{ $attempt->student->full_name ?? ($attempt->student->first_name . ' ' . $attempt->student->last_name) }}</strong><br>
-                                    <small class="text-muted">{{ $attempt->student->email }}</small>
-                                </td>
-                                <td>
-                                    <strong>{{ $attempt->exam->title }}</strong><br>
-                                    <small class="text-muted">Attempt #{{ $attempt->attempt_number }}</small>
-                                </td>
-                                <td>
-                                    <strong>{{ $attempt->score }}</strong> / {{ $attempt->exam->total_marks }}
-                                </td>
-                                <td>
-                                    <div class="progress" style="height: 20px;">
-                                        <div class="progress-bar {{ $attempt->passed ? 'bg-success' : 'bg-danger' }}"
-                                             role="progressbar"
-                                             style="width: {{ $attempt->percentage }}%;"
-                                             aria-valuenow="{{ $attempt->percentage }}"
-                                             aria-valuemin="0"
-                                             aria-valuemax="100">
-                                            {{ number_format($attempt->percentage, 2) }}%
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    @if($attempt->passed)
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check"></i> Passed
-                                        </span>
-                                    @else
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-times"></i> Failed
-                                        </span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($attempt->certificate)
-                                        <span class="badge bg-primary">
-                                            <i class="fas fa-certificate"></i> Issued
-                                        </span>
-                                    @else
-                                        <span class="badge bg-secondary">
-                                            <i class="fas fa-minus"></i> None
-                                        </span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($attempt->certificate_enabled)
-                                        <span class="badge bg-success">Enabled</span>
-                                    @else
-                                        <span class="badge bg-secondary">Disabled</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    {{ $attempt->created_at->format('Y-m-d') }}<br>
-                                    <small class="text-muted">{{ $attempt->created_at->format('h:i A') }}</small>
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.exam-results.show', $attempt->id) }}"
-                                           class="btn btn-sm btn-info" title="عرض التفاصيل">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.exam-results.edit', $attempt->id) }}"
-                                           class="btn btn-sm btn-warning" title="تعديل">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.exam-results.recalculate', $attempt->id) }}"
-                                              method="POST" class="d-inline"
-                                              onsubmit="return confirm('هل أنت متأكد من إعادة حساب الدرجة؟');">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-primary" title="إعادة حساب">
-                                                <i class="fas fa-calculator"></i>
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin.exam-results.toggle-certificate', $attempt->id) }}"
-                                              method="POST" class="d-inline"
-                                              onsubmit="return confirm('Toggle certificate access for this student?');">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" title="Toggle Certificate Access">
-                                                <i class="fas fa-certificate"></i>
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin.exam-results.destroy', $attempt->id) }}"
-                                              method="POST" class="d-inline"
-                                              onsubmit="return confirm('هل أنت متأكد من حذف هذه المحاولة؟ سيتم حذف جميع الإجابات والشهادة المرتبطة بها.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="حذف">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center text-muted">
-                                    <i class="fas fa-inbox fa-3x mb-3"></i>
-                                    <p>No results available</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
+                    @include('admin.exam-results.partials.table')
                 </table>
             </div>
 
             <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-3">
-                {{ $attempts->links() }}
+            <div id="paginationContainer">
+                @include('admin.exam-results.partials.pagination')
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.getElementById('filterForm');
+    const filterBtn = document.getElementById('filterBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const filterLoading = document.getElementById('filterLoading');
+    const resultsTableBody = document.getElementById('resultsTableBody');
+    const paginationContainer = document.getElementById('paginationContainer');
+    const filterResults = document.getElementById('filterResults');
+
+    // Filter inputs
+    const filterInputs = [
+        'filter_student',
+        'filter_exam_id',
+        'filter_status',
+        'filter_attempt_status',
+        'filter_sort_date',
+        'filter_date_from',
+        'filter_date_to'
+    ];
+
+    let filterTimeout;
+
+    // Auto-filter on input change (with debounce)
+    filterInputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('change', function() {
+                clearTimeout(filterTimeout);
+                filterTimeout = setTimeout(() => {
+                    performFilter();
+                }, 500);
+            });
+        }
+    });
+
+    // Manual filter button
+    filterBtn.addEventListener('click', function() {
+        performFilter();
+    });
+
+    // Reset button
+    resetBtn.addEventListener('click', function() {
+        // Clear all filters
+        filterInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+            }
+        });
+        performFilter();
+    });
+
+    function performFilter() {
+        // Show loading
+        filterLoading.style.display = 'inline-block';
+        filterBtn.disabled = true;
+        resetBtn.disabled = true;
+
+        // Get form data
+        const formData = new FormData(filterForm);
+        const data = {};
+        formData.forEach((value, key) => {
+            if (value) {
+                data[key] = value;
+            }
+        });
+
+        // Make AJAX request
+        fetch('{{ route("admin.exam-results.filter") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => Promise.reject(err));
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                // Update table body
+                resultsTableBody.innerHTML = result.html;
+                
+                // Update pagination
+                paginationContainer.innerHTML = result.pagination;
+                
+                // Show results count
+                filterResults.innerHTML = `
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Found <strong>${result.count}</strong> result(s)
+                    </div>
+                `;
+
+                // Re-attach event listeners for pagination links
+                attachPaginationListeners();
+            } else {
+                filterResults.innerHTML = `
+                    <div class="alert alert-danger mb-0">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${result.message || 'Error filtering results'}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Filter error:', error);
+            filterResults.innerHTML = `
+                <div class="alert alert-danger mb-0">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    An error occurred while filtering. Please try again.
+                </div>
+            `;
+        })
+        .finally(() => {
+            filterLoading.style.display = 'none';
+            filterBtn.disabled = false;
+            resetBtn.disabled = false;
+        });
+    }
+
+    function attachPaginationListeners() {
+        // Attach click listeners to pagination links
+        const paginationLinks = paginationContainer.querySelectorAll('a[href]');
+        paginationLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                const page = url.searchParams.get('page');
+                
+                // Get current filter values
+                const formData = new FormData(filterForm);
+                const data = {};
+                formData.forEach((value, key) => {
+                    if (value) {
+                        data[key] = value;
+                    }
+                });
+                data.page = page;
+
+                // Perform filter with page
+                filterLoading.style.display = 'inline-block';
+                fetch('{{ route("admin.exam-results.filter") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        resultsTableBody.innerHTML = result.html;
+                        paginationContainer.innerHTML = result.pagination;
+                        attachPaginationListeners();
+                        
+                        // Scroll to top of table
+                        resultsTableBody.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                })
+                .finally(() => {
+                    filterLoading.style.display = 'none';
+                });
+            });
+        });
+    }
+
+    // Initial pagination listeners
+    attachPaginationListeners();
+});
+</script>
+@endpush
 @endsection

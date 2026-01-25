@@ -109,4 +109,46 @@ class ExamResultController extends Controller
 
         return redirect()->back()->with('success', "Enabled certificates for {$count} attempt(s).");
     }
+
+    /**
+     * Filter exam results via AJAX
+     */
+    public function filter(Request $request)
+    {
+        try {
+            $filters = $request->all();
+            
+            // Handle pagination
+            if ($request->has('page')) {
+                $page = $request->get('page', 1);
+            } else {
+                $page = 1;
+            }
+            
+            $attempts = $this->resultService->getFilteredAttempts($filters);
+            
+            // Manually set current page if provided
+            if ($request->has('page')) {
+                $attempts->setCurrentPage($page);
+            }
+
+            $html = view('admin.exam-results.partials.table', compact('attempts'))->render();
+            $pagination = view('admin.exam-results.partials.pagination', compact('attempts'))->render();
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'pagination' => $pagination,
+                'count' => $attempts->total()
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Filter error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error filtering results: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

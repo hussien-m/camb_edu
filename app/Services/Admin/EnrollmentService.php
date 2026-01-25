@@ -16,15 +16,18 @@ class EnrollmentService
         try {
             $query = Enrollment::with(['student', 'course.level', 'course.exams' => function($q) {
                 $q->where('status', 'active');
-            }])->orderBy('enrollments.created_at', 'desc');
+            }]);
 
             // Filter by student name or email
             if (!empty($filters['student'])) {
                 $search = $filters['student'];
                 $query->whereHas('student', function($q) use ($search) {
-                    $q->where('first_name', 'like', "%{$search}%")
-                      ->orWhere('last_name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
+                    $q->where(function($sq) use ($search) {
+                        $sq->where('first_name', 'like', "%{$search}%")
+                          ->orWhere('last_name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%")
+                          ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                    });
                 });
             }
 
@@ -35,8 +38,42 @@ class EnrollmentService
                 });
             }
 
-            // Get all enrollments first (without exam filter for pagination)
-            $enrollments = $query->paginate(20)->withQueryString();
+            // Filter by content disabled status
+            if (isset($filters['content_status']) && $filters['content_status'] !== '') {
+                $query->where('content_disabled', $filters['content_status'] === 'disabled' ? true : false);
+            }
+
+            // Filter by exam disabled status
+            if (isset($filters['exam_status']) && $filters['exam_status'] !== '') {
+                if ($filters['exam_status'] === 'disabled') {
+                    $query->where('exam_disabled', true);
+                } elseif ($filters['exam_status'] === 'enabled') {
+                    $query->where('exam_disabled', false);
+                }
+            }
+
+            // Filter by enrollment status
+            if (!empty($filters['enrollment_status'])) {
+                $query->where('status', $filters['enrollment_status']);
+            }
+
+            // Date from
+            if (!empty($filters['date_from'])) {
+                $query->whereDate('created_at', '>=', $filters['date_from']);
+            }
+
+            // Date to
+            if (!empty($filters['date_to'])) {
+                $query->whereDate('created_at', '<=', $filters['date_to']);
+            }
+
+            // Sort by date
+            $sortOrder = $filters['sort_date'] ?? 'desc';
+            $query->orderBy('created_at', $sortOrder);
+
+            $perPage = 20;
+            $page = isset($filters['page']) ? (int)$filters['page'] : 1;
+            $enrollments = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
 
             // Add exam status to each enrollment
             $enrollments->getCollection()->transform(function($enrollment) {
@@ -52,17 +89,16 @@ class EnrollmentService
                 ];
             });
 
-            // Filter by exam status in PHP (after pagination)
-            if (!empty($filters['exam_status'])) {
+            // Filter by has exam (if needed)
+            if (!empty($filters['has_exam'])) {
                 $filtered = $enrollments->getCollection()->filter(function($item) use ($filters) {
-                    if ($filters['exam_status'] === 'has_exam') {
+                    if ($filters['has_exam'] === 'yes') {
                         return $item['hasExam'] === true;
-                    } elseif ($filters['exam_status'] === 'no_exam') {
+                    } elseif ($filters['has_exam'] === 'no') {
                         return $item['hasExam'] === false;
                     }
                     return true;
                 });
-
                 $enrollments->setCollection($filtered);
             }
 

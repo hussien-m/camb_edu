@@ -54,6 +54,7 @@ Route::middleware('admin')->group(function () {
 
     // Enrollments
     Route::get('enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('enrollments.index');
+    Route::post('enrollments/filter', [App\Http\Controllers\Admin\EnrollmentController::class, 'filter'])->name('enrollments.filter');
     Route::post('enrollments/{enrollment}/toggle-content-disabled', [App\Http\Controllers\Admin\EnrollmentController::class, 'toggleContentDisabled'])->name('enrollments.toggle-content-disabled');
     Route::post('enrollments/{enrollment}/toggle-exam-disabled', [App\Http\Controllers\Admin\EnrollmentController::class, 'toggleExamDisabled'])->name('enrollments.toggle-exam-disabled');
 
@@ -136,6 +137,7 @@ Route::middleware('admin')->group(function () {
 
     // Exam Results Management
     Route::get('exam-results', [App\Http\Controllers\Admin\ExamResultController::class, 'index'])->name('exam-results.index');
+    Route::post('exam-results/filter', [App\Http\Controllers\Admin\ExamResultController::class, 'filter'])->name('exam-results.filter');
     Route::get('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'show'])->name('exam-results.show');
     Route::get('exam-results/{id}/edit', [App\Http\Controllers\Admin\ExamResultController::class, 'edit'])->name('exam-results.edit');
     Route::put('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'update'])->name('exam-results.update');
