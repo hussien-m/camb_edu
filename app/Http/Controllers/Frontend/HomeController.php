@@ -450,23 +450,36 @@ class HomeController extends Controller
 
         $lockOfferContent = $isOfferCategory && !Auth::guard('student')->check();
 
-        // Check if content is disabled (for enrolled students)
-        $contentDisabled = false;
+        // Check enrollment and content disabled status
         $enrollment = null;
+        $contentDisabled = false;
+        $isEnrolled = false;
+        $showContent = false;
+        
         if (Auth::guard('student')->check()) {
-            $enrollment = \App\Models\Enrollment::where('student_id', Auth::guard('student')->id())
+            $student = Auth::guard('student')->user();
+            $enrollment = \App\Models\Enrollment::where('student_id', $student->id)
                 ->where('course_id', $course->id)
                 ->where('status', 'active')
                 ->first();
             
             if ($enrollment) {
+                $isEnrolled = true;
                 // Check enrollment-level first, then course-level
                 if ($enrollment->content_disabled !== null) {
-                    $contentDisabled = $enrollment->content_disabled;
-                } elseif ($course->content_disabled) {
-                    $contentDisabled = $course->content_disabled;
+                    $contentDisabled = (bool) $enrollment->content_disabled;
+                } else {
+                    // Fall back to course-level
+                    $contentDisabled = (bool) ($course->content_disabled ?? false);
+                }
+                // If enrolled and content is enabled, show content
+                if (!$contentDisabled) {
+                    $showContent = true;
                 }
             }
+            // If logged in but not enrolled, don't show content
+        } else {
+            // If not logged in, don't show content
         }
 
         // Get related courses from same category
@@ -477,7 +490,7 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        return view('frontend.course-detail', compact('course', 'relatedCourses', 'lockOfferContent', 'contentDisabled', 'enrollment'));
+        return view('frontend.course-detail', compact('course', 'relatedCourses', 'lockOfferContent', 'contentDisabled', 'enrollment', 'isEnrolled', 'showContent'));
     }
 
     public function successStories()

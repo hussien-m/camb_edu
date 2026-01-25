@@ -123,7 +123,8 @@
                                 <i class="fas fa-user-plus me-1"></i>Register
                             </a>
                         </div>
-                    @elseif(isset($contentDisabled) && $contentDisabled)
+                    @elseif(isset($isEnrolled) && $isEnrolled && isset($contentDisabled) && $contentDisabled == true)
+                        <!-- Enrolled but content disabled -->
                         <div class="alert alert-warning border-warning mt-4" style="border-left: 4px solid #f59e0b;">
                             <div class="d-flex align-items-start">
                                 <i class="fas fa-lock fa-2x me-3 mt-1" style="color: #f59e0b;"></i>
@@ -147,7 +148,51 @@
                                 </div>
                             </div>
                         </div>
-                    @else
+                    @elseif(!Auth::guard('student')->check())
+                        <!-- Not logged in -->
+                        <div class="alert alert-info mt-4" style="border-left: 4px solid #3b82f6;">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-info-circle fa-2x me-3 mt-1" style="color: #3b82f6;"></i>
+                                <div class="flex-grow-1">
+                                    <h5 class="alert-heading mb-2">
+                                        <i class="fas fa-lock me-2"></i>Login Required
+                                    </h5>
+                                    <p class="mb-3">
+                                        Please log in or register to view the course content and enroll in this course.
+                                    </p>
+                                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                                        <a href="{{ route('student.login') }}" class="btn btn-primary">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                                        </a>
+                                        <a href="{{ route('student.register') }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-user-plus me-2"></i>Register
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif(Auth::guard('student')->check() && (!isset($isEnrolled) || !$isEnrolled))
+                        <!-- Logged in but not enrolled -->
+                        <div class="alert alert-warning mt-4" style="border-left: 4px solid #f59e0b;">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-user-lock fa-2x me-3 mt-1" style="color: #f59e0b;"></i>
+                                <div class="flex-grow-1">
+                                    <h5 class="alert-heading mb-2">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Enrollment Required
+                                    </h5>
+                                    <p class="mb-3">
+                                        You need to enroll in this course to view the content. Please enroll first to access the course materials.
+                                    </p>
+                                    <form action="{{ route('student.courses.enroll', $course) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-user-plus me-2"></i>Enroll Now
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif(isset($showContent) && $showContent && isset($isEnrolled) && $isEnrolled)
                         <!-- Short Description -->
                         @if($course->short_description)
                         <div class="course-short-desc">
