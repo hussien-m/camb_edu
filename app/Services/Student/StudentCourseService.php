@@ -136,11 +136,14 @@ class StudentCourseService
      */
     public function enrollStudent(Student $student, Course $course)
     {
+        // Create enrollment with content disabled by default
+        // Admin must enable content for each student manually
         return Enrollment::create([
             'student_id' => $student->id,
             'course_id' => $course->id,
             'status' => 'active',
             'enrolled_at' => now(),
+            'content_disabled' => true, // Content disabled by default after enrollment
         ]);
     }
 }

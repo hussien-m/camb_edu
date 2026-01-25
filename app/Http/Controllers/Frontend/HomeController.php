@@ -452,7 +452,7 @@ class HomeController extends Controller
 
         // Check enrollment and content disabled status
         $enrollment = null;
-        $contentDisabled = false;
+        $contentDisabled = true; // Default: content is disabled
         $isEnrolled = false;
         $showContent = false;
         
@@ -467,13 +467,20 @@ class HomeController extends Controller
                 $isEnrolled = true;
                 // Check enrollment-level first, then course-level
                 if ($enrollment->content_disabled !== null) {
+                    // If enrollment has explicit setting, use it
                     $contentDisabled = (bool) $enrollment->content_disabled;
                 } else {
-                    // Fall back to course-level
-                    $contentDisabled = (bool) ($course->content_disabled ?? false);
+                    // If enrollment doesn't have explicit setting, check course-level
+                    // But default to disabled (true) if course-level is also not set
+                    if ($course->content_disabled !== null) {
+                        $contentDisabled = (bool) $course->content_disabled;
+                    } else {
+                        // Default: content is disabled until admin enables it
+                        $contentDisabled = true;
+                    }
                 }
-                // If enrolled and content is enabled, show content
-                if (!$contentDisabled) {
+                // Only show content if explicitly enabled (content_disabled = false)
+                if ($contentDisabled === false) {
                     $showContent = true;
                 }
             }

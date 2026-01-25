@@ -192,7 +192,7 @@
                                 </div>
                             </div>
                         </div>
-                    @elseif(isset($showContent) && $showContent && isset($isEnrolled) && $isEnrolled)
+                    @elseif(isset($isEnrolled) && $isEnrolled && isset($showContent) && $showContent && isset($contentDisabled) && $contentDisabled === false)
                         <!-- Short Description -->
                         @if($course->short_description)
                         <div class="course-short-desc">
