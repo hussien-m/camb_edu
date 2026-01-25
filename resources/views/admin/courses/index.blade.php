@@ -137,6 +137,13 @@
                             </td>
                             <td>
                                 <div class="btn-group">
+                                    <button type="button" 
+                                            class="btn btn-sm {{ $course->content_disabled ? 'btn-warning' : 'btn-success' }} toggle-content-btn" 
+                                            data-course-id="{{ $course->id }}"
+                                            data-disabled="{{ $course->content_disabled ? '1' : '0' }}"
+                                            title="{{ $course->content_disabled ? 'Enable Content' : 'Disable Content' }}">
+                                        <i class="fas fa-{{ $course->content_disabled ? 'unlock' : 'lock' }}"></i>
+                                    </button>
                                     <a href="{{ route('admin.courses.edit', $course) }}" class="btn btn-sm btn-info">
                                         <i class="fas fa-edit"></i>
                                     </a>
@@ -208,6 +215,59 @@
             e.preventDefault();
             return false;
         }
+    });
+
+    // Toggle content disabled status
+    document.querySelectorAll('.toggle-content-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const courseId = this.dataset.courseId;
+            const isDisabled = this.dataset.disabled === '1';
+            const btn = this;
+            
+            // Disable button during request
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch(`/admin/courses/${courseId}/toggle-content-disabled`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update button appearance
+                    btn.dataset.disabled = data.content_disabled ? '1' : '0';
+                    btn.className = `btn btn-sm ${data.content_disabled ? 'btn-warning' : 'btn-success'} toggle-content-btn`;
+                    btn.innerHTML = `<i class="fas fa-${data.content_disabled ? 'unlock' : 'lock'}"></i>`;
+                    btn.title = data.content_disabled ? 'Enable Content' : 'Disable Content';
+                    
+                    // Show success message
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                } else {
+                    alert(data.message || 'An error occurred while updating');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating. Please check the console for details.');
+            })
+            .finally(() => {
+                btn.disabled = false;
+            });
+        });
     });
 </script>
 @endpush

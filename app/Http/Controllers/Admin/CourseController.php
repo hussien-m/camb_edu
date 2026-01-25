@@ -176,4 +176,38 @@ class CourseController extends Controller
                 ->with('error', 'Failed to delete course. Please try again.');
         }
     }
+
+    /**
+     * Toggle content disabled status for a course
+     */
+    public function toggleContentDisabled(Request $request, $course)
+    {
+        try {
+            // Find course by ID (since route uses {course} but model uses slug as route key)
+            $courseModel = Course::findOrFail($course);
+            
+            $courseModel->content_disabled = !$courseModel->content_disabled;
+            $courseModel->save();
+
+            return response()->json([
+                'success' => true,
+                'content_disabled' => $courseModel->content_disabled,
+                'message' => $courseModel->content_disabled 
+                    ? 'Course content has been disabled successfully' 
+                    : 'Course content has been enabled successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error toggling content disabled: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'course_id' => $course,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating content status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

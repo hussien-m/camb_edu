@@ -179,6 +179,10 @@
             $enrollment = $courseData['enrollment'];
             $progress = $courseData['progress'];
             $examsData = $courseData['examsData'];
+            // Check enrollment-level first, then course-level
+            $contentDisabled = ($enrollment && $enrollment->content_disabled !== null) 
+                ? $enrollment->content_disabled 
+                : ($course->content_disabled ?? false);
         @endphp
         <div class="course-card">
             <div class="course-header">
@@ -202,6 +206,31 @@
                 </div>
             </div>
             <div class="card-body p-4">
+                @if($contentDisabled)
+                    <div class="alert alert-warning border-warning mb-4" style="border-left: 4px solid #f59e0b;">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-lock fa-2x me-3 mt-1" style="color: #f59e0b;"></i>
+                            <div class="flex-grow-1">
+                                <h5 class="alert-heading mb-2">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Course Content Disabled
+                                </h5>
+                                <p class="mb-3">
+                                    The content for this course is currently disabled. You cannot view the course materials or take exams until you contact the administration.
+                                </p>
+                                <div class="d-flex align-items-center gap-3 flex-wrap">
+                                    <a href="mailto:{{ setting('contact_email', 'info@example.com') }}?subject=Course Content Access Request - {{ $course->title }}&body=Hello,%0D%0A%0D%0AI am enrolled in the course '{{ $course->title }}' and would like to request access to the course content.%0D%0A%0D%0AThank you." 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-envelope me-2"></i>Contact Administration
+                                    </a>
+                                    <span class="text-muted small">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Email: <strong>{{ setting('contact_email', 'info@example.com') }}</strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="row">
                     <div class="col-md-8">
                         @if($course->short_description)

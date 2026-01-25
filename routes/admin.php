@@ -48,11 +48,13 @@ Route::middleware('admin')->group(function () {
 
     // Courses
     Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
+    Route::post('courses/{course}/toggle-content-disabled', [App\Http\Controllers\Admin\CourseController::class, 'toggleContentDisabled'])->name('courses.toggle-content-disabled')->where('course', '[0-9]+');
     Route::post('bulk-actions/courses', [App\Http\Controllers\Admin\BulkActionController::class, 'courses'])->name('bulk.courses');
     Route::get('export/courses', [App\Http\Controllers\Admin\ExportController::class, 'courses'])->name('export.courses');
 
     // Enrollments
     Route::get('enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('enrollments.index');
+    Route::post('enrollments/{enrollment}/toggle-content-disabled', [App\Http\Controllers\Admin\EnrollmentController::class, 'toggleContentDisabled'])->name('enrollments.toggle-content-disabled');
 
     // Pages
     Route::resource('pages', App\Http\Controllers\Admin\PageController::class);

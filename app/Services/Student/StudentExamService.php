@@ -41,6 +41,25 @@ class StudentExamService
             ];
         }
 
+        // Check if course content is disabled (enrollment-level first, then course-level)
+        $course = $exam->course;
+        $contentDisabled = false;
+        if ($enrollment->content_disabled !== null) {
+            // Check enrollment-level setting first
+            $contentDisabled = $enrollment->content_disabled;
+        } elseif ($course && $course->content_disabled) {
+            // Fall back to course-level setting
+            $contentDisabled = $course->content_disabled;
+        }
+        
+        if ($contentDisabled) {
+            $contactEmail = \App\Models\Setting::get('contact_email', 'info@example.com');
+            return [
+                'allowed' => false,
+                'message' => 'The course content is currently disabled. Please contact the administration at ' . $contactEmail . ' to request access.'
+            ];
+        }
+
         // Check if exam has questions
         $totalQuestions = $exam->questions()->count();
         if ($totalQuestions === 0) {

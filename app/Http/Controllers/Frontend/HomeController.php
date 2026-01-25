@@ -450,6 +450,25 @@ class HomeController extends Controller
 
         $lockOfferContent = $isOfferCategory && !Auth::guard('student')->check();
 
+        // Check if content is disabled (for enrolled students)
+        $contentDisabled = false;
+        $enrollment = null;
+        if (Auth::guard('student')->check()) {
+            $enrollment = \App\Models\Enrollment::where('student_id', Auth::guard('student')->id())
+                ->where('course_id', $course->id)
+                ->where('status', 'active')
+                ->first();
+            
+            if ($enrollment) {
+                // Check enrollment-level first, then course-level
+                if ($enrollment->content_disabled !== null) {
+                    $contentDisabled = $enrollment->content_disabled;
+                } elseif ($course->content_disabled) {
+                    $contentDisabled = $course->content_disabled;
+                }
+            }
+        }
+
         // Get related courses from same category
         $relatedCourses = Course::with(['category', 'level'])
             ->where('status', 'active')
@@ -458,7 +477,7 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        return view('frontend.course-detail', compact('course', 'relatedCourses', 'lockOfferContent'));
+        return view('frontend.course-detail', compact('course', 'relatedCourses', 'lockOfferContent', 'contentDisabled', 'enrollment'));
     }
 
     public function successStories()

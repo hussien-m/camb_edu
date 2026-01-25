@@ -24,10 +24,12 @@ class Course extends Model
         'image',
         'is_featured',
         'status',
+        'content_disabled',
     ];
 
     protected $casts = [
         'is_featured' => 'boolean',
+        'content_disabled' => 'boolean',
         'fee' => 'decimal:2',
     ];
 
