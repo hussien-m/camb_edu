@@ -17,6 +17,7 @@ class Enrollment extends Model
         'completed_at',
         'progress',
         'content_disabled',
+        'exam_disabled',
     ];
 
     protected $casts = [
@@ -24,6 +25,7 @@ class Enrollment extends Model
         'completed_at' => 'datetime',
         'progress' => 'decimal:2',
         'content_disabled' => 'boolean',
+        'exam_disabled' => 'boolean',
     ];
 
     public function student()

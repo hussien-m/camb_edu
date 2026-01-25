@@ -60,6 +60,15 @@ class StudentExamService
             ];
         }
 
+        // Check if exam is disabled for this enrollment
+        if ($enrollment->exam_disabled !== null && $enrollment->exam_disabled) {
+            $contactEmail = \App\Models\Setting::get('contact_email', 'info@example.com');
+            return [
+                'allowed' => false,
+                'message' => 'Exams are currently disabled for your enrollment. Please contact the administration at ' . $contactEmail . ' to request access.'
+            ];
+        }
+
         // Check if exam has questions
         $totalQuestions = $exam->questions()->count();
         if ($totalQuestions === 0) {

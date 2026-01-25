@@ -235,6 +235,13 @@
                                                 title="{{ $enrollment->content_disabled ? 'Enable Content' : 'Disable Content' }}">
                                             <i class="fas fa-{{ $enrollment->content_disabled ? 'unlock' : 'lock' }}"></i>
                                         </button>
+                                        <button type="button" 
+                                                class="btn btn-sm {{ $enrollment->exam_disabled ? 'btn-danger' : 'btn-success' }} toggle-exam-btn" 
+                                                data-enrollment-id="{{ $enrollment->id }}"
+                                                data-disabled="{{ $enrollment->exam_disabled ? '1' : '0' }}"
+                                                title="{{ $enrollment->exam_disabled ? 'Enable Exams' : 'Disable Exams' }}">
+                                            <i class="fas fa-{{ $enrollment->exam_disabled ? 'ban' : 'check-circle' }}"></i>
+                                        </button>
                                         @if(!$hasExam)
                                         <a href="{{ route('admin.exams.create') }}?course_id={{ $course->id }}" class="btn btn-sm btn-warning" title="Add Exam"><i class="fas fa-plus"></i></a>
                                         @else
@@ -383,6 +390,53 @@ document.addEventListener('DOMContentLoaded', function() {
                     btn.className = `btn btn-sm ${data.content_disabled ? 'btn-warning' : 'btn-success'} toggle-content-btn`;
                     btn.innerHTML = `<i class="fas fa-${data.content_disabled ? 'unlock' : 'lock'}"></i>`;
                     btn.title = data.content_disabled ? 'Enable Content' : 'Disable Content';
+                    
+                    // Show success message
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                } else {
+                    alert(data.message || 'An error occurred while updating');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating');
+            })
+            .finally(() => {
+                btn.disabled = false;
+            });
+        });
+    });
+
+    // Toggle exam disabled status
+    document.querySelectorAll('.toggle-exam-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const enrollmentId = this.dataset.enrollmentId;
+            const isDisabled = this.dataset.disabled === '1';
+            const btn = this;
+            
+            // Disable button during request
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch(`/admin/enrollments/${enrollmentId}/toggle-exam-disabled`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update button appearance
+                    btn.dataset.disabled = data.exam_disabled ? '1' : '0';
+                    btn.className = `btn btn-sm ${data.exam_disabled ? 'btn-danger' : 'btn-success'} toggle-exam-btn`;
+                    btn.innerHTML = `<i class="fas fa-${data.exam_disabled ? 'ban' : 'check-circle'}"></i>`;
+                    btn.title = data.exam_disabled ? 'Enable Exams' : 'Disable Exams';
                     
                     // Show success message
                     if (typeof toastr !== 'undefined') {

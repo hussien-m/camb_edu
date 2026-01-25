@@ -55,6 +55,7 @@ Route::middleware('admin')->group(function () {
     // Enrollments
     Route::get('enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('enrollments.index');
     Route::post('enrollments/{enrollment}/toggle-content-disabled', [App\Http\Controllers\Admin\EnrollmentController::class, 'toggleContentDisabled'])->name('enrollments.toggle-content-disabled');
+    Route::post('enrollments/{enrollment}/toggle-exam-disabled', [App\Http\Controllers\Admin\EnrollmentController::class, 'toggleExamDisabled'])->name('enrollments.toggle-exam-disabled');
 
     // Pages
     Route::resource('pages', App\Http\Controllers\Admin\PageController::class);

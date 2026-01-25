@@ -144,6 +144,7 @@ class StudentCourseService
             'status' => 'active',
             'enrolled_at' => now(),
             'content_disabled' => true, // Content disabled by default after enrollment
+            'exam_disabled' => true, // Exams disabled by default after enrollment
         ]);
     }
 }

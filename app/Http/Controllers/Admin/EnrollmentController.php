@@ -68,4 +68,34 @@ class EnrollmentController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Toggle exam disabled status for an enrollment
+     */
+    public function toggleExamDisabled(Enrollment $enrollment)
+    {
+        try {
+            $enrollment->exam_disabled = !$enrollment->exam_disabled;
+            $enrollment->save();
+
+            return response()->json([
+                'success' => true,
+                'exam_disabled' => $enrollment->exam_disabled,
+                'message' => $enrollment->exam_disabled 
+                    ? 'Exams have been disabled for this student successfully' 
+                    : 'Exams have been enabled for this student successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error toggling exam disabled: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'enrollment_id' => $enrollment->id
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating exam status'
+            ], 500);
+        }
+    }
 }
