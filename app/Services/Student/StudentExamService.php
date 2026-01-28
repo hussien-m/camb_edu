@@ -118,8 +118,10 @@ class StudentExamService
             }
         }
 
-        // Group assignment checks (optional, unless enrolled access is allowed)
-        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access) {
+        // Group assignment checks (only for scheduled exams)
+        // For non-scheduled exams, allow enrolled students to access regardless of group_assignment_enabled
+        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access && $exam->is_scheduled) {
+            // Only check assignment for scheduled exams
             if (!$student->email_verified_at) {
                 return [
                     'allowed' => false,
