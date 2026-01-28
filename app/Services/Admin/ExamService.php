@@ -35,6 +35,11 @@ class ExamService
                 $data['scheduled_end_date'] = null;
                 $data['timezone'] = null;
                 $data['scheduling_notes'] = null;
+            } else {
+                // If scheduled but timezone not provided, set default
+                if (empty($data['timezone'])) {
+                    $data['timezone'] = 'UTC';
+                }
             }
 
             $exam = Exam::create($data);
@@ -100,6 +105,11 @@ class ExamService
                 $data['scheduled_end_date'] = null;
                 $data['timezone'] = null;
                 $data['scheduling_notes'] = null;
+            } else {
+                // If scheduled but timezone not provided, set default
+                if (empty($data['timezone'])) {
+                    $data['timezone'] = 'UTC';
+                }
             }
 
             $updated = $exam->update($data);

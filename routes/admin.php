@@ -26,9 +26,6 @@ Route::middleware('admin.guest')->group(function () {
 
 // Admin Protected Routes
 Route::middleware('admin')->group(function () {
-    // Debug route (remove in production)
-    Route::get('debug/exam-access', [App\Http\Controllers\Admin\DebugController::class, 'checkExamAccess'])->name('debug.exam-access');
-    
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard', [DashboardController::class, 'index']);
