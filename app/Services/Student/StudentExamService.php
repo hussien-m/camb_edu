@@ -46,10 +46,10 @@ class StudentExamService
         $contentDisabled = false;
         if ($enrollment->content_disabled !== null) {
             // Check enrollment-level setting first
-            $contentDisabled = $enrollment->content_disabled;
-        } elseif ($course && $course->content_disabled) {
+            $contentDisabled = (bool) $enrollment->content_disabled;
+        } elseif ($course && $course->content_disabled !== null) {
             // Fall back to course-level setting
-            $contentDisabled = $course->content_disabled;
+            $contentDisabled = (bool) $course->content_disabled;
         }
         
         if ($contentDisabled) {
@@ -60,13 +60,26 @@ class StudentExamService
             ];
         }
 
+        // Check if exam is scheduled and available
+        // Use strict boolean check - non-scheduled exams (false/0/null) should be accessible
+        $isScheduled = ($exam->is_scheduled === true || $exam->is_scheduled === 1);
+        
         // Check if exam is disabled for this enrollment
-        if ($enrollment->exam_disabled !== null && $enrollment->exam_disabled) {
-            $contactEmail = \App\Models\Setting::get('contact_email', 'info@example.com');
-            return [
-                'allowed' => false,
-                'message' => 'Exams are currently disabled for your enrollment. Please contact the administration at ' . $contactEmail . ' to request access.'
-            ];
+        // BUT: For non-scheduled exams with allow_enrolled_access=true, ignore exam_disabled
+        // This allows enrolled students to access non-scheduled exams even if exam_disabled=true
+        $examDisabled = ($enrollment->exam_disabled !== null && (bool) $enrollment->exam_disabled);
+        
+        if ($examDisabled) {
+            // Only block if exam is scheduled OR if allow_enrolled_access is false
+            // For non-scheduled exams with allow_enrolled_access=true, allow access
+            if ($isScheduled || !$exam->allow_enrolled_access) {
+                $contactEmail = \App\Models\Setting::get('contact_email', 'info@example.com');
+                return [
+                    'allowed' => false,
+                    'message' => 'Exams are currently disabled for your enrollment. Please contact the administration at ' . $contactEmail . ' to request access.'
+                ];
+            }
+            // If non-scheduled and allow_enrolled_access=true, continue (allow access)
         }
 
         // Check if exam has questions
@@ -78,17 +91,16 @@ class StudentExamService
             ];
         }
 
-        // Check if total points equal 100
+        // Check if total points equal total_marks (not hardcoded 100)
         $totalPoints = $exam->questions()->sum('points');
         if ($totalPoints != $exam->total_marks) {
             return [
                 'allowed' => false,
-                'message' => 'This exam is not ready yet. The questions points do not match the exam total marks.'
+                'message' => 'This exam is not ready yet. The questions points (' . $totalPoints . ') do not match the exam total marks (' . $exam->total_marks . ').'
             ];
         }
 
-        // Check if exam is scheduled and available
-        if ($exam->is_scheduled) {
+        if ($isScheduled) {
             if (!$exam->scheduled_start_date) {
                 return [
                     'allowed' => false,
@@ -120,7 +132,8 @@ class StudentExamService
 
         // Group assignment checks (only for scheduled exams)
         // For non-scheduled exams, allow enrolled students to access regardless of group_assignment_enabled
-        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access && $exam->is_scheduled) {
+        // $isScheduled is already defined above
+        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access && $isScheduled) {
             // Only check assignment for scheduled exams
             if (!$student->email_verified_at) {
                 return [
@@ -374,7 +387,8 @@ class StudentExamService
 
         $assignment = null;
         // Only check assignment for scheduled exams
-        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access && $exam->is_scheduled) {
+        $isScheduled = ($exam->is_scheduled === true || $exam->is_scheduled === 1);
+        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access && $isScheduled) {
             $assignment = $this->getLatestAssignment($student, $exam);
             if (!$assignment || $assignment->status !== 'assigned') {
                 return [

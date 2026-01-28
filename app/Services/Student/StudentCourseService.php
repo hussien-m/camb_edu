@@ -81,7 +81,8 @@ class StudentCourseService
                 // Check if exam has ended (for scheduled exams)
                 $examEnded = false;
                 $examNotStarted = false;
-                if ($exam->is_scheduled) {
+                $isScheduled = ($exam->is_scheduled === true || $exam->is_scheduled === 1);
+                if ($isScheduled) {
                     if ($exam->scheduled_start_date && now()->lt($exam->scheduled_start_date)) {
                         $examNotStarted = true;
                     }

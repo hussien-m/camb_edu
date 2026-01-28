@@ -272,6 +272,7 @@
                                     $examEnded = $examItem['examEnded'];
                                     $examNotStarted = $examItem['examNotStarted'];
                                     $maxAttemptsReached = $examItem['maxAttemptsReached'];
+                                    $accessMessage = $examItem['accessMessage'] ?? null;
                                 @endphp
 
                                 <div class="exam-card">
@@ -399,9 +400,15 @@
                                                 </button>
                                             @else
                                                 <button class="btn btn-lg fw-bold" disabled
-                                                        style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6;">
+                                                        style="background: #9ca3af; color: white; border-radius: 12px; padding: 0.875rem; opacity: 0.6;"
+                                                        title="{{ $accessMessage ?? 'Exam is not available' }}">
                                                     <i class="fas fa-exclamation-triangle me-2"></i>Not Available
                                                 </button>
+                                                @if($accessMessage)
+                                                    <div class="alert alert-warning mt-2 mb-0" style="font-size: 0.875rem;">
+                                                        <i class="fas fa-info-circle me-1"></i>{{ $accessMessage }}
+                                                    </div>
+                                                @endif
                                             @endif
                                         @endif
 
