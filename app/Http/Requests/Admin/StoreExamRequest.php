@@ -24,7 +24,7 @@ class StoreExamRequest extends FormRequest
             'status' => 'required|in:active,inactive',
             'is_scheduled' => 'nullable|boolean',
             'scheduled_start_date' => 'nullable|required_if:is_scheduled,1|date|after:now',
-            'scheduled_end_date' => 'nullable|date|after:scheduled_start_date',
+            'scheduled_end_date' => 'nullable|date|required_with:scheduled_start_date|after:scheduled_start_date',
             'timezone' => 'nullable|string|timezone',
             'scheduling_notes' => 'nullable|string|max:1000',
             'group_assignment_enabled' => 'nullable|boolean',

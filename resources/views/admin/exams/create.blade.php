@@ -146,7 +146,7 @@
                     </div>
                     <div class="card-body">
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="is_scheduled" name="is_scheduled" value="1" {{ old('is_scheduled', '1') ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox" id="is_scheduled" name="is_scheduled" value="1" {{ old('is_scheduled', false) ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_scheduled">
                                 <strong>Schedule this exam</strong>
                                 <small class="d-block text-muted">Enable to set specific start and end times for this exam</small>
@@ -159,7 +159,7 @@
                             $defaultEnd = now()->addDays(3)->format('Y-m-d\TH:i');
                         @endphp
 
-                        <div id="schedulingFields" style="display: {{ old('is_scheduled', '1') ? 'block' : 'none' }};">
+                        <div id="schedulingFields" style="display: {{ old('is_scheduled', false) ? 'block' : 'none' }};">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="scheduled_start_date" class="form-label">Start Date & Time <span class="text-danger">*</span></label>
@@ -279,12 +279,17 @@ $(document).ready(function() {
         } else {
             $('#schedulingFields').slideUp();
             $('#scheduled_start_date').attr('required', false);
+            // Clear scheduling fields when unchecked
+            $('#scheduled_start_date').val('');
+            $('#scheduled_end_date').val('');
         }
     });
     
-    // Since scheduling is enabled by default, make sure field is required
+    // Make sure field is required only if scheduling is checked
     if ($('#is_scheduled').is(':checked')) {
         $('#scheduled_start_date').attr('required', true);
+    } else {
+        $('#scheduled_start_date').attr('required', false);
     }
 
     // Set minimum date to now

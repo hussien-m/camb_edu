@@ -28,6 +28,15 @@ class ExamService
     {
         DB::beginTransaction();
         try {
+            // If exam is not scheduled, clear scheduling fields
+            if (empty($data['is_scheduled']) || !$data['is_scheduled']) {
+                $data['is_scheduled'] = false;
+                $data['scheduled_start_date'] = null;
+                $data['scheduled_end_date'] = null;
+                $data['timezone'] = null;
+                $data['scheduling_notes'] = null;
+            }
+
             $exam = Exam::create($data);
 
             // Create reminders if exam is scheduled
@@ -83,6 +92,15 @@ class ExamService
 
             $wasScheduled = $exam->is_scheduled;
             $oldStartDate = $exam->scheduled_start_date;
+
+            // If exam is not scheduled, clear scheduling fields
+            if (empty($data['is_scheduled']) || !$data['is_scheduled']) {
+                $data['is_scheduled'] = false;
+                $data['scheduled_start_date'] = null;
+                $data['scheduled_end_date'] = null;
+                $data['timezone'] = null;
+                $data['scheduling_notes'] = null;
+            }
 
             $updated = $exam->update($data);
 

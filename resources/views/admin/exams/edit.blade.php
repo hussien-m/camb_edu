@@ -231,6 +231,9 @@ $(document).ready(function() {
         } else {
             $('#schedulingFields').slideUp();
             $('#scheduled_start_date').attr('required', false);
+            // Clear scheduling fields when unchecked
+            $('#scheduled_start_date').val('');
+            $('#scheduled_end_date').val('');
         }
     });
 

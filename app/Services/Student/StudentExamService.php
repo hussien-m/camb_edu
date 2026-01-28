@@ -373,7 +373,8 @@ class StudentExamService
         }
 
         $assignment = null;
-        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access) {
+        // Only check assignment for scheduled exams
+        if ($exam->group_assignment_enabled && !$exam->allow_enrolled_access && $exam->is_scheduled) {
             $assignment = $this->getLatestAssignment($student, $exam);
             if (!$assignment || $assignment->status !== 'assigned') {
                 return [
