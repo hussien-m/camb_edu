@@ -78,4 +78,6 @@ Route::middleware(['student', 'student.verified'])->group(function () {
     Route::get('certificates', [App\Http\Controllers\Student\CertificateController::class, 'index'])->name('certificates.index');
     Route::get('certificates/{certificate}', [App\Http\Controllers\Student\CertificateController::class, 'show'])->name('certificates.show');
     Route::get('certificates/{certificate}/download', [App\Http\Controllers\Student\CertificateController::class, 'download'])->name('certificates.download');
+    Route::get('certificates/{certificate}/file', [App\Http\Controllers\Student\CertificateController::class, 'viewFile'])->name('certificates.file');
+    Route::get('certificates/{certificate}/transcript', [App\Http\Controllers\Student\CertificateController::class, 'viewTranscript'])->name('certificates.transcript');
 });

@@ -86,7 +86,11 @@
                         <h4 class="mb-3 fw-bold" style="color: #1e3a8a;">{{ $certificate->course->title }}</h4>
                         <p class="text-muted mb-3">
                             <i class="fas fa-clipboard-check me-2" style="color: #f59e0b;"></i>
-                            <strong>Exam:</strong> {{ $certificate->examAttempt->exam->title }}
+                            @if($certificate->examAttempt)
+                                <strong>Exam:</strong> {{ $certificate->examAttempt->exam->title ?? 'N/A' }}
+                            @else
+                                <strong>Type:</strong> Manual Certificate
+                            @endif
                         </p>
                         <div class="d-flex gap-2 flex-wrap mb-3">
                             <span class="cert-badge" style="background: #dbeafe; color: #1e40af; border-color: #93c5fd;">
@@ -95,9 +99,11 @@
                             <span class="cert-badge" style="background: #d1fae5; color: #065f46; border-color: #6ee7b7;">
                                 <i class="fas fa-calendar me-1"></i>{{ $certificate->issue_date->format('M d, Y') }}
                             </span>
-                            <span class="cert-badge" style="background: #fef3c7; color: #92400e; border-color: #fcd34d;">
-                                <i class="fas fa-star me-1"></i>Score: {{ $certificate->examAttempt->percentage }}%
-                            </span>
+                            @if($certificate->examAttempt)
+                                <span class="cert-badge" style="background: #fef3c7; color: #92400e; border-color: #fcd34d;">
+                                    <i class="fas fa-star me-1"></i>Score: {{ $certificate->examAttempt->percentage }}%
+                                </span>
+                            @endif
                         </div>
                         <p class="text-muted mb-0">
                             <i class="fas fa-user me-1"></i>{{ auth('student')->user()->name }}
@@ -105,16 +111,35 @@
                     </div>
                     <div class="col-md-3">
                         <div class="d-grid gap-2">
-                            <a href="{{ route('student.certificates.show', $certificate) }}"
-                               class="btn btn-lg"
-                               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
-                                <i class="fas fa-eye me-2"></i>View Certificate
-                            </a>
-                            <a href="{{ route('student.certificates.download', $certificate) }}"
-                               class="btn btn-lg"
-                               style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
-                                <i class="fas fa-download me-2"></i>Download PDF
-                            </a>
+                            @if($certificate->certificate_file)
+                                <a href="{{ route('student.certificates.file', $certificate) }}" target="_blank"
+                                   class="btn btn-lg"
+                                   style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
+                                    <i class="fas fa-eye me-2"></i>View Certificate
+                                </a>
+                                <a href="{{ route('student.certificates.download', $certificate) }}"
+                                   class="btn btn-lg"
+                                   style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
+                                    <i class="fas fa-download me-2"></i>Download Certificate
+                                </a>
+                            @else
+                                <a href="{{ route('student.certificates.show', $certificate) }}"
+                                   class="btn btn-lg"
+                                   style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
+                                    <i class="fas fa-eye me-2"></i>View Certificate
+                                </a>
+                                <a href="{{ route('student.certificates.download', $certificate) }}"
+                                   class="btn btn-lg"
+                                   style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
+                                    <i class="fas fa-download me-2"></i>Download PDF
+                                </a>
+                            @endif
+                            @if($certificate->transcript_file)
+                                <a href="{{ route('student.certificates.transcript', $certificate) }}" target="_blank"
+                                   class="btn btn-lg btn-outline-secondary" style="border-radius: 12px; padding: 0.875rem; font-weight: 600;">
+                                    <i class="fas fa-file-alt me-2"></i>View Transcript
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>

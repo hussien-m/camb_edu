@@ -5,9 +5,15 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="text-end mb-3">
-                <a href="{{ route('student.certificates.download', $certificate) }}" class="btn btn-success me-2">
-                    <i class="fas fa-download me-2"></i>Download PDF
-                </a>
+                @if($certificate->certificate_file)
+                    <a href="{{ route('student.certificates.download', $certificate) }}" class="btn btn-success me-2">
+                        <i class="fas fa-download me-2"></i>Download Certificate
+                    </a>
+                @else
+                    <a href="{{ route('student.certificates.download', $certificate) }}" class="btn btn-success me-2">
+                        <i class="fas fa-download me-2"></i>Download PDF
+                    </a>
+                @endif
                 <a href="{{ route('student.certificates.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Back to Certificates
                 </a>
@@ -15,11 +21,13 @@
 
             @include('student.certificates.partials.template')
 
+            @if($certificate->examAttempt)
             <div class="text-center mt-4">
                 <a href="{{ route('student.exams.result', $certificate->examAttempt) }}" class="btn btn-info">
                     <i class="fas fa-chart-bar me-2"></i>View Exam Results
                 </a>
             </div>
+            @endif
         </div>
     </div>
 </div>

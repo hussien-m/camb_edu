@@ -179,8 +179,8 @@
                 </li>
 
                 <!-- Exams Management -->
-                <li class="nav-item {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') || request()->routeIs('admin.exam-reminders.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') || request()->routeIs('admin.exam-reminders.*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') || request()->routeIs('admin.exam-reminders.*') || request()->routeIs('admin.certificates.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('admin.exams.*') || request()->routeIs('admin.questions.*') || request()->routeIs('admin.exam-results.*') || request()->routeIs('admin.exam-reminders.*') || request()->routeIs('admin.certificates.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <p>
                             Exams
@@ -210,6 +210,12 @@
                             <a href="{{ route('admin.exam-reminders.index') }}" class="nav-link {{ request()->routeIs('admin.exam-reminders.*') ? 'active' : '' }}">
                                 <i class="far fa-bell nav-icon"></i>
                                 <p>Exam Reminders</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.certificates.index') }}" class="nav-link {{ request()->routeIs('admin.certificates.*') ? 'active' : '' }}">
+                                <i class="far fa-award nav-icon"></i>
+                                <p>Manual Certificates</p>
                             </a>
                         </li>
                     </ul>

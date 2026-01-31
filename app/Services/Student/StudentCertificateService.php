@@ -8,7 +8,7 @@ use App\Models\Student;
 class StudentCertificateService
 {
     /**
-     * Get certificates for a student
+     * Get certificates for a student (exam-linked + manual)
      * @param Student $student
      * @return \Illuminate\Support\Collection
      */
@@ -16,8 +16,12 @@ class StudentCertificateService
     {
         return Certificate::with(['course', 'examAttempt.exam'])
             ->where('student_id', $student->id)
-            ->whereHas('examAttempt', function ($query) {
-                $query->where('certificate_enabled', true);
+            ->where(function ($query) {
+                $query->whereHas('examAttempt', function ($q) {
+                    $q->where('certificate_enabled', true);
+                })->orWhere(function ($q) {
+                    $q->whereNull('exam_attempt_id')->where('is_active', true);
+                });
             })
             ->latest('issue_date')
             ->get();
@@ -34,6 +38,9 @@ class StudentCertificateService
         if ($certificate->student_id !== $student->id) {
             return null;
         }
+        if ($certificate->isManual() && !$certificate->is_active) {
+            return null;
+        }
         $certificate->load(['course', 'examAttempt.exam']);
         return $certificate;
     }
@@ -47,6 +54,9 @@ class StudentCertificateService
     public function getCertificateForDownload(Student $student, Certificate $certificate)
     {
         if ($certificate->student_id !== $student->id) {
+            return null;
+        }
+        if ($certificate->isManual() && !$certificate->is_active) {
             return null;
         }
         $certificate->load(['course', 'examAttempt.exam', 'student']);

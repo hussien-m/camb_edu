@@ -151,6 +151,13 @@ Route::middleware('admin')->group(function () {
     // Activity Log
     Route::get('activity-log', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-log.index');
 
+    // Manual Certificates
+    Route::get('certificates', [App\Http\Controllers\Admin\CertificateController::class, 'index'])->name('certificates.index');
+    Route::post('certificates', [App\Http\Controllers\Admin\CertificateController::class, 'store'])->name('certificates.store');
+    Route::post('certificates/toggle-active/{certificate}', [App\Http\Controllers\Admin\CertificateController::class, 'toggleActive'])->name('certificates.toggle-active')->where('certificate', '[0-9]+');
+    Route::post('certificates/delete/{certificate}', [App\Http\Controllers\Admin\CertificateController::class, 'destroy'])->name('certificates.destroy')->where('certificate', '[0-9]+');
+    Route::get('certificates/search-students', [App\Http\Controllers\Admin\CertificateController::class, 'searchStudents'])->name('certificates.search-students');
+
     // Exam Reminders Management
     Route::prefix('exam-reminders')->name('exam-reminders.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\ExamReminderController::class, 'index'])->name('index');
