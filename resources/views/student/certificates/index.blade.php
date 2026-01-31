@@ -83,7 +83,7 @@
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <h4 class="mb-3 fw-bold" style="color: #1e3a8a;">{{ $certificate->course->title }}</h4>
+                        <h4 class="mb-3 fw-bold" style="color: #1e3a8a;">{{ $certificate->display_course_title }}</h4>
                         <p class="text-muted mb-3">
                             <i class="fas fa-clipboard-check me-2" style="color: #f59e0b;"></i>
                             @if($certificate->examAttempt)

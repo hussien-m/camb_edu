@@ -12,6 +12,7 @@ class Certificate extends Model
     protected $fillable = [
         'student_id',
         'course_id',
+        'course_title',
         'exam_attempt_id',
         'certificate_number',
         'issue_date',
@@ -20,6 +21,17 @@ class Certificate extends Model
         'is_active',
         'qr_code',
     ];
+
+    /**
+     * Get display course title (from course relation or manual course_title)
+     */
+    public function getDisplayCourseTitleAttribute(): string
+    {
+        if ($this->course_id && $this->course) {
+            return $this->course->title ?? '';
+        }
+        return $this->course_title ?? '';
+    }
 
     protected $casts = [
         'issue_date' => 'datetime',

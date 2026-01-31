@@ -9,7 +9,7 @@
             successfully awarded the Certificate of the
         </div>
         <div class="certificate-layer course-title">
-            {{ $certificate->course->title }}
+            {{ $certificate->display_course_title }}
         </div>
         <div class="certificate-layer certificate-number">
             Registered Serial #{{ $certificate->certificate_number }}

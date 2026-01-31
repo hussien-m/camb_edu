@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
-use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -22,21 +21,13 @@ class CertificateController extends Controller
             ->latest('created_at')
             ->paginate(20);
 
-        $students = Student::where('status', 'active')
-            ->orderBy('first_name')
-            ->get(['id', 'first_name', 'last_name', 'email']);
-
-        $courses = Course::where('status', 'active')
-            ->orderBy('title')
-            ->get(['id', 'title']);
-
         $stats = [
             'total' => Certificate::whereNull('exam_attempt_id')->count(),
             'active' => Certificate::whereNull('exam_attempt_id')->where('is_active', true)->count(),
             'inactive' => Certificate::whereNull('exam_attempt_id')->where('is_active', false)->count(),
         ];
 
-        return view('admin.certificates.index', compact('certificates', 'students', 'courses', 'stats'));
+        return view('admin.certificates.index', compact('certificates', 'stats'));
     }
 
     /**
@@ -46,7 +37,7 @@ class CertificateController extends Controller
     {
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
-            'course_id' => 'required|exists:courses,id',
+            'course_title' => 'required|string|max:500',
             'certificate_file' => 'required|file|mimes:pdf,png,jpg,jpeg|max:10240',
             'transcript_file' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10240',
             'issue_date' => 'required|date',
@@ -62,7 +53,8 @@ class CertificateController extends Controller
 
             $certificate = Certificate::create([
                 'student_id' => $validated['student_id'],
-                'course_id' => $validated['course_id'],
+                'course_id' => null,
+                'course_title' => trim($validated['course_title']),
                 'exam_attempt_id' => null,
                 'certificate_number' => Certificate::generateCertificateNumber(),
                 'issue_date' => $validated['issue_date'],
@@ -80,7 +72,7 @@ class CertificateController extends Controller
                     'id' => $certificate->id,
                     'certificate_number' => $certificate->certificate_number,
                     'student_name' => $certificate->student->full_name,
-                    'course_title' => $certificate->course->title,
+                    'course_title' => $certificate->display_course_title,
                     'issue_date' => $certificate->issue_date->format('M d, Y'),
                     'is_active' => $certificate->is_active,
                     'certificate_url' => asset('storage/' . $certificate->certificate_file),
@@ -187,4 +179,5 @@ class CertificateController extends Controller
 
         return response()->json(['results' => $students]);
     }
+
 }

@@ -79,22 +79,17 @@
                         @csrf
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="student_id">Student <span class="text-danger">*</span></label>
+                                <label for="student_id">Student (search by name or email) <span class="text-danger">*</span></label>
                                 <select name="student_id" id="student_id" class="form-control select2-student" required>
-                                    <option value="">-- Select Student --</option>
-                                    @foreach($students as $s)
-                                        <option value="{{ $s->id }}">{{ $s->full_name }} ({{ $s->email }})</option>
-                                    @endforeach
+                                    <option value="">-- Search by name or email --</option>
                                 </select>
+                                <small class="text-muted">Type to search by student name or email</small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="course_id">Course <span class="text-danger">*</span></label>
-                                <select name="course_id" id="course_id" class="form-control" required>
-                                    <option value="">-- Select Course --</option>
-                                    @foreach($courses as $c)
-                                        <option value="{{ $c->id }}">{{ $c->title }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="course_title">Course Title <span class="text-danger">*</span></label>
+                                <input type="text" name="course_title" id="course_title" class="form-control" required
+                                       placeholder="Enter course name (can be any course, not necessarily in system)">
+                                <small class="text-muted">Type manually - course does not need to exist in the system</small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="certificate_file">Certificate File (PDF/Image) <span class="text-danger">*</span></label>
@@ -155,7 +150,7 @@
                                     <td class="text-center"><strong class="text-primary">{{ $certificates->firstItem() + $i }}</strong></td>
                                     <td><code>{{ $cert->certificate_number }}</code></td>
                                     <td>{{ $cert->student->full_name ?? '-' }}</td>
-                                    <td>{{ Str::limit($cert->course->title ?? '-', 35) }}</td>
+                                    <td>{{ Str::limit($cert->display_course_title ?: '-', 35) }}</td>
                                     <td>{{ $cert->issue_date->format('M d, Y') }}</td>
                                     <td>
                                         <span class="badge badge-{{ $cert->is_active ? 'success' : 'secondary' }} cert-status-badge">
@@ -205,7 +200,19 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(function() {
-    $('.select2-student').select2({ theme: 'bootstrap4', width: '100%' });
+    $('.select2-student').select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        ajax: {
+            url: '{{ route("admin.certificates.search-students") }}',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) { return { q: params.term }; },
+            processResults: function(data) { return data; }
+        },
+        placeholder: 'Search by name or email...',
+        minimumInputLength: 1
+    });
 
     $('#addCertificateForm').on('submit', function(e) {
         e.preventDefault();
@@ -229,6 +236,7 @@ $(function() {
                 toastr.success(data.message);
                 $('#addCertificateForm')[0].reset();
                 $('.select2-student').val(null).trigger('change');
+                $('#course_title').val('');
                 location.reload();
             } else {
                 toastr.error(data.message || 'Error adding certificate');
