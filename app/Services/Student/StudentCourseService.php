@@ -67,17 +67,17 @@ class StudentCourseService
                 $bestAttempt = $completedAttempts->sortByDesc('percentage')->first();
                 $attemptCount = $attempts->count();
                 $inProgress = $attempts->where('status', 'in_progress')->first();
-                
+
                 // Check if student can start this exam
                 $accessCheck = $this->examService->checkExamAccess($student, $exam);
                 $canStart = $accessCheck['allowed'];
-                
+
                 // Calculate exam statistics
                 $hasCompletedAttempts = $completedAttempts->count() > 0;
                 $highestScore = $bestAttempt ? $bestAttempt->percentage : null;
                 $lastScore = $lastAttempt ? $lastAttempt->percentage : null;
                 $hasPassed = $bestAttempt ? $bestAttempt->passed : false;
-                
+
                 // Check if exam has ended (for scheduled exams)
                 $examEnded = false;
                 $examNotStarted = false;
@@ -90,10 +90,10 @@ class StudentCourseService
                         $examEnded = true;
                     }
                 }
-                
+
                 // Check if max attempts reached
                 $maxAttemptsReached = $exam->max_attempts > 0 && $attemptCount >= $exam->max_attempts;
-                
+
                 $examsData[] = [
                     'exam' => $exam,
                     'attempts' => $attempts,
@@ -144,8 +144,8 @@ class StudentCourseService
             'course_id' => $course->id,
             'status' => 'active',
             'enrolled_at' => now(),
-            'content_disabled' => true, // Content disabled by default after enrollment
-            'exam_disabled' => true, // Exams disabled by default after enrollment
+            'content_disabled' => false, // Content enabled by default after enrollment
+            'exam_disabled' => false, // Exams enabled by default after enrollment
         ]);
     }
 }
