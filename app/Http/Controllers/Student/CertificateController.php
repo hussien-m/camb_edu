@@ -71,16 +71,11 @@ class CertificateController extends Controller
             abort(404);
         }
 
-        // Exam-linked or manual without file: generate PDF
-        $backgroundPath = public_path('certificates/certificate-template.png');
-        $backgroundImage = null;
-        if (file_exists($backgroundPath)) {
-            $backgroundImage = 'data:image/png;base64,' . base64_encode(file_get_contents($backgroundPath));
-        }
-
-        $pdf = Pdf::loadView('student.certificates.download', compact('certificate', 'backgroundImage'))
-            ->setPaper('a4', 'portrait')
-            ->setOption('isRemoteEnabled', true);
+        // Exam-linked or manual without file: generate PDF (نفس التصميم المعروض، صفحة واحدة عرضي)
+        $pdf = Pdf::loadView('student.certificates.download', compact('certificate'))
+            ->setPaper('a4', 'landscape')
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('isHtml5ParserEnabled', true);
 
         return $pdf->download('certificate-' . $certificate->certificate_number . '.pdf');
     }

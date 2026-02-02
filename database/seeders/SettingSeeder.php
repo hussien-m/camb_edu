@@ -216,6 +216,14 @@ class SettingSeeder extends Seeder
                 'label' => 'Footer Copyright Text',
                 'description' => 'Footer copyright notice',
             ],
+            [
+                'key' => 'certificate_tagline',
+                'value' => 'Authorized Training Center',
+                'type' => 'text',
+                'group' => 'general',
+                'label' => 'Certificate Tagline',
+                'description' => 'Subtitle shown on certificates (e.g. Authorized Training Center)',
+            ],
         ];
 
         foreach ($settings as $setting) {

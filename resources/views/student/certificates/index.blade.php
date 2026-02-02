@@ -128,10 +128,10 @@
                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
                                     <i class="fas fa-eye me-2"></i>View Certificate
                                 </a>
-                                <a href="{{ route('student.certificates.download', $certificate) }}"
+                                <a href="{{ route('student.certificates.show', $certificate) }}?download=1"
                                    class="btn btn-lg"
                                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 0.875rem; font-weight: 600;">
-                                    <i class="fas fa-download me-2"></i>Download PDF
+                                    <i class="fas fa-image me-2"></i>Download as Image
                                 </a>
                             @endif
                             @if($certificate->transcript_file)
