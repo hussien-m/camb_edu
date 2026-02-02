@@ -112,6 +112,11 @@ class ExamResultService
                 'admin_notes' => $data['admin_notes'] ?? null,
             ]);
 
+            // تفعيل الشهادة تلقائياً عند النجاح
+            if ($data['passed']) {
+                $this->setCertificateAccess($attempt->fresh(), true);
+            }
+
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -160,6 +165,11 @@ class ExamResultService
                 'percentage' => round($percentage, 2),
                 'passed' => $passed,
             ]);
+
+            // تفعيل الشهادة تلقائياً عند النجاح بعد إعادة الحساب
+            if ($passed) {
+                $this->setCertificateAccess($attempt->fresh(), true);
+            }
 
             DB::commit();
             return true;
@@ -231,11 +241,15 @@ class ExamResultService
         }
     }
 
+    /**
+     * Enable certificate access for all passed attempts of an exam (الناجحين فقط).
+     */
     public function enableCertificatesForExam(int $examId): int
     {
         $attempts = ExamAttempt::with('certificate')
             ->where('exam_id', $examId)
-            ->whereNotNull('end_time')
+            ->where('status', 'completed')
+            ->where('passed', true)
             ->get();
 
         $enabledCount = 0;
@@ -247,5 +261,17 @@ class ExamResultService
         }
 
         return $enabledCount;
+    }
+
+    /**
+     * Disable certificate access for all attempts of an exam (تعطيل جماعي).
+     */
+    public function disableCertificatesForExam(int $examId): int
+    {
+        $count = ExamAttempt::where('exam_id', $examId)
+            ->where('certificate_enabled', true)
+            ->update(['certificate_enabled' => false]);
+
+        return $count;
     }
 }

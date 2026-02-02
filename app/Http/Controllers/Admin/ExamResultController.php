@@ -8,6 +8,7 @@ use App\Models\ExamAttempt;
 use App\Models\Exam;
 use App\Services\Admin\ExamResultService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ExamResultController extends Controller
 {
@@ -107,7 +108,18 @@ class ExamResultController extends Controller
 
         $count = $this->resultService->enableCertificatesForExam((int) $validated['exam_id']);
 
-        return redirect()->back()->with('success', "Enabled certificates for {$count} attempt(s).");
+        return redirect()->back()->with('success', "Enabled certificate access for {$count} passed attempt(s).");
+    }
+
+    public function disableCertificatesForExam(Request $request)
+    {
+        $validated = $request->validate([
+            'exam_id' => 'required|exists:exams,id',
+        ]);
+
+        $count = $this->resultService->disableCertificatesForExam((int) $validated['exam_id']);
+
+        return redirect()->back()->with('success', "Disabled certificate access for {$count} attempt(s).");
     }
 
     /**
@@ -132,7 +144,11 @@ class ExamResultController extends Controller
                 $attempts->setCurrentPage($page);
             }
 
-            $html = view('admin.exam-results.partials.table', compact('attempts'))->render();
+            // Use index URL for pagination links so AJAX can read ?page= from href
+            $attempts->withPath(route('admin.exam-results.index'));
+
+            // Return only table rows for AJAX (no tbody wrapper) to avoid nested tbody
+            $html = view('admin.exam-results.partials.table_rows', compact('attempts'))->render();
             $pagination = view('admin.exam-results.partials.pagination', compact('attempts'))->render();
 
             return response()->json([
@@ -142,7 +158,7 @@ class ExamResultController extends Controller
                 'count' => $attempts->total()
             ]);
         } catch (\Exception $e) {
-            \Log::error('Filter error: ' . $e->getMessage(), [
+            Log::error('Filter error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json([

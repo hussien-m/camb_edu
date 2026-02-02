@@ -146,6 +146,8 @@ Route::middleware('admin')->group(function () {
         ->name('exam-results.toggle-certificate');
     Route::post('exam-results/enable-certificates', [App\Http\Controllers\Admin\ExamResultController::class, 'enableCertificatesForExam'])
         ->name('exam-results.enable-certificates');
+    Route::post('exam-results/disable-certificates', [App\Http\Controllers\Admin\ExamResultController::class, 'disableCertificatesForExam'])
+        ->name('exam-results.disable-certificates');
     Route::delete('exam-results/{id}', [App\Http\Controllers\Admin\ExamResultController::class, 'destroy'])->name('exam-results.destroy');
 
     // Activity Log

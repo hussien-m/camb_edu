@@ -195,6 +195,36 @@
                             </span>
                         </div>
                     </form>
+                    <hr class="my-3">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <span class="text-muted"><i class="fas fa-certificate me-1"></i>Bulk certificate access:</span>
+                        <form action="{{ route('admin.exam-results.enable-certificates') }}" method="POST" class="d-inline-flex align-items-center gap-2"
+                              onsubmit="return confirm('Enable certificate access for all students who passed the selected exam?');">
+                            @csrf
+                            <select name="exam_id" class="form-control form-control-sm exam-select-enable" style="width: auto; min-width: 200px;" required>
+                                <option value="">— Select exam —</option>
+                                @foreach($exams as $exam)
+                                    <option value="{{ $exam->id }}">{{ $exam->title }}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fas fa-check-double me-1"></i>Enable for passed
+                            </button>
+                        </form>
+                        <form action="{{ route('admin.exam-results.disable-certificates') }}" method="POST" class="d-inline-flex align-items-center gap-2"
+                              onsubmit="return confirm('Disable certificate access for ALL attempts of the selected exam?');">
+                            @csrf
+                            <select name="exam_id" class="form-control form-control-sm exam-select-disable" style="width: auto; min-width: 200px;" required>
+                                <option value="">— Select exam —</option>
+                                @foreach($exams as $exam)
+                                    <option value="{{ $exam->id }}">{{ $exam->title }}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-ban me-1"></i>Disable for all
+                            </button>
+                        </form>
+                    </div>
                     <div id="filterResults" class="mt-3"></div>
                 </div>
             </div>
@@ -361,14 +391,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function attachPaginationListeners() {
-        // Attach click listeners to pagination links
-        const paginationLinks = paginationContainer.querySelectorAll('a[href]');
+        // Only pagination links (with page= in href)
+        const paginationLinks = paginationContainer.querySelectorAll('a[href*="page="]');
         paginationLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                const url = new URL(this.href);
+                const url = new URL(this.href, window.location.origin);
                 const page = url.searchParams.get('page');
-                
+                if (!page) return;
+
                 // Get current filter values
                 const formData = new FormData(filterForm);
                 const data = {};
@@ -379,7 +410,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 data.page = page;
 
-                // Perform filter with page
                 filterLoading.style.display = 'inline-block';
                 fetch('{{ route("admin.exam-results.filter") }}', {
                     method: 'POST',
@@ -395,11 +425,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (result.success) {
                         resultsTableBody.innerHTML = result.html;
                         paginationContainer.innerHTML = result.pagination;
+                        filterResults.innerHTML = `
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Found <strong>${result.count}</strong> result(s)
+                            </div>
+                        `;
                         attachPaginationListeners();
-                        
-                        // Scroll to top of table
                         resultsTableBody.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                        filterResults.innerHTML = `<div class="alert alert-danger mb-0">${result.message || 'Error loading page'}</div>`;
                     }
+                })
+                .catch(err => {
+                    console.error('Pagination error:', err);
+                    filterResults.innerHTML = '<div class="alert alert-danger mb-0">An error occurred. Please try again.</div>';
                 })
                 .finally(() => {
                     filterLoading.style.display = 'none';
